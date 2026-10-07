@@ -37,6 +37,34 @@ Oltre ai difetti già in `STATO.md` (incongruenze 1–6):
 
 ---
 
+## Passo U — Una sola versione ufficiale per tutti gli schermi (prima del passo 0)
+*Aggiunto il 07.10.2026 su richiesta di Jack. Cambia solo il CSS (grafica): ogni voce va approvata.*
+
+**Verifica di partenza (07.10.2026).** Screenshot con emulazione dispositivo (Chrome headless via DevTools) di 12 formati, dal telefono 360 × 780 al desktop 1920 × 1080:
+- nessuno scorrimento orizzontale in nessun formato;
+- OF geometrico 1,57% in tutti i formati.
+
+| fascia | formati provati | come si presenta oggi | giudizio |
+|---|---|---|---|
+| telefono verticale (≤ 480 px) | 360, 390, 430 | anteprima in alto e ferma, pulsanti grandi con etichetta, controlli sotto (blocco di OF-mobile) | **buono** |
+| telefono orizzontale (481–960 px, altezza ~375–390) | 667 × 375, 844 × 390 | layout "tablet": prima tutti i controlli (~850 px), l'anteprima solo in fondo; cambiando un valore non si vede il disegno; la barra strumenti sporge sotto la scheda | **debole** |
+| tablet verticale (481–960 px) | 768 × 1024, 820 × 1180 | stessa cosa: controlli sopra, anteprima sotto la piega dello schermo | **debole** |
+| desktop basso (≥ 960 px, altezza ≤ ~800) | 1024 × 768, 1280 × 800, 1366 × 768 | layout v1 a due colonne; la pagina è alta 828 px, quindi il fondo dell'anteprima e il riquadro info vanno scorsi | **accettabile**, piccolo difetto |
+| desktop (≥ 1440 × 900) | 1440 × 900, 1920 × 1080 | layout v1, tutto visibile | **buono** |
+
+**Proposte:**
+
+| # | modifica | file | rischio | effort | come si verifica |
+|---|---|---|---|---|---|
+| U1 | **Tablet verticale**: anteprima in alto e ferma durante lo scroll, come sul telefono, estendendo la logica del blocco ≤ 480 px alla fascia 481–960 px in verticale. | `styles.css` (nuovo blocco `@media (min-width: 481px) and (max-width: 960px) and (orientation: portrait)`) | basso | S | screenshot 768/820: disegno visibile mentre si muovono i cursori; ≤ 480 e ≥ 960 identici al pixel |
+| U2 | **Telefono orizzontale** (altezza ≤ 500 px): due colonne, anteprima a sinistra ferma e controlli a destra che scorrono. | `styles.css` (blocco `@media (max-height: 500px) and (orientation: landscape)`) | medio: spazio molto stretto | S–M | screenshot 667 × 375 e 844 × 390; prova su un telefono vero |
+| U3 | **Barra strumenti che sporge** dalla scheda nella fascia 481–960 px. | `styles.css` (regole esistenti a 960/640 px) | basso | XS | screenshot 844 × 390 e 768 × 1024 |
+| U4 | **Desktop basso**: anteprima ridimensionata all'altezza dello schermo, così entra senza scroll. Solo con altezza ≤ 820 px: 1440 × 900 e 1920 × 1080 restano identici. | `styles.css` (blocco `@media (min-width: 961px) and (max-height: 820px)`) | basso | S | screenshot 1024 × 768, 1366 × 768: tutto visibile; 1440 × 900 identico al pixel |
+| U5 | **Strumento di verifica nel repo**: lo script degli screenshot (`tools/screenshot.mjs`, Node senza dipendenze + Chrome), per rifare questo controllo a ogni passo. | nuovo `tools/screenshot.mjs` | nessuno (non tocca l'app) | XS | genera le 12 immagini e la tabella |
+| U6 | **Ritiro di OF-mobile** (una sola versione ufficiale): la pagina grecagni.github.io/OF-mobile diventa un rimando automatico a grecagni.github.io/OpennessFactor e il repo OF-mobile viene archiviato (sola lettura) su GitHub. **Tocca OF-mobile: solo con ok esplicito di Jack**, dopo U1–U4. | repo `OF-mobile` (`index.html` di rimando), impostazioni GitHub | basso, reversibile | XS | il vecchio link apre la v2 |
+
+---
+
 ## Passo 0 — Fissare il comportamento di oggi (nessun effetto visibile)
 
 ### 0.1 Separare il calcolo in `of-core.js` + test che registrano i numeri di oggi
@@ -148,7 +176,7 @@ Ognuna cambia la grafica, quindi va approvata singolarmente.
 ---
 
 ## Ordine riassunto
-0.1 → 0.2 → **1** → 2.1 → 2.2 → 2.3 → 2.4–2.7 → (2.8 se serve) → 2.9 → 3.x a scelta → 4.x una alla volta.
+**U** (U5 → U3 → U1 → U4 → U2 → U6) → 0.1 → 0.2 → **1** → 2.1 → 2.2 → 2.3 → 2.4–2.7 → (2.8 se serve) → 2.9 → 3.x a scelta → 4.x una alla volta.
 Dopo ogni passo: stop, verifica, approvazione.
 
 ---
