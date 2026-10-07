@@ -1084,3 +1084,152 @@ svg {
     z-index: 20;
   }
 }
+
+/* ==========================================================================
+   v2 — una sola versione per tutti gli schermi (passo U del piano)
+   Blocchi aggiunti in coda, senza modificare le regole sopra.
+   Telefono verticale (≤ 480 px) e desktop alto restano identici.
+   ========================================================================== */
+
+/* U4 — Desktop: la colonna dei controlli scorre al suo interno, così su
+   schermi bassi (1024×768, 1366×768) anteprima e controlli restano entrambi
+   visibili senza scorrere la pagina. Su schermi alti non cambia nulla. */
+@media (min-width: 961px) {
+  .controls {
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+    max-height: 100dvh;
+  }
+}
+
+/* U1 + U3 — Tablet e schermi intermedi (481–960 px): come sul telefono,
+   anteprima in alto e barra strumenti sotto, dentro la scheda, con etichette. */
+@media (min-width: 481px) and (max-width: 960px) {
+  .preview-panel {
+    order: -1;
+    flex: none;
+    min-height: 0;
+    padding: 30px 16px 16px 36px;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .preview-frame {
+    width: min(100%, 40vh);
+    max-height: none;
+    margin: 0 auto 72px;
+  }
+
+  .preview-toolbar {
+    top: calc(100% + 12px);
+    bottom: auto;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    flex-direction: row;
+    gap: 8px;
+    padding: 6px;
+    border-radius: 12px;
+  }
+
+  button.tool-btn {
+    min-width: 76px;
+    min-height: 52px;
+    padding: 6px 8px;
+    flex-direction: column;
+    gap: 3px;
+    touch-action: manipulation;
+  }
+
+  .tool-label,
+  .wave-toggle__label,
+  button.tool-btn:hover .tool-label,
+  button.tool-btn:focus-visible .tool-label,
+  button.tool-btn:hover .wave-toggle__label,
+  button.tool-btn:focus-visible .wave-toggle__label {
+    position: static;
+    transform: none;
+    opacity: 1;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    color: inherit;
+    font-size: 0.7rem;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+
+  /* niente scroll interno ai controlli (regola dei 640 px): scorre la pagina */
+  .controls {
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+/* Anteprima ferma in alto se lo schermo è abbastanza alto (tablet verticale) */
+@media (min-width: 481px) and (max-width: 960px) and (min-height: 640px) {
+  .preview-panel {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+}
+
+/* U2 — Telefono orizzontale (schermo basso): due colonne,
+   anteprima ferma a sinistra, controlli che scorrono a destra. */
+@media (max-width: 960px) and (max-height: 500px) and (orientation: landscape) {
+  .app {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .preview-panel {
+    position: sticky;
+    top: 8px;
+    z-index: 20;
+    flex: 0 0 auto;
+    padding: 24px 10px 8px 30px;
+  }
+
+  .preview-frame {
+    width: calc(100vh - 126px);
+    width: calc(100dvh - 126px);
+    margin: 0 0 70px;
+    --dimension-offset: 18px;
+  }
+
+  .preview-toolbar {
+    left: 0;
+    right: 0;
+    transform: none;
+    justify-content: space-between;
+    gap: 4px;
+    padding: 4px;
+  }
+
+  button.tool-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 4px 2px;
+  }
+
+  .tool-label,
+  .wave-toggle__label,
+  button.tool-btn:hover .tool-label,
+  button.tool-btn:focus-visible .tool-label,
+  button.tool-btn:hover .wave-toggle__label,
+  button.tool-btn:focus-visible .wave-toggle__label {
+    font-size: 0.62rem;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .controls {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 12px;
+  }
+}

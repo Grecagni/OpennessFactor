@@ -38,7 +38,14 @@ Oltre ai difetti già in `STATO.md` (incongruenze 1–6):
 ---
 
 ## Passo U — Una sola versione ufficiale per tutti gli schermi (prima del passo 0)
-*Aggiunto il 07.10.2026 su richiesta di Jack. Cambia solo il CSS (grafica): ogni voce va approvata.*
+*Aggiunto il 07.10.2026 su richiesta di Jack. Cambia solo il CSS (grafica).*
+
+**Esito (07.10.2026): FATTO.** U1–U5 approvati e realizzati con un blocco in coda a `styles.css`; U6 sostituito dalla richiesta di Jack di rendere privati i repository OF e OF-mobile, che spegne le loro Pages. Verifica con `tools/screenshot.mjs`:
+- telefono verticale (360/390/430) e desktop 1440 × 900 e 1920 × 1080 **identici al pixel** a prima;
+- tablet: anteprima ferma in alto;
+- telefono orizzontale: due colonne;
+- desktop basso: tutto visibile, controlli con scorrimento interno;
+- nessuno scorrimento orizzontale; OF 1,57% ovunque.
 
 **Verifica di partenza (07.10.2026).** Screenshot con emulazione dispositivo (Chrome headless via DevTools) di 12 formati, dal telefono 360 × 780 al desktop 1920 × 1080:
 - nessuno scorrimento orizzontale in nessun formato;

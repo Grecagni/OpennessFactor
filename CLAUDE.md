@@ -17,7 +17,7 @@ Repository: github.com/Grecagni/OpennessFactor (pubblico; in futuro da trasferir
 
 ## Cosa non si cambia senza approvazione
 - Formule, valori di default e intervalli (min/max/step) dei campi: si cambiano solo dentro un passo del piano approvato da Jack.
-- Aspetto grafico: da PC (≥ 960 px) l'app deve restare uguale alla v1 finché Jack non approva cambi grafici; da smartphone (≤ 480 px) il riferimento è OF-mobile.
+- Aspetto grafico: non cambia senza approvazione di Jack. Riferimento: quello fissato dal passo U (vedi verifica minima, punto 3).
 - Un passo alla volta: si implementa solo il passo approvato, poi ci si ferma e si mostra il risultato.
 
 ## Convenzione del pattern (decisa da Jack il 06.10.2026)
@@ -40,7 +40,7 @@ Repository: github.com/Grecagni/OpennessFactor (pubblico; in futuro da trasferir
 ## Verifica minima (dopo ogni modifica)
 1. Con i default l'OF geometrico è **1,57%**.
 2. Con d = 0,6 (resto ai default) l'OF geometrico è **2,26%**.
-3. Da PC l'aspetto resta quello della v1 (confronto con screenshot a 1440 e 800 px) finché Jack non approva cambi grafici; controllare anche la vista smartphone (390 px).
+3. Grafica: `node --experimental-websocket tools/screenshot.mjs <cartella> --confronta <cartella-riferimento>` (12 formati, dal telefono al desktop). Nessuno scorrimento orizzontale; i formati che il passo non deve toccare restano "identico". Riferimento grafico dal passo U (07.10.2026): telefono verticale = OF-mobile, desktop ≥ 1440 × 900 = v1; tablet, telefono orizzontale e desktop basso come da passo U.
 4. Quando esisteranno (passo 0 del piano): tutti i test verdi (`test.html` con doppio clic; `node tests/run-node.js`).
 
 ## Commit

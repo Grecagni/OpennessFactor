@@ -3,7 +3,7 @@
 Strumento web per progettare il pattern di microforatura laser del film WAVE (Pellini) e calcolarne il **fattore di apertura geometrico** (OF).
 
 - Si apre con doppio clic su `index.html`: HTML/CSS/JS vanilla, nessuna installazione.
-- Funziona da PC e da smartphone.
+- Una sola versione per tutti gli schermi: telefono (verticale e orizzontale), tablet, PC.
 - Stato: **base di partenza** = v1 ([Grecagni/OF](https://github.com/Grecagni/OF), tag `v1.0`) + adattamento smartphone ([Grecagni/OF-mobile](https://github.com/Grecagni/OF-mobile)). I miglioramenti seguono `docs/PIANO_v2.md`, un passo alla volta.
 
 ## Cosa calcola
@@ -29,4 +29,5 @@ Convenzione del pattern della v2 (`docs/CONVENZIONE_PASSO.md`):
 |---|---|
 | `index.html`, `script.js`, `styles.css` | l'app |
 | `CLAUDE.md` | regole di lavoro per Claude Code |
+| `tools/screenshot.mjs` | verifica grafica su 12 formati di schermo (Node + Chrome) |
 | `docs/` | convenzione, piano e note di progetto |
