@@ -182,9 +182,33 @@ Ognuna cambia la grafica, quindi va approvata singolarmente.
 
 ---
 
-## Ordine riassunto
+## Ordine riassunto (prima versione, 06.10.2026)
 **U** (U5 → U3 → U1 → U4 → U2 → U6) → 0.1 → 0.2 → **1** → 2.1 → 2.2 → 2.3 → 2.4–2.7 → (2.8 se serve) → 2.9 → 3.x a scelta → 4.x una alla volta.
 Dopo ogni passo: stop, verifica, approvazione.
+
+## Roadmap (07.10.2026) — come la organizzerebbe un team di sviluppo
+*Sostituisce l'ordine qui sopra. Tiene conto di `BRAINSTORMING_UX.md` e delle risposte di Jack: utenti principali Jack e agenti commerciali da telefono; stile Pellini × Apple; lingua IT/EN; app installabile.*
+
+**Principi**
+- **Due binari in parallelo.** Progettazione (mockup e decisioni grafiche) e ingegneria (calcolo, test, correzioni) procedono insieme. Si incontrano solo nel rilascio "Nuovo aspetto".
+- **Il disegno si rifà una volta sola.** Prima si fissano i numeri e i campi definitivi (P, R, S), poi si cambia l'aspetto.
+- **Rilasci piccoli e numerati** (v2.1, v2.2, …). Ognuno ha un obiettivo, una verifica e una nota "Novità" in `CHANGELOG.md`, e un tag git sul commit di rilascio.
+- **Nome e indirizzo definitivi prima di distribuire l'app agli agenti.** Se l'indirizzo cambia dopo, ad esempio con il trasferimento nell'organizzazione Pellini, l'app installata va reinstallata su ogni telefono.
+- **Qualità a ogni rilascio**: test del calcolo (dal passo 0), verifica grafica sui 12 formati (`tools/screenshot.mjs`); prova su 2–3 telefoni veri prima di ogni rilascio agli agenti.
+
+| rilascio | binario | contenuto | dipende da | cosa vede l'utente |
+|---|---|---|---|---|
+| **v2.0** ✔ | — | base unificata, passo U | — | un'app sola per tutti gli schermi |
+| **D1 Mockup** | progettazione | 2 varianti statiche, fuori dall'app (A "Pellini editoriale", B "Apple chiara"; vedi `DESIGN.md`); Jack sceglie o mescola; `DESIGN.md` approvato | materiali di Jack (facoltativi) | solo il mockup |
+| **v2.1 Fondamenta** | ingegneria | passo 0.1–0.2: `of-core.js` e test; `CHANGELOG.md` | — | nulla (invisibile) |
+| **v2.2 Convenzione** | ingegneria | passo 1 (P, R, S) + passo 2: ponte vero, avviso di troncamento, SVG in mm, link completo e robusto, contatore fori, default OF, README | v2.1 | nuove etichette e avvisi |
+| **v2.3 Nuovo aspetto** | incontro | token CSS dal mockup scelto; intestazione con nome e selettore lingua IT/EN; riquadro "OF geometrico"; controlli a segmenti; campi con unità; numeri nel formato della lingua; toast; avvisi sul campo; tema scuro; via Wave e "GR"; foglio "Informazioni" con la firma; metadati autore negli export | D1, v2.2 | l'app rinnovata |
+| **v2.4 App** | ingegneria | PWA: manifest (inserito solo in http/https, nessun errore da doppio clic), icone, service worker per l'uso offline, istruzioni di installazione per iPhone e Android | v2.3; nome, indirizzo e icona definitivi | si installa sulla Home |
+| *distribuzione* | — | prova su telefoni veri, poi link o QR agli agenti | v2.4 | — |
+| **v2.5 Anteprima** | entrambi | quote P/R/S/d disegnate sui fori, barra di scala, collisioni evidenziate (anche senza colore), zoom | v2.3 | anteprima "parlante" |
+| **v2.6+ Funzioni** | — | per gli agenti: condivisione con QR, scheda PDF (con la firma nel piè di pagina), preset. Per Jack: tabella soluzioni, confronto varianti. Per la produzione: pannello reale, tempo laser, export coordinate, vincoli di processo | v2.5; dati da Jack | una funzione per rilascio |
+
+D1 e v2.1 possono partire subito, in parallelo. I passi 2.8 e 3.5 restano condizionati (2.8 se i test confermano A5; 3.5 dopo la decisione su "cumulativa o alternata").
 
 ---
 
@@ -198,5 +222,5 @@ Dopo ogni passo: stop, verifica, approvazione.
 7. **Export**: con quale CAD si verifica l'SVG in mm (2.3)? Per la produzione serve più SVG, DXF o CSV di coordinate?
 8. **"Copia parametri"** (A6): va bene che copi l'indirizzo completo?
 9. **Etichetta "OF geometrico"** nell'interfaccia (3.2): va bene, o preferisci una nota sotto il valore?
-10. **CLAUDE.md** della v2: è scritto ma **non ancora nel commit**. Lo includo nel primo commit del passo 0?
-11. **Pubblicazione della v2**: per ora resta solo locale. Quando servirà, repo nuovo privato (brainstorming §7 domanda 4)?
+10. ~~CLAUDE.md della v2~~ → nel repository dal 07.10.2026.
+11. ~~Pubblicazione della v2~~ → repo pubblico Grecagni/OpennessFactor con Pages (07.10.2026); il trasferimento nell'organizzazione Pellini è rimandato.

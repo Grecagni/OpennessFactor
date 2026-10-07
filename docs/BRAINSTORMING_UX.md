@@ -111,7 +111,16 @@ Principio: **prima la sostanza, poi la forma**, così la grafica si disegna una 
 
 ---
 
-## 5. Domande per Jack
+## 5. Risposte di Jack (07.10.2026)
+1. **Utenti**: un po' tutti, ma soprattutto Jack e alcuni agenti commerciali (spesso da telefono).
+2. **Wave e sigla "GR"**: si tolgono. Va trovato un modo discreto e "furbo" per mantenere la firma dell'autore.
+3. **Stile**: quello di Pellini (dal sito, o da materiali che Jack può fornire), con alla base le best practice Apple.
+4. **Mockup**: Jack chiede che cosa si intenda; spiegazione data in chat.
+5. **Ordine**: a scelta di Claude, come farebbe un vero team di sviluppo.
+6. **Lingua inglese**: sì, con un piccolo selettore di lingua in alto.
+7. **App sulla schermata Home** (PWA): sì, molto interessante.
+
+## 6. Domande per Jack (originali)
 1. **Chi usa l'app, e quale uso conta di più?** Commerciale e architetti (presentare), UT (verificare), produzione (programmare la macchina)? Decide l'ordine di F2–F12.
 2. **Effetto Wave e sigla "GR"**: restano come oggi, diventano un'opzione, o si tolgono?
 3. **Identità visiva**: stile Apple neutro (grigi, un solo colore di accento) o colori Pellini? Esiste un manuale del marchio da rispettare?
