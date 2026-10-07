@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Open Factor Designer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="controls">
+      <h1>Pattern Microfori</h1>
+
+      <div class="control-row" data-control="mode">
+        <label for="modeSelect">Modalità di calcolo</label>
+        <select id="modeSelect" aria-describedby="modeHelp">
+          <option value="of">Calcola OF(d,x,y)</option>
+          <option value="step">Calcola passo x=y(d,OF)</option>
+          <option value="diameter">Calcola d(OF,x,y)</option>
+        </select>
+        <p class="control-help" id="modeHelp">Calcola OF in funzione di diametro e passi.</p>
+      </div>
+
+      <div class="control-row" data-control="ofTarget">
+        <label for="ofRange">
+          OF (%)
+          <span class="of-inline-value" id="ofInlineValue">0.00%</span>
+        </label>
+        <div class="slider-group slider-only">
+          <input type="range" id="ofRange" data-range="ofTarget" min="0" max="12" step="0.02" value="8" aria-label="Open factor" />
+        </div>
+      </div>
+
+      <div class="control-row" data-control="d">
+        <label for="dRange">Diametro foro (d)</label>
+        <div class="slider-group">
+          <input type="range" id="dRange" data-range="d" min="0.2" max="0.9" step="0.05" value="0.5" aria-label="Diametro foro" />
+          <input type="number" id="dInput" data-number="d" min="0.2" max="0.9" step="0.05" value="0.50" />
+        </div>
+      </div>
+
+      <div class="control-row" data-control="x">
+        <label for="xRange">Passo orizzontale (x)</label>
+        <div class="slider-group">
+          <input type="range" id="xRange" data-range="x" min="1" max="10" step="0.1" value="5" aria-label="Passo orizzontale" />
+          <input type="number" id="xInput" data-number="x" min="1" max="10" step="0.1" value="5.00" />
+        </div>
+      </div>
+
+      <div class="control-row" data-control="y">
+        <label for="yRange">Passo verticale (y)</label>
+        <div class="slider-group">
+          <input type="range" id="yRange" data-range="y" min="1" max="10" step="0.1" value="5" aria-label="Passo verticale" />
+          <input type="number" id="yInput" data-number="y" min="1" max="10" step="0.1" value="5.00" />
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <label class="toggle-row__grid">
+          <input type="checkbox" id="gridToggle" /> Mostra griglia
+        </label>
+        <button type="button" class="secondary reset-btn" id="resetBtn">Reset</button>
+        <label for="patternSelect" class="toggle-row__pattern">Pattern
+          <select id="patternSelect">
+            <option value="staggered">Sfalsato</option>
+            <option value="grid">Griglia</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="status-message" id="statusMessage" role="status" aria-live="polite" aria-atomic="true"></div>
+
+      <div class="info-box" id="infoBox">
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>Area foro</strong>
+            <span id="holeArea">0 mm²</span>
+          </div>
+          <div class="info-item">
+            <strong>Area cella</strong>
+            <span id="cellArea">0 mm²</span>
+          </div>
+          <div class="info-item">
+            <strong>Rapporto d/x</strong>
+            <span id="ratioDX">0.00</span>
+          </div>
+          <div class="info-item">
+            <strong>Rapporto d/y</strong>
+            <span id="ratioDY">0.00</span>
+          </div>
+        </div>
+        <div class="badge-row">
+          <div class="badge" id="cellsCount">0 fori</div>
+        </div>
+        <div class="warning" id="warningMessage" role="alert" aria-live="assertive" aria-atomic="true">Diametro troppo grande rispetto al passo.</div>
+      </div>
+    </aside>
+
+    <main class="preview-panel">
+      <div class="preview-frame" id="previewFrame">
+        <div class="preview-toolbar" role="toolbar" aria-label="Azioni anteprima">
+          <button type="button" class="tool-btn" id="exportSvgBtn" aria-label="Esporta SVG">
+            <svg class="tool-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 5L3 12l5 7" />
+              <path d="M16 5l5 7-5 7" />
+              <path d="M10 19l4-14" />
+            </svg>
+            <span class="tool-label">Esporta SVG</span>
+          </button>
+          <button type="button" class="tool-btn" id="exportPngBtn" aria-label="Esporta PNG">
+            <svg class="tool-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="5" width="18" height="14" rx="2" />
+              <circle cx="9" cy="10" r="1.5" />
+              <path d="M21 15l-5-5-4 4-3-3-6 6" />
+            </svg>
+            <span class="tool-label">Esporta PNG</span>
+          </button>
+          <button type="button" class="tool-btn" id="copyHashBtn" aria-label="Copia parametri">
+            <svg class="tool-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="11" height="11" rx="2" />
+              <rect x="4" y="4" width="11" height="11" rx="2" />
+            </svg>
+            <span class="tool-label">Copia parametri</span>
+          </button>
+          <button type="button" class="tool-btn wave-toggle" id="waveToggleBtn" aria-pressed="true">
+            <svg class="tool-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 12c2.5 0 2.5-4 5-4s2.5 4 5 4 2.5-4 5-4 2.5 4 5 4" />
+            </svg>
+            <span class="wave-toggle__label">Wave attivo</span>
+          </button>
+        </div>
+        <div class="dimension-line dimension-line--horizontal">
+          <span class="dimension-line__tick dimension-line__tick--start"></span>
+          <span class="dimension-line__tick dimension-line__tick--end"></span>
+          <span class="dimension-line__label" id="previewWidthLabel">0.0 mm</span>
+        </div>
+        <div class="dimension-line dimension-line--vertical">
+          <span class="dimension-line__tick dimension-line__tick--start"></span>
+          <span class="dimension-line__tick dimension-line__tick--end"></span>
+          <span class="dimension-line__label" id="previewHeightLabel">0.0 mm</span>
+        </div>
+        <div class="svg-wrapper" id="svgWrapper" aria-label="Anteprima pattern">
+          <svg id="patternSvg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Anteprima pattern">
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#94a3b8" font-size="16">
+              Caricamento…
+            </text>
+          </svg>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
