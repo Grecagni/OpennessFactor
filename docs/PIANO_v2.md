@@ -1,7 +1,7 @@
 # PIANO v2 — OF unificato
 *06.10.2026 — proposta da approvare passo per passo. Base: `02_APP\OF-v2`, commit `b12f41d` "Base v2 = copia di OF-mobile" (file identici a OF-mobile, verificato con SHA-256).*
 
-Fonti: `BRAINSTORMING_v2.md`, `CONVENZIONE_PASSO.md`, `STATO.md`, rilettura di `script.js` (1016 righe), `index.html`, `styles.css` della v2.
+Fonti: `CONVENZIONE_PASSO.md` (in questa cartella); `BRAINSTORMING_v2.md` e `STATO.md` (note interne, fuori dal repository); rilettura di `script.js` (1016 righe), `index.html`, `styles.css` della v2.
 Le cose non verificate sono marcate **[ipotesi]**.
 
 ---
