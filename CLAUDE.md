@@ -8,7 +8,7 @@ Repository: github.com/Grecagni/OpennessFactor (pubblico; in futuro da trasferir
 ## Dove si lavora
 - Codice e documenti di progetto (convenzione, piano, requisiti): SOLO in questa cartella (`02_APP\OF-v2`), documenti in `docs/`. L'originale è qui: non tenere copie altrove.
 - Note interne non pubblicabili (`STATO.md`, `BRAINSTORMING_v2.md`, dati di processo, numeri di produzione): restano in `01_ANALISI`, FUORI dal repository, finché il repository è pubblico.
-- MAI scrivere in `00_SORGENTI` (archivio, sola lettura), in `02_APP\OF-mobile` (pubblicata e in uso) né nel repository Grecagni/OF (v1 congelata).
+- MAI scrivere in `00_SORGENTI` (archivio, sola lettura), in `02_APP\OF-mobile` né nei repository Grecagni/OF e Grecagni/OF-mobile: dal 07.10.2026 sono privati, con Pages spente, e restano solo come archivio.
 - Push su `main` dopo ogni passo approvato e verificato. Niente Excel di processo né dati aziendali nel repository.
 
 ## Tecnologia

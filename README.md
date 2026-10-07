@@ -4,7 +4,7 @@ Strumento web per progettare il pattern di microforatura laser del film WAVE (Pe
 
 - Si apre con doppio clic su `index.html`: HTML/CSS/JS vanilla, nessuna installazione.
 - Una sola versione per tutti gli schermi: telefono (verticale e orizzontale), tablet, PC.
-- Stato: **base di partenza** = v1 ([Grecagni/OF](https://github.com/Grecagni/OF), tag `v1.0`) + adattamento smartphone ([Grecagni/OF-mobile](https://github.com/Grecagni/OF-mobile)). I miglioramenti seguono `docs/PIANO_v2.md`, un passo alla volta.
+- Versione ufficiale unica: **https://grecagni.github.io/OpennessFactor/**. Nasce dalla v1 (tag `v1.0`) e dalla sua variante smartphone, che oggi sono archiviate in repository privati e non sono più pubblicate. I miglioramenti seguono `docs/PIANO_v2.md`, un passo alla volta.
 
 ## Cosa calcola
 L'**OF geometrico** = area dei fori nominali / area del film forato.
