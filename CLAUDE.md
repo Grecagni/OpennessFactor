@@ -3,7 +3,7 @@
 Open Factor Designer v2: un'unica base desktop + smartphone, da migliorare a piccoli passi.
 Punto di partenza: copia di `02_APP\OF-mobile` (commit "Base v2 = copia di OF-mobile"), che a sua volta è la v1 (github.com/Grecagni/OF, tag v1.0) con un blocco CSS per smartphone.
 Piano dei passi: `docs/PIANO_v2.md`. Convenzione del pattern: `docs/CONVENZIONE_PASSO.md`.
-Repository: github.com/Grecagni/OpenessFactor (pubblico; in futuro da trasferire nell'organizzazione Pellini). È l'unica base viva del progetto.
+Repository: github.com/Grecagni/OpennessFactor (pubblico; in futuro da trasferire nell'organizzazione Pellini). È l'unica base viva del progetto.
 
 ## Dove si lavora
 - Codice e documenti di progetto (convenzione, piano, requisiti): SOLO in questa cartella (`02_APP\OF-v2`), documenti in `docs/`. L'originale è qui: non tenere copie altrove.
