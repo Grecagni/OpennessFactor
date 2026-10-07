@@ -1,14 +1,14 @@
 # OF-v2 — regole per Claude Code
 
 Open Factor Designer v2: un'unica base desktop + smartphone, da migliorare a piccoli passi.
-Punto di partenza: copia di `02_APP\OF-mobile` (commit "Base v2 = copia di OF-mobile"), che a sua volta è la v1 (github.com/Grecagni/OF, tag v1.0) con un blocco CSS per smartphone.
+Punto di partenza: copia di OF-mobile (commit "Base v2 = copia di OF-mobile"), che a sua volta è la v1 (github.com/Grecagni/OF, tag v1.0) con un blocco CSS per smartphone.
 Piano dei passi: `docs/PIANO_v2.md`. Convenzione del pattern: `docs/CONVENZIONE_PASSO.md`.
 Repository: github.com/Grecagni/OpennessFactor (pubblico; in futuro da trasferire nell'organizzazione Pellini). È l'unica base viva del progetto.
 
 ## Dove si lavora
 - Codice e documenti di progetto (convenzione, piano, requisiti): SOLO in questa cartella (`02_APP\OF-v2`), documenti in `docs/`. L'originale è qui: non tenere copie altrove.
 - Note interne non pubblicabili (`STATO.md`, `BRAINSTORMING_v2.md`, dati di processo, numeri di produzione): restano in `01_ANALISI`, FUORI dal repository, finché il repository è pubblico.
-- MAI scrivere in `00_SORGENTI` (archivio, sola lettura), in `02_APP\OF-mobile` né nei repository Grecagni/OF e Grecagni/OF-mobile: dal 07.10.2026 sono privati, con Pages spente, e restano solo come archivio.
+- MAI scrivere in `00_SORGENTI` (archivio, sola lettura) né nei repository Grecagni/OF e Grecagni/OF-mobile: dal 07.10.2026 sono privati, con Pages spente, e restano solo come archivio.
 - Push su `main` dopo ogni passo approvato e verificato. Niente Excel di processo né dati aziendali nel repository.
 
 ## Tecnologia
@@ -44,7 +44,7 @@ Repository: github.com/Grecagni/OpennessFactor (pubblico; in futuro da trasferir
 4. Quando esisteranno (passo 0 del piano): tutti i test verdi (`test.html` con doppio clic; `node tests/run-node.js`).
 
 ## Commit
-- Commit piccoli, uno per modifica logica, con messaggi in italiano che dicano cosa cambia.
+- Commit diretti su `main` (niente rami né Pull Request), piccoli, uno per modifica logica, con messaggi in italiano che dicano cosa cambia. **Non** si seguono le regole della guida GitHub di Pellini (`Pellini-S-P-A/guida_github`): decisione di Jack del 07.10.2026.
 - Se un test registrato cambia valore, il commit deve dirlo esplicitamente (cambio voluto e approvato).
 
 ## Lingua
