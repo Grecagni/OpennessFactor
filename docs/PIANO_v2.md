@@ -1,0 +1,167 @@
+# PIANO v2 — OF unificato
+*06.10.2026 — proposta da approvare passo per passo. Base: `02_APP\OF-v2`, commit `b12f41d` "Base v2 = copia di OF-mobile" (file identici a OF-mobile, verificato con SHA-256).*
+
+Fonti: `BRAINSTORMING_v2.md`, `CONVENZIONE_PASSO.md`, `STATO.md`, rilettura di `script.js` (1016 righe), `index.html`, `styles.css` della v2.
+Le cose non verificate sono marcate **[ipotesi]**.
+
+---
+
+## Come si legge
+- **Rischio**: basso = nessun effetto sui numeri, o effetto coperto da test · medio = tocca il flusso dei calcoli o il disegno · alto = cambia risultati che qualcuno usa.
+- **Effort** (tempo di sessione con Claude, verifica compresa): XS < 30 min · S ~1 h · M ~mezza giornata · L ≥ 1 giornata.
+- **Verifica standard** (vale per ogni passo, oltre a quella specifica):
+  1. test verdi (dal passo 0 in poi): `test.html` con doppio clic e `node tests/run-node.js` (Node è installato su questo PC);
+  2. verifica minima: default → OF geometrico 1,57%; d = 0,6 → 2,26%;
+  3. screenshot con Edge headless a 1440, 800 e 390 px, confrontati con il commit precedente: da PC invariato salvo cambi grafici approvati;
+  4. un commit per modifica logica, messaggio in italiano.
+
+---
+
+## A. Cosa ho trovato rileggendo il codice
+Oltre ai difetti già in `STATO.md` (incongruenze 1–6):
+
+| # | osservazione | dove | stato |
+|---|---|---|---|
+| A1 | Calcolo e interfaccia sono mescolati in un'unica IIFE. Le funzioni di calcolo leggono gli intervalli direttamente dagli slider dell'HTML (`clampToSliderRange` → `range.min/max`): gli intervalli esistono solo in `index.html`. | `script.js` 285–345, 542–548, 976–1014 | certo |
+| A2 | Nello sfalsato l'"area cella" mostrata è x·y·0,5, cioè **già P·R**: questo numero non cambierà con la nuova convenzione. | `script.js` 366, 996–1005 | certo |
+| A3 | Il controllo collisione confronta d con min(x, y/2) = **min(P, R)**: segnala collisione anche quando i fori della riga adiacente sono più lontani di R. | `script.js` 382 | certo |
+| A4 | In modalità "OF" lo slider OF è solo un indicatore: a ogni aggiornamento viene riallineato all'OF calcolato, quindi muoverlo non ha effetto. | `script.js` 239–242, 317–322 | certo; **[ipotesi]** che sia voluto |
+| A5 | Lo slider HTML arrotonda il valore al suo `step` (d 0,05; x/y 0,1; OF 0,02), mentre il campo numerico mostra 2 decimali e al giro successivo viene riletto quello. Nelle modalità "passo" e "d" il valore usato, quello mostrato e quello riletto possono differire di poco, e così l'OF ottenuto rispetto al richiesto. | `script.js` 211–229, 324–331 | **[ipotesi]**, da misurare con i test del passo 0 |
+| A6 | "Copia parametri" copia negli appunti solo `#d=…&x=…`, non l'indirizzo completo. | `script.js` 660–671 | certo; **[ipotesi]** che sia un difetto |
+| A7 | Link in modalità "passo" con x ≠ y impostati a mano: al caricamento la modalità automatica si riattiva e ricalcola x = y, quindi il link non riproduce la configurazione. | `script.js` 74–84, 244–267 | **[ipotesi]**, da verificare |
+| A8 | Il contatore "N fori" conta i fori nel riquadro 50×50 mm, compresi quelli nascosti dalla cornice ondulata quando "Wave" è attivo. | `script.js` 464–481 | **[ipotesi]** che il numero differisca da quello visibile |
+| A9 | La quota orizzontale dell'anteprima, (colonne−1)·x + d, ignora lo spostamento delle righe sfalsate. | `script.js` 371–381 | certo |
+| A10 | L'OF è limitato a 100% senza avviso. | `script.js` 546 | certo (caso limite) |
+| A11 | Il default OF obiettivo è 10 nello script e 8 nell'HTML. In modalità OF viene subito sovrascritto; conta solo, ad esempio, aprendo un link con `mode=step` senza `t`. | `script.js` 18, `index.html` 30 | certo |
+| A12 | Git avvisa che i file sono LF e verrebbero convertiti in CRLF al checkout: un clone futuro potrebbe avere hash diversi dagli originali. | repo `OF-v2` | certo; impatto minimo |
+
+---
+
+## Passo 0 — Fissare il comportamento di oggi (nessun effetto visibile)
+
+### 0.1 Separare il calcolo in `of-core.js` + test che registrano i numeri di oggi
+- **Cosa**: funzioni pure, senza DOM, con gli intervalli passati come parametro. I nomi restano quelli della v1 (x, y, pattern): in questo passo **non cambia nessun numero**.
+  - `holeArea(d)`, `cellAreaV1(x, y, pattern)`, `ofV1(d, x, y, pattern)` (limite 100% compreso), `rowStepV1(y, pattern)`;
+  - `stepPairFromTarget(params, ranges, lockedKey)`, `diameterFromTarget(params, ranges)`;
+  - `collisionV1(d, x, y, pattern)`, `autoCount(step, d, previewMm)`;
+  - `buildHash(params)`, `parseHash(string, defaults, ranges)`.
+- **File e funzioni toccati**:
+  - nuovo `of-core.js` (script classico, espone `window.OFCore` e, se c'è, `module.exports` per Node; niente moduli ES, che con `file://` non funzionano);
+  - `script.js`: `computeOF`, `computeCellArea`, `getPatternAreaFactor`, `getEffectiveRowStepMm`, `computeStepPairFromTarget`, ramo DIAMETER di `applyModeCalculations`, `computeAutoCount`, controllo in `updateInfoBox`, `buildHashFromParams`, `parseHash` diventano chiamate a `OFCore`;
+  - `index.html`: una riga `<script src="of-core.js">` prima di `script.js`;
+  - nuovi `test.html`, `tests/casi.js` (casi condivisi), `tests/run-node.js`;
+  - `.gitattributes` per tenere i fine riga così come sono (A12).
+- **Numeri registrati** (valori di oggi, anche se sbagliati, come previsto dal brainstorming):
+  - default (d 0,5, x = y = 5, sfalsato) → 1,5708%; d 0,6 → 2,2619%; stessa geometria a griglia → 0,7854%;
+  - modalità "passo" e "d" sui default e su 3–4 combinazioni, compresi i casi in cui il risultato viene troncato agli intervalli (difetto 3);
+  - collisione: casi limite e un falso allarme noto (vedi 2.1);
+  - righe/colonne automatiche: default → 10 colonne, 20 righe **[ipotesi: calcolato a mano]**;
+  - link: andata e ritorno di `buildHash`/`parseHash`, link con n/m.
+- **Rischio**: basso. L'unico rischio è un arrotondamento diverso nel travaso; per questo i test si scrivono **prima** sulle funzioni copiate così come sono, poi si sposta il codice e si rilanciano.
+- **Effort**: M.
+- **Come si verifica**: test verdi; verifica minima; screenshot identici al commit base a 1440/800/390 px; app aperta con doppio clic da Esplora risorse.
+
+### 0.2 Estrarre la disposizione dei fori
+- **Cosa**: `holeLayoutV1(params, previewMm)` → posizioni dei centri in mm e numero di fori; `render` disegna quelle posizioni. Serve al passo 1, che cambia proprio la disposizione, e più avanti all'export delle coordinate.
+- **File e funzioni**: `of-core.js` (nuova funzione), `script.js` → `render` (ciclo delle righe 464–479).
+- **Numeri registrati**: fori disegnati con i default → 190 **[ipotesi: 10 righe da 10 + 10 righe sfalsate da 9, calcolato a mano]**; griglia; un caso con d grande.
+- **Rischio**: basso-medio: tocca il disegno.
+- **Effort**: S.
+- **Come si verifica**: test; screenshot identici; SVG esportato identico byte per byte a quello del commit base con gli stessi parametri.
+
+---
+
+## Passo 1 — Campi P, R, S con la convenzione decisa (geometria di default invariata)
+- **Cosa**:
+  - modello interno `{ d, P, R, S }` e **OF geometrico = π(d/2)² / (P·R)** per tutti i pattern (`ofGeometric` in `of-core.js`);
+  - campi "Passo tra i punti (P)" e "Passo tra le righe (R)" al posto di x e y;
+  - S **derivata dal menu Pattern**: Griglia → S = 0, Sfalsato → S = P/2, mostrata in sola lettura. Niente campo S libero finché non si decide "cumulativa o alternata" (vedi 3.5);
+  - disposizione: riga n a quota n·R, spostata di S nelle righe dispari. Per S = 0 e S = P/2 coincide con entrambe le letture: un test lo dimostra;
+  - default **P = 5, R = 2,5, S = 2,5, d = 0,5 → 1,57%**: stessi fori, nelle stesse posizioni, di oggi;
+  - modalità "d": d = √(4·P·R·OF / π);
+  - info: "Rapporto d/P", "Rapporto d/R"; l'area cella resta P·R e mostra lo stesso numero di oggi (A2);
+  - collisione: stessa logica di oggi espressa come d ≥ min(P, R). La correzione arriva in 2.1, così il passo 1 resta un puro cambio di convenzione;
+  - link: nuove chiavi `p`, `r` (+ `pattern`); i vecchi link con `x`, `y` vengono ancora letti e convertiti (P = x; R = y a griglia, y/2 sfalsato);
+  - nome file di export: `pattern-d0.50-P5.00-R2.50-S2.50.svg`.
+- **File e funzioni toccati**:
+  - `index.html`: etichette e id dei campi x/y → P/R, voci del menu "Modalità", riga S in sola lettura, etichette info. Il CSS non usa quegli id (verificato);
+  - `script.js`: `defaults`, `cacheDom`, `init` (`setupSlider`), `applyParamsToUI`, `updateFromUI`, `applyModeCalculations`, `updateModeHelpText`, `updateInfoBox`, `render`, `enforceAutoGrid`, `buildFileName`, funzioni dei link; `getEffectiveRowStepMm` sparisce (la distanza tra le righe è R);
+  - `of-core.js`: `ofGeometric`, `holeLayout(P, R, S)`, `convertV1toPRS`;
+  - test: i casi del passo 0 vengono convertiti in P/R/S e devono dare **lo stesso OF** (prova che cambiano solo i nomi). Da qui le funzioni `V1` restano solo nei test.
+- **Decisioni di Jack (07.10.2026)**:
+  - R: intervallo **0,5–10, step 0,05**;
+  - modalità "passo": **opzione A**, si mantengono i numeri di oggi (griglia P = R, sfalsato P = 2R);
+  - S **in sola lettura**, derivata da Griglia/Sfalsato, finché non si decide tra cumulativa e alternata.
+- **Rischio**: medio, perché tocca tutto il flusso. È coperto dall'equivalenza dei test e dal confronto degli screenshot.
+- **Effort**: M–L.
+- **Come si verifica**:
+  - verifica minima (1,57% / 2,26%);
+  - caso Excel d 0,5, P 5, R 2 → **1,96%**: con la v1 dava 3,93% inserendo gli stessi numeri;
+  - le 216 combinazioni di `CALCOLO-%.xlsx`, lette dallo zip in `00_SORGENTI` in sola lettura e salvate come dati di test, coincidono con l'app (L = P, H = R) **[ipotesi: i valori calcolati del foglio sono leggibili senza Excel]**;
+  - un vecchio link v1 apre la stessa geometria;
+  - screenshot da PC: stesso disegno, cambiano solo i testi delle etichette (è un cambio grafico minimo, approvato insieme al passo).
+
+---
+
+## Passo 2 — Correzioni dei difetti noti
+Un commit per voce. Ordine proposto: dalla più utile alla più cosmetica.
+
+| # | correzione | file e funzioni | rischio | effort | come si verifica |
+|---|---|---|---|---|---|
+| 2.1 | **Distanza minima vera e ponte**: `minCenterDistance(P, R, S)` = minimo fra P, √(dx² + R²) con la riga adiacente e 2R con la riga che si ripete; ponte = distanza − d. L'avviso scatta su ponte ≤ 0 e il ponte si mostra nelle info. | `of-core.js`; `script.js` → `updateInfoBox`; `index.html` (voce "Ponte minimo") | basso | S | test: d 0,6, P 2, R 0,5, sfalsato → oggi allarme, ponte vero 0,40 mm (minimo = 2R = 1,0); d 0,9, P 1, R 0,5 → collisione vera (√0,5 = 0,707 < 0,9) |
+| 2.2 | **Avviso di risultato troncato** in modalità "passo" e "d": "OF richiesto X% non raggiungibile con questi limiti: OF ottenuto Y%". | `of-core.js` (`stepPairFromTarget`, `diameterFromTarget` restituiscono anche `troncato`); `script.js` → `applyModeCalculations`, `setStatus` o riga dedicata | basso | S | test sui casi troncati registrati al passo 0; prova manuale con OF 12% e d 0,2 |
+| 2.3 | **SVG in mm reali**: `width="50mm" height="50mm"` con `viewBox` invariato, così in CAD la scala è 1:1. | `script.js` → `buildExportSvgSource` (e controllo di `exportPNG`, che usa lo stesso sorgente) | basso | XS | aprire l'SVG in un CAD o in Inkscape e misurare P tra due centri = 5,00 mm **[ipotesi: CAD da confermare, domanda 7]**; PNG invariato |
+| 2.4 | **Default OF allineato** tra script e HTML (A11). | `script.js` `defaults.ofTarget`, `index.html` `value` di `ofRange` | basso | XS | test sul link con `mode=step` senza `t` |
+| 2.5 | **"Copia parametri" copia l'indirizzo completo** (A6). | `script.js` → `copyParamsHash` | basso | XS | incollare in un browser nuovo → stessa configurazione |
+| 2.6 | **Link più robusto**: non salvare righe/colonne (che bloccano l'auto-griglia) e conservare P/R impostati a mano in modalità "passo" (A7). | `script.js` → funzioni dei link, `init`; `of-core.js` | basso | S | test andata/ritorno; vecchi link ancora letti |
+| 2.7 | **Contatore fori e quota coerenti con il disegno** (A8, A9). | `of-core.js` → `holeLayout`; `script.js` → `render`, `updateInfoBox` | basso | S | test sul conteggio; confronto visivo con la cornice Wave attiva e spenta |
+| 2.8 | **Arrotondamenti slider/campo** (A5), solo se i test del passo 0 li confermano. | `script.js` → `sanitizeDimension`, `applySliderValue` | medio (tocca l'input) | S | test: OF richiesto = OF ottenuto entro 0,01% quando non c'è troncamento |
+| 2.9 | **README della v2 onesto**: niente "1:1", niente "pronto per CAD" finché 2.3 non è verificato; OF geometrico vs reale. | nuovo `README.md` | basso | XS | lettura |
+
+---
+
+## Passo 3 — Migliorie dell'esistente (dal brainstorming §4)
+Ognuna cambia la grafica, quindi va approvata singolarmente.
+
+| # | miglioria | file e funzioni | rischio | effort | come si verifica |
+|---|---|---|---|---|---|
+| 3.1 | **Formula e ipotesi visibili**: riquadro "OF geometrico = π(d/2)² / (P·R)" e disegno quotato di P, R e S, come quello dell'Excel. | `index.html` (SVG statico), `styles.css` (nuovo blocco), `script.js` (valori nel disegno) | basso | S–M | screenshot a 1440/800/390; il disegno segue i valori |
+| 3.2 | **Indicatori**: ponte minimo, fori/m² = 10⁶ / (P·R), unità e decimali uniformi; etichetta "OF geometrico (%)" al posto di "OF (%)". | `index.html` info-box; `script.js` → `updateInfoBox`; `of-core.js` | basso | S | test fori/m² (default: 80 000); screenshot |
+| 3.3 | **Preset WAVE** (pattern 1/2 delle prove 2024, box "OF 3%", OF 3% e 4% per Glasstec). | `index.html` (menu), `script.js`, `of-core.js` (tabella preset) | basso | S | ogni preset dà l'OF atteso. **Servono i parametri** (domanda 5) |
+| 3.4 | **Confronto varianti**: fissare 2–3 configurazioni e vederle affiancate (OF, ponte, fori/m²). | `index.html`, `styles.css`, `script.js` (stato in memoria; eventualmente `localStorage` come comodità) | medio (spazio su smartphone) | M | prova manuale da PC e smartphone |
+| 3.5 | **S libera** (campo 0 ≤ S < P), solo **dopo** la decisione "cumulativa o alternata". | `of-core.js` → `holeLayout`, `minCenterDistance` (più righe da controllare); `index.html`, `script.js`; link `s` | medio: cambia disegno, ponte e coordinate | S–M | test con S generica nella lettura scelta; S = 0 e S = P/2 invariati |
+
+---
+
+## Passo 4 — Nuove funzioni (dal brainstorming §5), una alla volta
+
+| # | funzione | file | rischio | effort | dipende da |
+|---|---|---|---|---|---|
+| 4.1 | **Tabella soluzioni**: dato un OF obiettivo o un intervallo (es. 2–5%) e i valori ammessi di d, P, R, elenco delle combinazioni valide con OF, ponte e fori/m², ordinate. Riporta in app quello che faceva l'Excel. | `of-core.js` (`enumerateSolutions`), nuova sezione in `index.html`, `styles.css`, `script.js` | basso (non tocca il resto) | M–L | 2.1; test: con i valori Excel riproduce le 216 righe |
+| 4.2 | **Pannello reale W × H** con margini: fori totali e OF effettivo sul pannello, bordi non forati compresi. | `of-core.js`, `index.html`, `script.js` | medio | M | 2.7; **[ipotesi]** definizione dei margini da Jack |
+| 4.3 | **Stima tempo laser**: fori × tempo/foro. | `of-core.js`, `script.js`, `index.html` | basso | S | 4.2; tempo/foro misurato sulla OTLAS |
+| 4.4 | **Export coordinate** (CSV, poi forse DXF). | `of-core.js` (`holeLayout` in mm), `script.js` | medio-alto: va in produzione | M–L | 3.5; formato da OT-LAS; riferimento film piano o plissé |
+| 4.5 | **Vincoli di processo configurabili**: d min/max del laser, ponte minimo, intervalli → avvisi. | `of-core.js`, `script.js`, `index.html` | medio: cambia gli intervalli | M | dati di processo |
+
+**Parcheggio** (come brainstorming §6): OF reale/ottico da misura, plissé (OF proiettato), pattern esagonali, PWA/offline, OF Pocket, WAVE Digital Platform, report PDF.
+
+---
+
+## Ordine riassunto
+0.1 → 0.2 → **1** → 2.1 → 2.2 → 2.3 → 2.4–2.7 → (2.8 se serve) → 2.9 → 3.x a scelta → 4.x una alla volta.
+Dopo ogni passo: stop, verifica, approvazione.
+
+---
+
+## Domande per Jack
+1. ~~Intervallo di R~~ → **deciso il 07.10.2026: 0,5–10, step 0,05.**
+2. ~~Modalità "Calcola passo x = y"~~ → **decisa il 07.10.2026: opzione A** (griglia P = R, sfalsato P = 2R; nessun risultato cambia).
+3. ~~S al passo 1~~ → **deciso il 07.10.2026: in sola lettura**, derivata da Griglia/Sfalsato.
+4. **Cumulativa o alternata** (aperta): serve solo per il passo 3.5 e per l'export coordinate (4.4). Chi può verificare sul programma OTLAS?
+5. **Preset WAVE**: i parametri di pattern 1/2 (prove 2024), della trama della box "OF 3%" e degli OF 3%/4% per Glasstec.
+6. **Default OF obiettivo** (2.4): 8 come nell'HTML o 10 come nello script? Oppure 1,57, l'OF dei default?
+7. **Export**: con quale CAD si verifica l'SVG in mm (2.3)? Per la produzione serve più SVG, DXF o CSV di coordinate?
+8. **"Copia parametri"** (A6): va bene che copi l'indirizzo completo?
+9. **Etichetta "OF geometrico"** nell'interfaccia (3.2): va bene, o preferisci una nota sotto il valore?
+10. **CLAUDE.md** della v2: è scritto ma **non ancora nel commit**. Lo includo nel primo commit del passo 0?
+11. **Pubblicazione della v2**: per ora resta solo locale. Quando servirà, repo nuovo privato (brainstorming §7 domanda 4)?
