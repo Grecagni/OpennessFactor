@@ -252,6 +252,17 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border-radius
 .message--warning { background: var(--of-warning-bg); color: var(--of-warning); }
 .message--danger { background: var(--of-danger-bg); color: var(--of-danger); }
 
+/* pannello reale (v2.10) */
+.pannello__campi { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 12px; padding: 12px 14px; }
+.pannello__campi label { display: grid; gap: 4px; font-size: var(--of-fs-caption); color: var(--of-text-2); }
+.pannello__campi .input-unit input { width: 100%; }
+.pannello__campi input[aria-invalid="true"] { border-color: var(--of-danger); }
+.pannello__risultati { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 12px 14px; }
+.pannello__risultati dt { font-size: var(--of-fs-caption); color: var(--of-text-2); }
+.pannello__risultati dd { margin: 2px 0 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.pannello__risultati dd.pannello__vuoto { font-weight: 400; font-size: var(--of-fs-caption); color: var(--of-text-2); }
+.pannello__nota { margin: 0; padding: 10px 14px 12px; font-size: var(--of-fs-caption); color: var(--of-text-3); }
+
 /* confronto varianti (v2.8): la tabella scorre dentro la scheda, mai la pagina */
 .confronto__tabella { overflow-x: auto; }
 .confronto__tabella:empty { display: none; }
@@ -298,16 +309,16 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border-radius
 .sheet--largo { width: min(760px, 100vw); }
 .soluzioni__griglia { display: grid; grid-template-columns: auto repeat(3, minmax(0, 1fr)); gap: 8px 10px; align-items: center; }
 .soluzioni__griglia label { display: flex; align-items: center; gap: 6px; font-size: var(--of-fs-caption); color: var(--of-text-2); }
-.soluzioni__griglia input { width: 100%; min-width: 0; min-height: 40px; padding: 6px 8px; border: 1px solid var(--of-border); border-radius: var(--of-radius-control); background: var(--of-bg); color: var(--of-text); font-variant-numeric: tabular-nums; }
+.soluzioni__griglia input { width: 100%; min-width: 0; min-height: 40px; padding: 6px 8px; border: 1px solid var(--of-border); border-radius: var(--of-radius-field); background: var(--of-surface); color: var(--of-text); font-variant-numeric: tabular-nums; }
 .soluzioni__nome { font-size: var(--of-fs-callout); font-weight: 600; }
 .soluzioni__largo { grid-column: span 3; flex-wrap: wrap; }
 .soluzioni__largo input { width: 7em; flex: none; }
 .soluzioni__nota { color: var(--of-text-3); }
 .soluzioni__ordine { display: flex; align-items: center; gap: 10px; font-size: var(--of-fs-callout); }
-.soluzioni__ordine select { min-height: 40px; padding: 0 8px; border: 1px solid var(--of-border); border-radius: var(--of-radius-control); background: var(--of-bg); color: var(--of-text); }
+.soluzioni__ordine select { min-height: 40px; padding: 0 8px; border: 1px solid var(--of-border); border-radius: var(--of-radius-field); background: var(--of-surface); color: var(--of-text); }
 .soluzioni__esito { margin: 0; font-weight: 600; }
 .soluzioni__esito:empty { display: none; }
-.soluzioni__tabella { overflow-x: auto; max-height: 50vh; overflow-y: auto; border: 1px solid var(--of-separator); border-radius: var(--of-radius-control); }
+.soluzioni__tabella { overflow-x: auto; max-height: 50vh; overflow-y: auto; border: 1px solid var(--of-separator); border-radius: var(--of-radius-field); }
 .soluzioni__tabella:empty { display: none; }
 .soluzioni__tabella table { width: 100%; border-collapse: collapse; font-size: var(--of-fs-caption); font-variant-numeric: tabular-nums; }
 .soluzioni__tabella th, .soluzioni__tabella td { padding: 6px 8px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--of-separator); }

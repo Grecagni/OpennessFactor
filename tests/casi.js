@@ -491,12 +491,34 @@
     t.ok('troppe combinazioni: nessun calcolo, segnalato', troppe.troppe === true && troppe.soluzioni.length === 0 && troppe.combinazioni > OF.MAX_COMBINAZIONI);
   }
 
+  function casiPannello(OF, t) {
+    t.gruppo('v2 · pannello reale e tempo laser');
+    var def = { d: 0.5, P: 5, R: 2.5, pattern: 'staggered' };
+    var r = OF.foriPannello(def, 50, 50, 0);
+    t.uguale('pannello di 50 × 50 mm senza margine = campo dell’anteprima (181 fori)', r.fori, OF.disposizioneCampo(def, 50).length);
+    t.uguale('… a griglia (171 fori)', OF.foriPannello({ d: 0.5, P: 5, R: 2.5, pattern: 'grid' }, 50, 50, 0).fori, 171);
+    var grande = OF.foriPannello(def, 2000, 3000, 0);
+    t.vicino('pannello di 2 × 3 m: fori ≈ fori al m² × 6 m² (entro lo 0,5 %)', grande.fori / (OF.foriAlMetroQuadro(5, 2.5) * 6), 1, 0.005);
+    t.vicino('… OF sul pannello ≈ OF del reticolo', grande.ofPannello / grande.ofReticolo, 1, 0.005);
+    var conMargine = OF.foriPannello(def, 2000, 3000, 50);
+    t.ok('margine di 50 mm: meno fori e OF sul pannello minore di quello del reticolo', conMargine.fori < grande.fori && conMargine.ofPannello < conMargine.ofReticolo);
+    t.uguale('… area forabile 1900 × 2900 mm', conMargine.areaForabile, 1900 * 2900);
+    t.vicino('… OF sul pannello = fori × area foro / area del pannello', conMargine.ofPannello, conMargine.fori * OF.holeArea(0.5) / 6e6 * 100, 1e-12);
+    var fitto = OF.foriPannello({ d: 0.2, P: 1, R: 0.5, pattern: 'staggered' }, 3000, 3000, 0);
+    t.ok('pannello di 3 × 3 m con 2 milioni di fori al m²: contati senza elencarli (≈ 18 milioni)', Math.abs(fitto.fori / 18e6 - 1) < 0.005);
+    t.uguale('margine più grande del pannello → nessun foro', OF.foriPannello(def, 100, 100, 60).fori, 0);
+    t.uguale('valori non validi → null', [OF.foriPannello(def, 0, 100, 0), OF.foriPannello({ d: 0.5, P: 0, R: 2.5 }, 100, 100, 0)], [null, null]);
+    t.uguale('tempo laser: 1000 fori × 0,05 s = 50 s', OF.tempoLaser(1000, 0.05), 50);
+    t.uguale('tempo laser senza tempo per foro → null', [OF.tempoLaser(1000, NaN), OF.tempoLaser(1000, 0)], [null, null]);
+  }
+
   function tutti(OF, t, TESTI) {
     casiV1(OF, t);
     casiV2(OF, t);
     casiIngombro(OF, t);
     casiCampo(OF, t);
     casiSoluzioni(OF, t);
+    casiPannello(OF, t);
     if (TESTI) casiTesti(TESTI, t);
     else t.ok('testi (i18n.js) caricati', false);
   }

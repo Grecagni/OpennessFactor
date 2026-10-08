@@ -599,6 +599,40 @@
     return fori;
   }
 
+  // Pannello reale (v2.10): fori su un pannello di W × H mm con un margine non forato uguale sui
+  // quattro lati. Il reticolo è centrato nell'area forabile, come nell'anteprima (un foro al centro,
+  // righe dispari spostate di S); contano solo i fori interamente dentro l'area forabile.
+  // I fori si contano riga per riga, senza elencarli: va bene anche per pannelli di molti metri.
+  // Restituisce { fori, righe, areaPannello (mm²), areaForabile (mm²), ofPannello (%: area dei fori
+  // sull'area del pannello, margini compresi), ofReticolo (%) } oppure null se i valori non sono validi.
+  function foriPannello(params, W, H, margine) {
+    var P = params.P, R = params.R, d = params.d;
+    var m = Number.isFinite(margine) && margine > 0 ? margine : 0;
+    if (!(P > 0) || !(R > 0) || !(d > 0) || !(W > 0) || !(H > 0)) return null;
+    var Wu = W - 2 * m, Hu = H - 2 * m;
+    var areaPannello = W * H;
+    var risultato = { fori: 0, righe: 0, areaPannello: areaPannello, areaForabile: Math.max(Wu, 0) * Math.max(Hu, 0), ofPannello: 0, ofReticolo: ofGeometrico(d, P, R).percent };
+    if (!(Wu >= d) || !(Hu >= d)) return risultato;
+    var S = sfalsatura(P, params.pattern), r = d / 2, cx = Wu / 2, cy = Hu / 2, eps = 1e-9;
+    var nMax = Math.floor((cy - r) / R + eps);
+    var fori = 0, righe = 0;
+    for (var n = -nMax; n <= nMax; n++) {
+      var off = spostamentoRiga(Math.abs(n), S);
+      var kMin = Math.ceil((r - cx - off) / P - eps);
+      var kMax = Math.floor((Wu - r - cx - off) / P + eps);
+      if (kMax >= kMin) { fori += kMax - kMin + 1; righe++; }
+    }
+    risultato.fori = fori;
+    risultato.righe = righe;
+    risultato.ofPannello = fori * holeArea(d) / areaPannello * 100;
+    return risultato;
+  }
+
+  // Tempo laser: fori × tempo per foro (in secondi). Restituisce i secondi, o null se manca il tempo.
+  function tempoLaser(fori, secondiPerForo) {
+    return Number.isFinite(fori) && fori >= 0 && Number.isFinite(secondiPerForo) && secondiPerForo > 0 ? fori * secondiPerForo : null;
+  }
+
   // Valori da min a max con un passo, estremi compresi, senza accumulare errori di arrotondamento
   // (min + i·passo, puliti). Se min > max si scambiano. Passo non positivo → nessun valore.
   function valoriIntervallo(min, max, passo) {
@@ -700,6 +734,8 @@
     ingombroFori: ingombroFori,
     disposizioneCampo: disposizioneCampo,
     valoriIntervallo: valoriIntervallo,
+    foriPannello: foriPannello,
+    tempoLaser: tempoLaser,
     MAX_COMBINAZIONI: MAX_COMBINAZIONI,
     tabellaSoluzioni: tabellaSoluzioni
   };

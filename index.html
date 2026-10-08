@@ -172,6 +172,24 @@
       </section>
 
 
+      <section class="section" aria-labelledby="h-pannello">
+        <h2 class="eyebrow" id="h-pannello" data-i18n="pannello">Pannello reale</h2>
+        <div class="card pannello">
+          <div class="pannello__campi" id="pannello-campi">
+            <label><span data-i18n="pannelloLarghezza">Larghezza</span><span class="input-unit"><input type="text" inputmode="decimal" name="W" autocomplete="off" /><span aria-hidden="true">mm</span></span></label>
+            <label><span data-i18n="pannelloAltezza">Altezza</span><span class="input-unit"><input type="text" inputmode="decimal" name="H" autocomplete="off" /><span aria-hidden="true">mm</span></span></label>
+            <label><span data-i18n="pannelloMargine">Margine non forato</span><span class="input-unit"><input type="text" inputmode="decimal" name="margine" autocomplete="off" /><span aria-hidden="true">mm</span></span></label>
+            <label><span data-i18n="pannelloTempo">Tempo per foro</span><span class="input-unit"><input type="text" inputmode="decimal" name="tempo" autocomplete="off" placeholder="–" /><span aria-hidden="true">s</span></span></label>
+          </div>
+          <dl class="pannello__risultati" id="pannello-risultati" aria-live="polite">
+            <div><dt data-i18n="pannelloFori">Fori sul pannello</dt><dd data-pannello="fori">–</dd></div>
+            <div><dt data-i18n="pannelloOF">OF sul pannello</dt><dd data-pannello="of">–</dd></div>
+            <div><dt data-i18n="pannelloTempoTot">Tempo laser</dt><dd data-pannello="tempo">–</dd></div>
+          </dl>
+          <p class="pannello__nota" data-i18n="pannelloNota">Margine uguale sui quattro lati; reticolo centrato. L’OF sul pannello conta anche i margini non forati. Il tempo laser è fori × tempo per foro (senza spostamenti).</p>
+        </div>
+      </section>
+
       <section class="section" aria-labelledby="h-confronto">
         <h2 class="eyebrow" id="h-confronto" tabindex="-1" data-i18n="confronto">Confronto varianti</h2>
         <div class="card confronto">

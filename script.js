@@ -6,13 +6,14 @@
 
   var OF = window.OFCore;
   var TESTI = window.OFTesti;
-  var VERSIONE = '2.9.0'; // uguale a VERSIONE in sw.js (lo controlla tests/run-node.js)
+  var VERSIONE = '2.10.0'; // uguale a VERSIONE in sw.js (lo controlla tests/run-node.js)
   var CAMPO_MM = 50;
   var INDIRIZZO = 'https://grecagni.github.io/OpennessFactor/';
   var CHIAVE_STATO = 'of.v2.stato';
   var CHIAVE_LINGUA = 'of.v2.lingua';
   var CHIAVE_VISTA = 'of.v2.vista';
   var CHIAVE_CONFRONTO = 'of.v2.confronto';
+  var CHIAVE_PANNELLO = 'of.v2.pannello';
   var MAX_VARIANTI = 3;
 
   var INTERVALLI = OF.RANGES;
@@ -76,6 +77,7 @@
     stato.params = calcola(iniziali, origine);
     stato.registrato = istantanea();
     stato.varianti = leggiVarianti();
+    stato.pannello = leggiPannello();
 
     collegaEventi();
     collegaZoom();
@@ -341,6 +343,10 @@
     chiudiSuSfondo(dom.info);
     document.getElementById('condividi').addEventListener('click', condividi);
     document.getElementById('confronto-aggiungi').addEventListener('click', aggiungiVariante);
+    Array.prototype.slice.call(document.querySelectorAll('#pannello-campi input')).forEach(function (campo) {
+      campo.addEventListener('input', function () { confermaPannello(campo, false); });
+      campo.addEventListener('change', function () { confermaPannello(campo, true); });
+    });
     document.getElementById('chiudi-soluzioni').addEventListener('click', function () { dom.soluzioni.close(); });
     chiudiSuSfondo(dom.soluzioni);
     document.getElementById('soluzioni-form').addEventListener('submit', function (e) { e.preventDefault(); cercaSoluzioni(); });
@@ -675,6 +681,7 @@
     }
     disegnaMessaggi(messaggi);
     disegnaConfronto();
+    disegnaPannello();
     disegnaRichiami(messaggi);
 
     disegnaAnteprima();
@@ -1192,6 +1199,67 @@
       parti.push(png.subarray(fineIhdr));
       return new Blob(parti, { type: 'image/png' });
     });
+  }
+
+  // ------------------------------------------------------------------ pannello reale (v2.10)
+  // Fori su un pannello di W × H mm con margine non forato, OF sul pannello e tempo laser
+  // (fori × tempo per foro scritto dall'utente). I valori restano nella memoria del browser.
+
+  var PANNELLO_INIZIALE = { W: 1000, H: 1000, margine: 0, tempo: null };
+
+  function leggiPannello() {
+    var v = leggiJSON(CHIAVE_PANNELLO) || {};
+    var p = copia(PANNELLO_INIZIALE);
+    ['W', 'H', 'margine', 'tempo'].forEach(function (k) {
+      if (typeof v[k] === 'number' && Number.isFinite(v[k]) && v[k] >= 0) p[k] = v[k];
+    });
+    return p;
+  }
+
+  // valore scritto in un campo del pannello: numero ≥ 0 (vuoto ammesso solo per il tempo)
+  function confermaPannello(campo, uscita) {
+    var k = campo.name;
+    var testo = campo.value.trim();
+    var valore = testo === '' && k === 'tempo' ? null : numeroScritto(testo);
+    var valido = valore === null || (Number.isFinite(valore) && valore >= 0 && (k === 'margine' || k === 'tempo' || valore > 0));
+    campo.setAttribute('aria-invalid', String(!valido));
+    if (!valido) return;
+    stato.pannello[k] = valore;
+    scriviMemoria(CHIAVE_PANNELLO, JSON.stringify(stato.pannello));
+    disegnaPannello(uscita ? null : campo);
+  }
+
+  // durata in secondi → "1 h 05 min 09 s" (o "9,5 s" sotto il minuto)
+  function durata(secondi) {
+    var t = stato.testi;
+    if (secondi < 60) return t.n(secondi, secondi < 10 ? 1 : 0) + ' s';
+    var s = Math.round(secondi);
+    var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), r = s % 60;
+    var due = function (v) { return (v < 10 ? '0' : '') + v; };
+    return (h ? h + ' h ' + due(m) + ' min ' : m + ' min ') + due(r) + ' s';
+  }
+
+  function disegnaPannello(inModifica) {
+    var campi = document.getElementById('pannello-campi');
+    if (!campi) return;
+    var t = stato.testi;
+    var pn = stato.pannello;
+    Array.prototype.slice.call(campi.querySelectorAll('input')).forEach(function (campo) {
+      if (campo === inModifica || campo === document.activeElement) return;
+      var v = pn[campo.name];
+      // nel campo il numero senza separatore delle migliaia (si deve poter rileggere): 2000, 0,02
+      campo.value = v === null ? '' : String(Number(v.toFixed(campo.name === 'tempo' ? 4 : 2))).replace('.', t.decimale);
+      campo.removeAttribute('aria-invalid');
+    });
+    var r = OF.foriPannello(stato.params, pn.W, pn.H, pn.margine);
+    var scrivi = function (k, testo) { var dd = document.querySelector('[data-pannello="' + k + '"]'); if (dd) dd.textContent = testo; };
+    if (!r) { scrivi('fori', '–'); scrivi('of', '–'); scrivi('tempo', '–'); return; }
+    scrivi('fori', t.n(r.fori, 0));
+    scrivi('of', t.n(r.ofPannello, 2) + ' %');
+    var sec = OF.tempoLaser(r.fori, pn.tempo);
+    scrivi('tempo', sec === null ? t.t('pannelloTempoVuoto') : durata(sec));
+    var ddTempo = document.querySelector('[data-pannello="tempo"]');
+    if (ddTempo) ddTempo.classList.toggle('pannello__vuoto', sec === null);
   }
 
   // ------------------------------------------------------------------ tabella soluzioni (v2.9)
@@ -1791,6 +1859,7 @@
     svg: function () { return svgCad(); },
     vista: function () { return { z: vista.z, cx: vista.cx, cy: vista.cy }; },
     varianti: function () { return JSON.parse(JSON.stringify(stato.varianti)); },
+    pannello: function () { return copia(stato.pannello); },
     qr: function (testo) { var q = moduliQr(testo || linkCompleto()); return q ? { moduli: q.getModuleCount(), scuri: function (r, c) { return q.isDark(r, c); } } : null; }
   };
 

@@ -2,6 +2,14 @@
 
 Ogni rilascio ha un tag git (`v2.1`, `v2.2`, …). I numeri dell'OF sono sempre **geometrici** (calcolati), non misurati.
 
+## v2.10 — Pannello reale e tempo laser (08.10.2026)
+- Sezione **Pannello reale**: larghezza, altezza e margine non forato (uguale sui quattro lati) di una tenda. L'app calcola i **fori sul pannello** (reticolo centrato, solo fori interamente nell'area forabile) e l'**OF sul pannello**, che conta anche i margini non forati.
+- **Tempo laser** = fori × tempo per foro, se si scrive il tempo per foro (in secondi; non è ancora un dato misurato sulla OT-LAS). Gli spostamenti della macchina non sono compresi.
+- I fori si contano riga per riga, senza elencarli: anche pannelli di molti metri con milioni di fori.
+- I valori restano nella memoria del browser. Valori iniziali: 1000 × 1000 mm (1 m²) senza margine.
+- Tabella soluzioni: la tabella dei risultati non è più ritagliata a ellisse (angoli sbagliati) e i suoi campi hanno la forma degli altri campi dell'app.
+- Da fare con i dati dell'Ufficio Tecnico: come si definiscono davvero i margini, tempo per foro misurato, esportazione delle coordinate nel formato dell'OT-LAS.
+
 ## v2.9 — Tabella soluzioni (08.10.2026)
 - **Tabella soluzioni** (menu Altro): dato un intervallo di OF geometrico e gli intervalli ammessi di d, P e R (da, a, passo), l'app elenca tutte le combinazioni valide, a griglia, sfalsate o entrambe, con OF, ponte minimo e fori al m². È quello che faceva il foglio Excel, ora dentro l'app.
 - Filtro sul ponte minimo (vuoto: basta che i fori non si tocchino). Ordine per vicinanza al centro dell'intervallo di OF, per ponte più largo o per meno fori al m².

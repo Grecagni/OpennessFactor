@@ -1544,13 +1544,13 @@
  "informazioni": {
   "aperto": true,
   "crediti": "Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico",
-  "versione": "Versione 2.9.0",
+  "versione": "Versione 2.10.0",
   "installa": "L’installazione funziona dall’indirizzo web dell’app, non dal file aperto con doppio clic.grecagni.github.io/OpennessFactor",
   "pulsanteInstalla": false,
   "novita": [
-   "Tabella soluzioni (menu Altro): tutte le combinazioni di d, P e R con l’OF nell’intervallo voluto, ordinate ed esportabili in CSV.",
-   "Confronto varianti: fino a 3 configurazioni affiancate a quella attuale (v2.8).",
-   "Scheda PDF con parametri, risultati, disegno in scala 1:1 e codice QR (v2.7)."
+   "Pannello reale: fori, OF con i margini non forati e tempo laser per una tenda di misura data.",
+   "Tabella soluzioni (menu Altro): combinazioni di d, P e R con l’OF voluto, esportabili in CSV (v2.9).",
+   "Confronto varianti: fino a 3 configurazioni affiancate a quella attuale (v2.8)."
   ]
  },
  "SVG per CAD": {
@@ -3588,7 +3588,7 @@
   ],
   "qr": true,
   "link": "https://grecagni.github.io/OpennessFactor/#d=0.5&p=5&r=2.5&pattern=staggered&mode=of",
-  "piede": "Openness Factor 2.9.0 · Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico"
+  "piede": "Openness Factor 2.10.0 · Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico"
  },
  "scheda PDF con avviso (collisione), in inglese": {
   "titolo": "Openness Factor · Pattern sheet",
@@ -3596,7 +3596,7 @@
    "Holes overlap: the geometric OF is capped at 100 %."
   ],
   "of": "100.00%",
-  "piede": "Openness Factor 2.9.0 · Designed and developed by Giacomo Recagni · Technical Department"
+  "piede": "Openness Factor 2.10.0 · Designed and developed by Giacomo Recagni · Technical Department"
  },
  "confronto: vuoto all’inizio": {
   "vuoto": true,
@@ -3688,6 +3688,46 @@
   "intestazione": "d (mm);P (mm);R (mm);S (mm);Disposizione;OF geometrico (%);Ponte minimo (mm);Fori al m²",
   "prima": "0,7500;9,5000;3,0000;4,7500;Sfalsato;1,5501;4,8681;35088",
   "righe": 214
+ },
+ "pannello: valori iniziali (1 m², senza margine)": {
+  "campi": [
+   "W=1000",
+   "H=1000",
+   "margine=0",
+   "tempo="
+  ],
+  "risultati": [
+   "79.601",
+   "1,56 %",
+   "scrivi il tempo per foro"
+  ]
+ },
+ "pannello: tenda 2000 × 3000 mm, margine 50 mm, 0,02 s per foro": {
+  "campi": [
+   "W=2000",
+   "H=3000",
+   "margine=50",
+   "tempo=0,02"
+  ],
+  "risultati": [
+   "439.841",
+   "1,44 %",
+   "2 h 26 min 37 s"
+  ],
+  "memoria": {
+   "W": 2000,
+   "H": 3000,
+   "margine": 50,
+   "tempo": 0.02
+  }
+ },
+ "pannello: valore sbagliato": {
+  "invalido": "true",
+  "risultati": [
+   "79.601",
+   "1,56 %",
+   "scrivi il tempo per foro"
+  ]
  },
  "memoria del browser": {
   "d": 0.7,
