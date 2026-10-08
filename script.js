@@ -1,4 +1,6 @@
 (function () {
+  // Openness Factor — interfaccia della v2.2 (aspetto della v1, convenzione P, R, S).
+  // Il calcolo è in of-core.js (window.OFCore).
   const PX_PER_MM = 10;
   const CALC_MODES = {
     OF: 'of',
@@ -6,17 +8,23 @@
     DIAMETER: 'diameter'
   };
 
+  // Geometria di default della v1 nella convenzione decisa: P 5, R 2,5, sfalsato (S = P/2), d 0,5.
+  // L'OF obiettivo di default è l'OF di questa geometria (1,5708 %): così passare a "Passo"
+  // o "Diametro" non cambia nulla (prima: 10 nello script e 8 nell'HTML).
   const defaults = {
     d: 0.5,
-    x: 5,
-    y: 5,
+    P: 5,
+    R: 2.5,
     rows: 12,
     cols: 12,
     showGrid: false,
     pattern: 'staggered',
     mode: CALC_MODES.OF,
-    ofTarget: 10
+    ofTarget: OFCore.ofGeometrico(0.5, 5, 2.5).percent
   };
+  // Valori di riserva per il disegno, che riusa la disposizione dei fori della v1 (campi x, y).
+  const DEFAULTS_V1 = { d: 0.5, x: 5, y: 5 };
+  const CHIAVI = ['ofTarget', 'd', 'P', 'R'];
 
   const PREVIEW_SIZE_MM = 50;
   const PREVIEW_MARGIN_MM = 0;
@@ -42,9 +50,8 @@
     params: { ...defaults },
     baseWidthPx: 0,
     baseHeightPx: 0,
-    stepAuto: true,
+    passoBloccato: null,   // 'P' o 'R' quando, in modalità Passo, l'utente fissa un passo
     renderHandle: null,
-    gridLocked: false,
     waveEnabled: true
   };
 
@@ -58,8 +65,8 @@
     cacheDom();
     setupSlider('ofTarget', 2);
     setupSlider('d', 2);
-    setupSlider('x', 2);
-    setupSlider('y', 2);
+    setupSlider('P', 2);
+    setupSlider('R', 2);
     dom.gridToggle.addEventListener('change', () => updateFromUI('grid'));
     dom.patternSelect.addEventListener('change', () => updateFromUI('pattern'));
     dom.modeSelect.addEventListener('change', () => updateFromUI('mode'));
@@ -71,18 +78,38 @@
       dom.waveToggleBtn.addEventListener('click', toggleWaveEffect);
     }
 
-    const hashState = parseHash();
-    if (hashState) {
-      state.params = hashState.params;
-      state.gridLocked = hashState.gridLocked;
-    } else {
-      state.gridLocked = false;
-    }
-    enforceAutoGrid(state.params);
-
+    const origine = applicaLink();
     applyParamsToUI(state.params);
-    updateFromUI();
+    updateFromUI(origine || null);
     applyWaveToggleState();
+    // Link incollato nella stessa scheda (cambia solo la parte dopo #) o tasto Indietro.
+    window.addEventListener('hashchange', () => {
+      const origineLink = applicaLink();
+      if (origineLink === undefined) return;
+      applyParamsToUI(state.params);
+      updateFromUI(origineLink);
+    });
+  }
+
+  // Legge i parametri dal link (parte dopo #) e li mette nello stato.
+  // Link della v2: uno coerente si riapre esattamente com'era; uno incoerente (OF della
+  // geometria diverso dall'OF obiettivo) viene ricalcolato.
+  // Vecchi link della v1 (x, y con 2 decimali): si apre la loro geometria, come faceva la v1,
+  // e l'OF obiettivo si allinea a quella geometria (niente ricalcoli né avvisi dovuti agli
+  // arrotondamenti a 2 decimali).
+  // Restituisce l'origine per updateFromUI ('link' da ricalcolare, null), oppure undefined
+  // se il link non contiene parametri.
+  function applicaLink() {
+    const daLink = OFCore.leggiLink(location.hash, defaults, getSliderRanges());
+    if (!daLink) return undefined;
+    state.params = daLink.params;
+    state.passoBloccato = daLink.bloccato;
+    if (daLink.legacy) {
+      const p = state.params;
+      p.ofTarget = OFCore.clampToRange(OFCore.ofGeometrico(p.d, p.P, p.R).percent, getSliderRanges().ofTarget, defaults.ofTarget);
+      return null;
+    }
+    return OFCore.daRicalcolare(state.params) ? 'link' : null;
   }
 
   function cacheDom() {
@@ -103,8 +130,10 @@
     dom.info = {
       holeArea: document.getElementById('holeArea'),
       cellArea: document.getElementById('cellArea'),
-      ratioDX: document.getElementById('ratioDX'),
-      ratioDY: document.getElementById('ratioDY'),
+      ponte: document.getElementById('ponteMin'),
+      foriM2: document.getElementById('foriM2'),
+      sfalsatura: document.getElementById('sfalsaturaS'),
+      interasse: document.getElementById('interasse'),
       cellsCount: document.getElementById('cellsCount'),
       warning: document.getElementById('warningMessage')
     };
@@ -114,8 +143,8 @@
       mode: document.querySelector('[data-control="mode"]'),
       ofTarget: document.querySelector('[data-control="ofTarget"]'),
       d: document.querySelector('[data-control="d"]'),
-      x: document.querySelector('[data-control="x"]'),
-      y: document.querySelector('[data-control="y"]')
+      P: document.querySelector('[data-control="P"]'),
+      R: document.querySelector('[data-control="R"]')
     };
   }
 
@@ -123,12 +152,20 @@
     const range = document.querySelector(`[data-range="${key}"]`);
     if (!range) return;
     const number = document.querySelector(`[data-number="${key}"]`) || null;
-    sliderMap[key] = { range, number, decimals };
+    sliderMap[key] = { range, number, decimals, scritto: false };
     if (number) {
       number.addEventListener('focus', () => editingFields.add(key));
       number.addEventListener('blur', () => {
         editingFields.delete(key);
-        updateFromUI(key);
+        const ctrl = sliderMap[key];
+        if (ctrl.scritto) {
+          // il valore scritto viene confermato (e poi mostrato con 2 decimali)
+          ctrl.scritto = false;
+          updateFromUI(key);
+        } else {
+          // nessuna modifica: si rimette il valore attuale, senza rileggerlo arrotondato dal campo
+          applyParamsToUI(state.params);
+        }
       });
       number.addEventListener('input', () => {
         const raw = number.value.trim();
@@ -137,6 +174,8 @@
         }
         const numeric = parseFloat(raw);
         if (Number.isFinite(numeric)) {
+          // solo un numero scritto conta come modifica (un campo svuotato no: non fissa il passo)
+          sliderMap[key].scritto = true;
           range.value = numeric;
           updateFromUI(key);
         }
@@ -151,8 +190,9 @@
     });
   }
 
+  // Mostra i valori dello stato su cursori e campi (il campo in modifica non viene toccato).
   function applyParamsToUI(params) {
-    ['ofTarget', 'd', 'x', 'y'].forEach((key) => {
+    CHIAVI.forEach((key) => {
       const ctrl = sliderMap[key];
       if (!ctrl || !ctrl.range) return;
       ctrl.range.value = params[key];
@@ -188,30 +228,32 @@
     }
   }
 
+  // Aggiornamento guidato dallo stato: dalla pagina si rilegge solo il campo che l'utente
+  // ha appena cambiato (sourceKey); gli altri valori restano quelli esatti dello stato,
+  // senza passare dagli arrotondamenti di cursori e campi (difetto A5 della v1).
   function updateFromUI(sourceKey = null) {
     const next = { ...state.params };
     next.mode = sanitizeMode(dom.modeSelect ? dom.modeSelect.value : defaults.mode);
-    next.ofTarget = sanitizeDimension('ofTarget', defaults.ofTarget);
-    next.d = sanitizeDimension('d', defaults.d);
-    next.x = sanitizeDimension('x', defaults.x);
-    next.y = sanitizeDimension('y', defaults.y);
+    if (CHIAVI.indexOf(sourceKey) >= 0) {
+      next[sourceKey] = sanitizeDimension(sourceKey, state.params[sourceKey]);
+    }
     next.showGrid = dom.gridToggle.checked;
     next.pattern = dom.patternSelect.value === 'grid' ? 'grid' : 'staggered';
-    if (state.gridLocked && sourceKey !== null) {
-      state.gridLocked = false;
-    }
     applyModeCalculations(next, sourceKey);
     enforceAutoGrid(next);
     state.params = next;
+    applyParamsToUI(next);
     updateModeHelpText(next);
     updateInfoBox(next);
     requestRender();
   }
 
+  // Valore del campo appena cambiato: quello scritto (se è un numero) o quello del cursore,
+  // limitato all'intervallo del cursore.
   function sanitizeDimension(key, fallback) {
     const ctrl = sliderMap[key];
     if (!ctrl || !ctrl.range) return fallback;
-    const { range, number, decimals } = ctrl;
+    const { range, number } = ctrl;
     const min = parseFloat(range.min);
     const max = parseFloat(range.max);
     const numberValue = number ? parseFloat(number.value) : NaN;
@@ -220,12 +262,7 @@
     if (!Number.isFinite(value)) {
       value = fallback;
     }
-    value = clamp(value, min, max);
-    range.value = value;
-    if (number && !editingFields.has(key)) {
-      number.value = value.toFixed(decimals);
-    }
-    return value;
+    return clamp(value, min, max);
   }
 
   function sanitizeMode(value) {
@@ -235,52 +272,38 @@
     return CALC_MODES.OF;
   }
 
+  // Modalità di calcolo. sourceKey = campo appena cambiato ('d', 'P', 'R', 'ofTarget',
+  // 'pattern', 'mode', 'grid'), 'link' per un link incoerente da ricalcolare, oppure null
+  // (avvio, link coerente, ripristino): con null non si ricalcola nulla.
   function applyModeCalculations(params, sourceKey) {
+    const ranges = getSliderRanges();
     if (params.mode === CALC_MODES.OF) {
-      state.stepAuto = true;
-      syncOfTargetWithComputed(params);
+      state.passoBloccato = null;
+      params.ofTarget = OFCore.clampToRange(OFCore.ofGeometrico(params.d, params.P, params.R).percent, ranges.ofTarget, defaults.ofTarget);
       return;
     }
     if (params.mode === CALC_MODES.STEP) {
-      if (sourceKey === 'mode' || sourceKey === 'd' || sourceKey === 'ofTarget' || sourceKey === 'pattern' || sourceKey === null) {
-        state.stepAuto = true;
+      if (sourceKey === 'P' || sourceKey === 'R') {
+        state.passoBloccato = sourceKey;
+      } else if (sourceKey === 'd' || sourceKey === 'ofTarget' || sourceKey === 'pattern' || sourceKey === 'mode') {
+        state.passoBloccato = null;
       }
-      if (sourceKey === 'x' || sourceKey === 'y') {
-        state.stepAuto = false;
-        const pair = computeStepPairFromTarget(params, sourceKey);
-        if (pair) {
-          params.x = pair.x;
-          params.y = pair.y;
-        }
-        applySliderValue('x', params.x);
-        applySliderValue('y', params.y);
-        return;
-      }
-      if (state.stepAuto) {
-        const pair = computeStepPairFromTarget(params);
-        if (pair) {
-          params.x = pair.x;
-          params.y = pair.y;
-          applySliderValue('x', params.x);
-          applySliderValue('y', params.y);
-        }
+      if (sourceKey === null || sourceKey === 'grid') return;
+      const r = OFCore.passiDaObiettivo(params, state.passoBloccato, ranges);
+      if (r) {
+        params.P = r.P;
+        params.R = r.R;
       }
       return;
     }
     if (params.mode === CALC_MODES.DIAMETER) {
-      state.stepAuto = true;
-      const diameter = OFCore.computeDiameterFromTarget(params, getSliderRanges(), defaults);
-      if (diameter !== null) {
-        params.d = diameter;
-        applySliderValue('d', params.d);
+      state.passoBloccato = null;
+      if (sourceKey === null || sourceKey === 'grid') return;
+      const r = OFCore.diametroDaObiettivo(params, ranges);
+      if (r) {
+        params.d = r.d;
       }
-      return;
     }
-    state.stepAuto = true;
-  }
-
-  function computeStepPairFromTarget(params, lockedKey = null) {
-    return OFCore.computeStepPairFromTarget(params, lockedKey, getSliderRanges(), defaults);
   }
 
   // Intervalli {min, max} letti dagli slider dell'HTML (unica fonte degli intervalli).
@@ -295,75 +318,75 @@
     return ranges;
   }
 
-  function syncOfTargetWithComputed(params) {
-    const { percent } = computeOF(params.d, params.x, params.y, params.pattern);
-    const clamped = clampToSliderRange('ofTarget', percent);
-    params.ofTarget = clamped;
-    applySliderValue('ofTarget', params.ofTarget);
-  }
-
-  function applySliderValue(key, value) {
-    const ctrl = sliderMap[key];
-    if (!ctrl || !ctrl.range) return;
-    ctrl.range.value = value;
-    if (ctrl.number && !editingFields.has(key)) {
-      ctrl.number.value = value.toFixed(ctrl.decimals);
-    }
-  }
-
-  function clampToSliderRange(key, value) {
-    const ctrl = sliderMap[key];
-    const fallback = defaults[key] ?? 0;
-    if (!Number.isFinite(value)) {
-      return fallback;
-    }
-    if (!ctrl || !ctrl.range) {
-      return value;
-    }
-    const min = parseFloat(ctrl.range.min);
-    const max = parseFloat(ctrl.range.max);
-    return clamp(value, min, max);
-  }
-
   function updateModeHelpText(params) {
     if (!dom.modeHelp) return;
-    let text = 'Calcola OF in funzione di diametro e passi.';
+    let text = 'Calcola l\'OF geometrico da d, P e R.';
     if (params.mode === CALC_MODES.STEP) {
-      text = state.stepAuto
-        ? 'Calcola passo con x = y partendo da diametro e OF. Modifica x o y per fissare un passo.'
-        : 'Passo manuale: l\'altro passo si aggiorna per mantenere OF e d; cambia d o OF per ricalcolare automaticamente.';
+      text = state.passoBloccato
+        ? `Passo ${state.passoBloccato} fissato: l'altro passo si aggiorna per mantenere OF e d. Cambia d o OF per tornare al calcolo automatico.`
+        : 'Calcola P e R da d e OF (sfalsato P = 2R, griglia P = R). Modifica P o R per fissarlo.';
     } else if (params.mode === CALC_MODES.DIAMETER) {
-      text = 'Calcola il diametro dei fori a partire da OF, passo x e passo y.';
+      text = 'Calcola il diametro dei fori da OF, P e R.';
     }
     dom.modeHelp.textContent = text;
   }
 
   function updateInfoBox(params) {
-    const info = OFCore.infoV1(params, defaults);
+    const S = OFCore.sfalsatura(params.P, params.pattern);
+    const of = OFCore.ofGeometrico(params.d, params.P, params.R);
+    const distanza = OFCore.distanzaMinima(params.P, params.R, S).distanza;
+    const ponte = distanza - params.d;
     if (dom.ofInlineValue) {
-      dom.ofInlineValue.textContent = `${info.of.percent.toFixed(2)}%`;
+      dom.ofInlineValue.textContent = `${of.percent.toFixed(2)}%`;
     }
-    dom.info.holeArea.textContent = `${info.holeArea.toFixed(4)} mm²`;
-    dom.info.cellArea.textContent = `${info.cellArea.toFixed(4)} mm²`;
-    dom.info.ratioDX.textContent = info.ratioDX.toFixed(2);
-    dom.info.ratioDY.textContent = info.ratioDY.toFixed(2);
-    if (dom.previewWidthLabel) {
-      dom.previewWidthLabel.textContent = `${info.widthMm.toFixed(1)} mm`;
+    dom.info.holeArea.textContent = `${OFCore.holeArea(params.d).toFixed(4)} mm²`;
+    dom.info.cellArea.textContent = `${OFCore.areaCella(params.P, params.R).toFixed(4)} mm²`;
+    dom.info.ponte.textContent = `${ponte.toFixed(2)} mm`;
+    // migliaia separate da uno spazio sottile: il punto qui è il separatore decimale
+    dom.info.foriM2.textContent = String(Math.round(OFCore.foriAlMetroQuadro(params.P, params.R))).replace(/\B(?=(\d{3})+(?!\d))/g, '\u202f');
+    dom.info.sfalsatura.textContent = `${S.toFixed(2)} mm (${params.pattern === 'staggered' ? 'P/2' : '0'})`;
+    dom.info.interasse.textContent = `${distanza.toFixed(2)} mm`;
+    // Collisione: ponte (bordo–bordo tra i fori più vicini) nullo o negativo.
+    const collision = ponte <= 1e-12;
+    // OF obiettivo non raggiunto (modalità Passo o Diametro): si ricava dallo stato, quindi
+    // resta anche dopo "Mostra griglia" e ricompare riaprendo il link.
+    const fuori = OFCore.fuoriObiettivo(params);
+    let testo = `Geometria valida: ponte minimo ${ponte.toFixed(2)} mm.`;
+    if (collision) {
+      testo = `ATTENZIONE: fori sovrapposti o a contatto (ponte minimo ${ponte.toFixed(2)} mm).`;
+    } else if (fuori) {
+      testo = `OF richiesto ${params.ofTarget.toFixed(2)}% non raggiungibile ${motivoFuoriObiettivo(params)}: OF ottenuto ${of.percent.toFixed(2)}%.`;
     }
-    if (dom.previewHeightLabel) {
-      dom.previewHeightLabel.textContent = `${info.heightMm.toFixed(1)} mm`;
-    }
-    const collision = info.collision;
-    dom.info.warning.classList.toggle('visible', collision);
-    dom.info.warning.textContent = collision
-      ? 'ATTENZIONE: d ≥ min(x, y) — fori sovrapposti o a bordo.'
-      : 'Geometria valida: nessuna collisione.';
+    dom.info.warning.classList.toggle('visible', collision || fuori);
+    dom.info.warning.textContent = testo;
     dom.controlRows.d.classList.toggle('invalid', collision);
   }
 
-  function render(params) {
+  // Perché l'OF obiettivo non si raggiunge: i limiti dei campi, con il vincolo della modalità.
+  function motivoFuoriObiettivo(params) {
+    const rg = getSliderRanges();
+    if (params.mode === CALC_MODES.DIAMETER) {
+      return `con d tra ${rg.d.min.toFixed(2)} e ${rg.d.max.toFixed(2)} mm`;
+    }
+    if (state.passoBloccato) {
+      return `con ${state.passoBloccato} fissato a ${params[state.passoBloccato].toFixed(2)} mm`;
+    }
+    const vincolo = params.pattern === 'staggered' ? 'P = 2R' : 'P = R';
+    return OFCore.obiettivoRaggiungibile(params, rg)
+      ? `con ${vincolo} (si raggiunge fissando P o R)`
+      : `con P e R negli intervalli`;
+  }
+
+  // Parametri nella forma della v1 per il disegno: x = P; y = R a griglia, 2R nello sfalsato.
+  function paramsDisegno(params) {
+    const v1 = OFCore.aV1(params.P, params.R, params.pattern);
+    return { ...params, x: v1.x, y: v1.y };
+  }
+
+  function render(stato) {
     if (!dom.svg) return;
-    const layout = OFCore.layoutV1(params, defaults, {
+    const params = paramsDisegno(stato);
+    const layout = OFCore.layoutV1(params, DEFAULTS_V1, {
       previewSizeMm: PREVIEW_SIZE_MM,
       marginMm: PREVIEW_MARGIN_MM,
       pxPerMm: PX_PER_MM
@@ -443,6 +466,14 @@
     if (dom.info && dom.info.cellsCount) {
       dom.info.cellsCount.textContent = `${holesDrawn} fori`;
     }
+    // Quote dell'anteprima: ingombro dei fori davvero disegnati (righe sfalsate comprese).
+    const ingombro = OFCore.ingombroFori(layout, params.d, PX_PER_MM);
+    if (dom.previewWidthLabel) {
+      dom.previewWidthLabel.textContent = `${ingombro.larghezza.toFixed(1)} mm`;
+    }
+    if (dom.previewHeightLabel) {
+      dom.previewHeightLabel.textContent = `${ingombro.altezza.toFixed(1)} mm`;
+    }
   }
 
   function buildWatermarkFragment({ contentLeftPx, contentTopPx, contentWidthPx, contentHeightPx }) {
@@ -485,10 +516,6 @@
     });
   }
 
-  function computeOF(d, x, y, pattern = 'grid') {
-    return OFCore.computeOF(d, x, y, pattern);
-  }
-
   function exportSVG() {
     const source = buildExportSvgSource();
     if (!source) {
@@ -497,7 +524,7 @@
     }
     const blob = new Blob([source], { type: 'image/svg+xml;charset=utf-8' });
     downloadBlob(blob, buildFileName('pattern.svg'));
-    setStatus('SVG esportato.');
+    setStatus('SVG esportato (50 × 50 mm).');
   }
 
   function exportPNG() {
@@ -534,6 +561,8 @@
     img.src = url;
   }
 
+  // SVG esportato: dimensioni in millimetri (50 × 50 mm; la prova in un CAD è ancora da fare).
+  // Il disegno interno resta in unità dell'anteprima (10 unità = 1 mm).
   function buildExportSvgSource() {
     if (!dom.svg || !state.baseWidthPx || !state.baseHeightPx) {
       return null;
@@ -560,8 +589,8 @@
       parent.removeChild(node);
     });
     clone.setAttribute('viewBox', `0 0 ${state.baseWidthPx} ${state.baseHeightPx}`);
-    clone.setAttribute('width', state.baseWidthPx);
-    clone.setAttribute('height', state.baseHeightPx);
+    clone.setAttribute('width', `${state.baseWidthPx / PX_PER_MM}mm`);
+    clone.setAttribute('height', `${state.baseHeightPx / PX_PER_MM}mm`);
     const serializer = new XMLSerializer();
     return serializer.serializeToString(clone);
   }
@@ -577,31 +606,31 @@
   }
 
   function buildFileName(base) {
-    const { d, x, y } = state.params;
-    const safe = `${base.replace(/\.[a-z]+$/i, '')}-d${d.toFixed(2)}-x${x.toFixed(2)}-y${y.toFixed(2)}`;
+    const { d, P, R, pattern } = state.params;
+    const S = OFCore.sfalsatura(P, pattern);
+    const safe = `${base.replace(/\.[a-z]+$/i, '')}-d${d.toFixed(2)}-P${P.toFixed(2)}-R${R.toFixed(2)}-S${S.toFixed(2)}`;
     const ext = base.split('.').pop();
     return `${safe}.${ext}`.replace(/[^a-z0-9_.-]+/gi, '_');
   }
 
   function resetDefaults() {
     state.params = { ...defaults };
-    state.stepAuto = true;
-    state.gridLocked = false;
+    state.passoBloccato = null;
     state.waveEnabled = true;
-    enforceAutoGrid(state.params, { force: true });
     applyParamsToUI(state.params);
-    updateFromUI();
+    updateFromUI(null);
     applyWaveToggleState();
     setStatus('Parametri ripristinati.');
   }
 
+  // Copia negli appunti l'indirizzo completo con i parametri (e il passo fissato, se c'è).
   function copyParamsHash() {
-    const hash = buildHashFromParams(state.params);
-    const full = `#${hash}`;
+    const hash = OFCore.costruisciLink(state.params, state.passoBloccato);
     location.hash = hash;
+    const full = location.href;
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(full).then(() => {
-        setStatus('Parametri copiati negli appunti.');
+        setStatus('Link copiato negli appunti.');
       }).catch(() => fallbackCopy(full));
     } else {
       fallbackCopy(full);
@@ -618,20 +647,11 @@
     textarea.select();
     try {
       document.execCommand('copy');
-      setStatus('Parametri copiati negli appunti.');
+      setStatus('Link copiato negli appunti.');
     } catch (err) {
-      setStatus('Impossibile copiare gli appunti.', true);
+      setStatus('Impossibile copiare negli appunti.', true);
     }
     document.body.removeChild(textarea);
-  }
-
-  function buildHashFromParams(params) {
-    return OFCore.buildHash(params);
-  }
-
-  function parseHash() {
-    if (!location.hash) return null;
-    return OFCore.parseHash(location.hash, defaults, getSliderRanges());
   }
 
   function setStatus(message, isError = false) {
@@ -851,15 +871,13 @@
     return Number(value).toFixed(2);
   }
 
-  function enforceAutoGrid(params, options = {}) {
+
+  // Righe e colonne dell'anteprima: sempre automatiche, quante ne stanno nel riquadro di 50 mm.
+  // (I vecchi link con righe e colonne fissate, n e m, non bloccano più la griglia.)
+  function enforceAutoGrid(params) {
     if (!params) return;
-    const force = Boolean(options.force);
-    if (!force && state.gridLocked) {
-      return;
-    }
-    const grid = OFCore.autoGrid(params, defaults, PREVIEW_SIZE_MM);
-    params.cols = grid.cols;
-    params.rows = grid.rows;
+    params.cols = OFCore.computeAutoCount(params.P, params.d, PREVIEW_SIZE_MM);
+    params.rows = OFCore.computeAutoCount(params.R, params.d, PREVIEW_SIZE_MM);
   }
 
 })();

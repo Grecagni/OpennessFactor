@@ -115,6 +115,20 @@ Confermate due ipotesi: A5 (arrotondamenti: passando a "Passo" i passi diventano
 ---
 
 ## Passo 1 — Campi P, R, S con la convenzione decisa (geometria di default invariata)
+
+**Esito (08.10.2026): FATTO → rilascio v2.2** (insieme al passo 2). Verifiche:
+- default 1,57 % con gli stessi 190 fori della v2.0;
+- 500 combinazioni casuali con lo stesso OF della v1 dopo la conversione x = P, y = 2R;
+- caso Excel d 0,5 · P 5 · R 2 → 1,96 %;
+- vecchi link v1 aperti convertiti, con la loro geometria;
+- 171 casi di test e 47 scenari dell'interfaccia (`tests/e2e/v2.2.json`).
+
+Differenze rispetto al testo originale qui sotto:
+- il link conserva anche il passo fissato (`lock=P|R`) e salva i valori per intero (fino a 12 cifre significative);
+- un link coerente non viene ricalcolato all'apertura, uno incoerente sì; un vecchio link della v1 apre sempre la sua geometria;
+- nomi nel codice: `ofGeometrico`, `daV1`, `aV1` (non `ofGeometric`, `convertV1toPRS`);
+- `holeLayout(P, R, S)` non c'è ancora: il disegno della v2.2 riusa la disposizione della v1 (`layoutV1`, con `getEffectiveRowStepMm` e `aV1`), che per S = 0 e S = P/2 dà le stesse posizioni. Quindi le funzioni `V1` servono ancora al disegno, non solo ai test. La disposizione propria della v2 arriva con la v2.3;
+- "per S = 0 e S = P/2 le due letture coincidono" vale per costruzione (con S = P/2 la riga n + 2 è spostata di P, cioè di nuovo allineata), non è provato da un test: il test servirà con S libera (3.5).
 - **Cosa**:
   - modello interno `{ d, P, R, S }` e **OF geometrico = π(d/2)² / (P·R)** per tutti i pattern (`ofGeometric` in `of-core.js`);
   - campi "Passo tra i punti (P)" e "Passo tra le righe (R)" al posto di x e y;
@@ -147,6 +161,11 @@ Confermate due ipotesi: A5 (arrotondamenti: passando a "Passo" i passi diventano
 ---
 
 ## Passo 2 — Correzioni dei difetti noti
+
+**Esito (08.10.2026): FATTO nella v2.2.**
+- **Fatte:** 2.1 ponte vero e interasse; 2.2 avviso di troncamento, con il motivo (ricavato dai valori mostrati, con la stessa soglia dei link); 2.4 OF obiettivo di default = OF della geometria; 2.5 indirizzo completo; 2.6 link robusti, con righe e colonne sempre automatiche; 2.8 arrotondamenti eliminati (logica guidata dallo stato); 2.9 README (senza "1:1").
+- **2.3 in parte:** l'SVG ha le dimensioni in mm (50 × 50 mm); manca la prova in un CAD dell'Ufficio Tecnico (domanda 7), quindi nei testi niente "scala 1:1".
+- **2.7 in parte:** le quote misurano i fori disegnati e ai bordi non si perde più nessuna riga o colonna; il contatore conta ancora anche i fori coperti dalla cornice Wave: si risolve con la v2.3, che toglie Wave.
 Un commit per voce. Ordine proposto: dalla più utile alla più cosmetica.
 
 | # | correzione | file e funzioni | rischio | effort | come si verifica |
@@ -207,9 +226,9 @@ Dopo ogni passo: stop, verifica, approvazione.
 | rilascio | binario | contenuto | dipende da | cosa vede l'utente |
 |---|---|---|---|---|
 | **v2.0** ✔ | — | base unificata, passo U | — | un'app sola per tutti gli schermi |
-| **D1 Mockup** | progettazione | 2 varianti statiche, fuori dall'app (A "Pellini editoriale", B "Apple chiara"; vedi `DESIGN.md`); Jack sceglie o mescola; `DESIGN.md` approvato | materiali di Jack (facoltativi) | solo il mockup |
+| **D1 Mockup** ✔ | progettazione | 2 varianti statiche, fuori dall'app (A "Pellini editoriale", B "Apple chiara"; vedi `DESIGN.md`); Jack sceglie o mescola; `DESIGN.md` approvato | materiali di Jack (facoltativi) | solo il mockup |
 | **v2.1 Fondamenta** ✔ | ingegneria | passo 0.1–0.2: `of-core.js` e test; `CHANGELOG.md` | — | nulla (invisibile) |
-| **v2.2 Convenzione** | ingegneria | passo 1 (P, R, S) + passo 2: ponte vero, avviso di troncamento, SVG in mm, link completo e robusto, contatore fori, default OF, README | v2.1 | nuove etichette e avvisi |
+| **v2.2 Convenzione** ✔ | ingegneria | passo 1 (P, R, S) + passo 2: ponte vero, avviso di troncamento, SVG in mm (prova in CAD da fare), link completo e robusto, quote coerenti con il disegno (contatore fori: v2.3), default OF, README | v2.1 | nuove etichette e avvisi |
 | **v2.3 Nuovo aspetto** | incontro | token CSS dal mockup scelto; intestazione con nome e selettore lingua IT/EN; riquadro "OF geometrico"; controlli a segmenti; campi con unità; numeri nel formato della lingua; toast; avvisi sul campo; tema scuro; via Wave e "GR"; foglio "Informazioni" con la firma; metadati autore negli export | D1, v2.2 | l'app rinnovata |
 | **v2.4 App** | ingegneria | PWA: manifest (inserito solo in http/https, nessun errore da doppio clic), icone, service worker per l'uso offline, istruzioni di installazione per iPhone e Android | v2.3; nome, indirizzo e icona definitivi | si installa sulla Home |
 | *distribuzione* | — | prova su telefoni veri, poi link o QR agli agenti | v2.4 | — |

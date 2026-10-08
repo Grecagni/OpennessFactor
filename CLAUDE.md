@@ -45,7 +45,8 @@ Repository: github.com/Grecagni/OpennessFactor (pubblico; in futuro da trasferir
 2. Con d = 0,6 (resto ai default) l'OF geometrico è **2,26%**.
 3. Grafica: `node --experimental-websocket tools/screenshot.mjs <cartella> --confronta <cartella-riferimento>` (12 formati, dal telefono al desktop). Nessuno scorrimento orizzontale; i formati che il passo non deve toccare restano "identico". Riferimento grafico dal passo U (07.10.2026): telefono verticale = OF-mobile, desktop ≥ 1440 × 900 = v1; tablet, telefono orizzontale e desktop basso come da passo U.
 4. Test del calcolo verdi: `node tests/run-node.js` e `test.html` (doppio clic, oppure `node --experimental-websocket tools/test-browser.mjs`).
-5. Passi "invisibili": `node --experimental-websocket tools/e2e.mjs <scenari.mjs> <uscita.json> --confronta <riferimento.json>` deve dare tutti gli scenari identici.
+5. Scenari dell'interfaccia: `node --experimental-websocket tools/e2e.mjs tests/e2e/scenari-v2.2.mjs <uscita.json> --confronta tests/e2e/v2.2.json` (scenari e riferimento dell'interfaccia in uso). Nei passi "invisibili" tutti gli scenari restano identici; se un passo cambia dei valori di proposito, il riferimento si registra di nuovo e il commit elenca le differenze.
+6. Tema scuro: `tools/screenshot.mjs` con `--tema scuro` simula un dispositivo in modalità scura (il predefinito è chiaro, qualunque sia il tema di Windows).
 
 ## Commit
 - Commit diretti su `main` (niente rami né Pull Request), piccoli, uno per modifica logica, con messaggi in italiano che dicano cosa cambia. **Non** si seguono le regole della guida GitHub di Pellini (`Pellini-S-P-A/guida_github`): decisione di Jack del 07.10.2026.

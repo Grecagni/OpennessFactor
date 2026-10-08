@@ -17,12 +17,13 @@ Convenzione del pattern della v2 (`docs/CONVENZIONE_PASSO.md`):
 - S = sfalsatura;
 - OF = π(d/2)² / (P·R).
 
-**Limite noto della base attuale**: i campi sono ancora quelli della v1 (x, y). Nello sfalsato y è il doppio della distanza tra le righe (y = 2R). Il passaggio a P, R, S è il passo 1 del piano.
+Dalla v2.2 l'app usa questa convenzione. I vecchi link della v1 (campi x, y; nello sfalsato y = 2R) si aprono convertiti, con la loro geometria.
 
-## Limiti noti (da correggere, vedi piano)
-- L'SVG esportato è in pixel (10 px/mm), non in mm: in CAD va riscalato.
-- L'anteprima è un riquadro di 50 × 50 mm adattato allo schermo, non una vista 1:1.
-- Nelle modalità "passo" e "d" il risultato viene limitato agli intervalli dei cursori senza avviso.
+## Limiti noti
+- L'anteprima è un campo di 50 × 50 mm adattato allo schermo, non una vista in scala 1:1 sul monitor.
+- Per la sfalsatura sono gestiti solo i casi S = 0 (griglia) e S = P/2 (sfalsato): una S qualsiasi richiede prima di decidere se dalla terza riga si applica in modo cumulativo o alternato.
+- L'SVG esportato ha le dimensioni in mm (50 × 50 mm); la prova di importazione in un CAD dell'Ufficio Tecnico è ancora da fare.
+- Nei campi numerici la virgola decimale funziona solo con il browser in italiano (il punto sempre); nei link valgono entrambi.
 
 ## File
 | file | contenuto |

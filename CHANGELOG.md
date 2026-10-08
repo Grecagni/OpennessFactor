@@ -2,6 +2,32 @@
 
 Ogni rilascio ha un tag git (`v2.1`, `v2.2`, …). I numeri dell'OF sono sempre **geometrici** (calcolati), non misurati.
 
+## v2.2 — Convenzione P, R, S (08.10.2026)
+Stesso aspetto della v2.0: cambiano i nomi dei campi e, dove deciso, alcuni numeri.
+- Campi **P** (passo tra i punti) e **R** (passo tra le righe); **S** (sfalsatura) è calcolata: 0 a griglia, P/2 sfalsato. **OF geometrico = π(d/2)² / (P·R)** per tutti i pattern.
+- La geometria di default non cambia: P 5, R 2,5, S 2,5, d 0,5 → **1,57 %**, stessi 190 fori nell'anteprima.
+- R va da 0,5 a 10 mm (passo 0,05). La modalità "Passo" dà gli stessi numeri di prima: sfalsato P = 2R, griglia P = R.
+- Passare da "Sfalsato" a "Griglia" non cambia più l'OF, perché cambia solo la disposizione. Prima l'app raddoppiava la distanza tra le righe e l'OF si dimezzava.
+- **Ponte minimo vero** (bordo–bordo tra i fori più vicini) e interasse minimo. L'avviso di collisione scatta solo se i fori si toccano davvero: prima, nello sfalsato, c'erano falsi allarmi (es. d 0,6, P 2, R 0,5: ora ponte 0,40 mm, nessun avviso).
+- **Avviso** quando l'OF richiesto non si raggiunge, con il motivo: l'intervallo di d, il passo fissato, oppure il vincolo P = 2R (P = R a griglia) della modalità "Passo"; in quest'ultimo caso dice se fissando P o R l'OF si raggiunge. Prima il risultato veniva troncato senza dirlo.
+  - L'avviso dipende solo dai valori mostrati (OF diverso dall'obiettivo di oltre 0,005 punti): resta con "Mostra griglia" e ricompare riaprendo il link.
+  - Con OF obiettivo 0 l'app dà i passi più grandi (o il diametro più piccolo) e l'avviso.
+- Niente più arrotondamenti nascosti: passando a "Passo" i valori restano 5,00 e 2,50 (prima diventavano 4,99). I valori calcolati sono senza rumore di arrotondamento (R 3,125, non 3,1249999…).
+- OF obiettivo di default = OF della geometria di default (prima 10 nello script, 8 nell'HTML).
+- **Link**:
+  - "Copia link" copia l'indirizzo completo; un link incollato nella stessa scheda, o il tasto Indietro, aggiorna l'app;
+  - i valori sono salvati per intero (fino a 12 cifre significative): un link coerente si riapre esattamente com'era, uno incoerente viene ricalcolato;
+  - il passo fissato in modalità "Passo" (P o R) viene conservato; in modalità OF il link non contiene più t, che si ricava da d, P e R;
+  - i vecchi link con x, y si aprono convertiti, con la loro geometria, come nella v1;
+  - numeri con la virgola accettati, valori non numerici ignorati;
+  - righe e colonne non bloccano più l'anteprima.
+- **SVG** esportato con le dimensioni in mm (50 × 50 mm); la prova in un CAD è ancora da fare. Nome dei file con d, P, R, S.
+- Riquadro informazioni: ponte minimo, fori/m² (migliaia separate da uno spazio), sfalsatura S, interasse minimo. Le quote dell'anteprima misurano i fori davvero disegnati.
+- Corretto un difetto della v1: per un arrotondamento, a volte ai bordi dell'anteprima mancava una riga o una colonna di fori (es. P 3, R 2, d 0,391: 413 fori, prima 384).
+- Un campo P o R svuotato senza scrivere un numero non fissa più il passo.
+- Test: 171 casi (96 nuovi per la convenzione, tra cui 500 combinazioni casuali con lo stesso OF della v1); 47 scenari dell'interfaccia (`tests/e2e/v2.2.json`), compresi link copiato, SVG esportato e fori a contatto.
+- Revisione indipendente (3 revisori, ogni rilievo verificato da un secondo agente): 30 rilievi confermati, 23 problemi distinti, tutti corretti tranne uno. Resta la virgola decimale nei campi quando il browser non è in italiano: c'era già nella v2.0 e si risolve con i campi nuovi della v2.3.
+
 ## v2.1 — Fondamenta (08.10.2026)
 Nessun cambiamento visibile: l'app si comporta esattamente come la v2.0.
 - Il calcolo è separato dall'interfaccia in `of-core.js` (funzioni pure, usate anche dai test).
