@@ -13,8 +13,34 @@ const t = crea();
 try {
   casi.tutti(OF, t, TESTI);
   if (TESTI) chiaviTesti(t);
+  fileApp(t);
 } catch (errore) {
   t.interrotto(errore);
+}
+
+// Solo in Node (leggono i file): coerenza dei file dell'app installabile (v2.4).
+function fileApp(t) {
+  const radice = path.join(__dirname, '..');
+  const leggi = (f) => fs.readFileSync(path.join(radice, f), 'utf8');
+  t.gruppo('app installabile · file (solo in Node)');
+  const sw = leggi('sw.js');
+  const versione = (testo) => (testo.match(/var VERSIONE = '([^']+)'/) || [])[1];
+  t.uguale('stessa VERSIONE in sw.js e script.js (a ogni rilascio cambiano insieme)', versione(sw), versione(leggi('script.js')));
+  const elenco = ((sw.match(/var FILE = \[([\s\S]*?)\];/) || [])[1] || '').match(/'[^']+'/g) || [];
+  const inCache = elenco.map((f) => f.slice(1, -1));
+  t.ok('elenco dei file della cache letto', inCache.length > 10);
+  t.uguale('ogni file della cache esiste', inCache.filter((f) => f !== './' && !fs.existsSync(path.join(radice, f))), []);
+  const html = leggi('index.html');
+  const usati = [...html.matchAll(/(?:src|href)="([^"#:]+)"/g)].map((m) => m[1]);
+  usati.push('manifest.webmanifest');
+  t.uguale('ogni file usato da index.html è nella cache', usati.filter((f) => inCache.indexOf(f) < 0), []);
+  const font = [...leggi('styles.css').matchAll(/url\("?([^")]+)"?\)/g)].map((m) => m[1]);
+  t.ok('font di styles.css trovati', font.length > 0);
+  t.uguale('ogni font di styles.css è nella cache', font.filter((f) => inCache.indexOf(f) < 0), []);
+  const man = JSON.parse(leggi('manifest.webmanifest'));
+  t.uguale('manifest: nome, nome breve, avvio e ambito', [man.name, man.short_name, man.start_url, man.scope, man.display], ['Openness Factor', 'OF', './', './', 'standalone']);
+  t.uguale('manifest: icone presenti', (man.icons || []).map((i) => i.src).filter((f) => !fs.existsSync(path.join(radice, f))), []);
+  t.ok('manifest: icone 192, 512 e maskable', ['192x192', '512x512'].every((d) => man.icons.some((i) => i.sizes === d)) && man.icons.some((i) => /maskable/.test(i.purpose || '')));
 }
 
 // Solo in Node (legge i file): ogni chiave usata da index.html e script.js esiste in i18n.js,

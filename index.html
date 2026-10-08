@@ -13,6 +13,17 @@
   <link rel="icon" href="assets/icons/favicon-32.png" sizes="32x32" type="image/png" />
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
   <link rel="stylesheet" href="styles.css" />
+  <script>
+    // Manifest dell'app installabile: solo da un indirizzo web. Con il doppio clic (file://)
+    // il browser non può leggerlo e segnalerebbe un errore.
+    (function () {
+      if (!/^https?:$/.test(location.protocol)) return;
+      var m = document.createElement('link');
+      m.rel = 'manifest';
+      m.href = 'manifest.webmanifest';
+      document.head.appendChild(m);
+    })();
+  </script>
 </head>
 <body>
   <a class="skip" href="#comandi" data-i18n="vaiAiComandi">Vai ai comandi</a>
@@ -199,6 +210,19 @@
           <li data-i18n="convP"></li>
           <li data-i18n="convR"></li>
           <li data-i18n="convS"></li>
+        </ul>
+      </section>
+      <section id="sezione-installa">
+        <h4 class="eyebrow" data-i18n="installa">Installa l’app</h4>
+        <div id="installa-testo"></div>
+        <button type="button" class="btn" id="installa" data-i18n="installaPulsante" hidden>Installa</button>
+      </section>
+      <section>
+        <h4 class="eyebrow" data-i18n="novitaTitolo">Novità della versione</h4>
+        <ul>
+          <li data-i18n="novita1"></li>
+          <li data-i18n="novita2"></li>
+          <li data-i18n="novita3"></li>
         </ul>
       </section>
       <p class="sheet__credits" data-i18n="crediti">Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico</p>

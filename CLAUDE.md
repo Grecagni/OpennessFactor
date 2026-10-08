@@ -17,6 +17,7 @@ Repository: github.com/Grecagni/OpennessFactor (pubblico; in futuro da trasferir
 - Ammessi solo file locali con licenza libera e con il file di licenza accanto (es. font IBM Plex Sans, OFL, in `assets/fonts/`).
 - Logo e marchi Pellini: NON nel repository pubblico finché Jack non decide (vedi `docs/DESIGN.md`).
 - L'app si apre con doppio clic su `index.html` (protocollo `file://`): niente moduli ES, niente fetch di file locali.
+- App installabile (dalla v2.4): a ogni rilascio `VERSIONE` cambia insieme in `script.js` e in `sw.js` (lo controlla `node tests/run-node.js`), altrimenti chi ha l'app installata non riceve i file nuovi. Un file nuovo dell'app va aggiunto all'elenco `FILE` di `sw.js`.
 
 ## Cosa non si cambia senza approvazione
 - Formule, valori di default e intervalli (min/max/step) dei campi: si cambiano solo dentro un passo del piano approvato da Jack.
@@ -47,6 +48,7 @@ Repository: github.com/Grecagni/OpennessFactor (pubblico; in futuro da trasferir
 4. Test del calcolo verdi: `node tests/run-node.js` e `test.html` (doppio clic, oppure `node --experimental-websocket tools/test-browser.mjs`).
 5. Scenari dell'interfaccia: `node --experimental-websocket tools/e2e.mjs tests/e2e/scenari-v2.3.mjs <uscita.json> --confronta tests/e2e/v2.3.json` (scenari e riferimento dell'interfaccia in uso; quelli della v2.0 e della v2.2 restano come storico). Nei passi "invisibili" tutti gli scenari restano identici; se un passo cambia dei valori di proposito, il riferimento si registra di nuovo e il commit elenca le differenze.
 6. Tema scuro: `tools/screenshot.mjs` con `--tema scuro` simula un dispositivo in modalità scura (il predefinito è chiaro, qualunque sia il tema di Windows).
+7. App installabile: `node --experimental-websocket tools/pwa.mjs` (server locale e Chrome; 14 controlli, tutti "ok").
 
 ## Commit
 - Commit diretti su `main` (niente rami né Pull Request), piccoli, uno per modifica logica, con messaggi in italiano che dicano cosa cambia. **Non** si seguono le regole della guida GitHub di Pellini (`Pellini-S-P-A/guida_github`): decisione di Jack del 07.10.2026.

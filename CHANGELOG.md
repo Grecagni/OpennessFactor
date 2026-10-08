@@ -2,6 +2,17 @@
 
 Ogni rilascio ha un tag git (`v2.1`, `v2.2`, …). I numeri dell'OF sono sempre **geometrici** (calcolati), non misurati.
 
+## v2.4 — App installabile (08.10.2026)
+- Si installa sulla schermata Home di telefono, tablet e PC e si apre come un'app, a schermo intero, con l'icona "OF":
+  - Chrome, Edge e Android: pulsante "Installa" nel foglio Informazioni (o dal menu del browser);
+  - iPhone e iPad: in Safari, Condividi → "Aggiungi alla schermata Home" (istruzioni nel foglio Informazioni).
+- Funziona anche senza rete: tutti i file dell'app, font e icone compresi, restano sul dispositivo. Alla prima apertura dal web compare "App pronta anche senza rete".
+- Versioni nuove: l'app mostra "Nuova versione disponibile · Aggiorna"; scegliendo Aggiorna si ricarica con la versione nuova. Nessun aggiornamento a metà lavoro senza conferma.
+- Con il doppio clic sul file l'app funziona come prima, senza installazione: il manifest si inserisce solo quando l'app è aperta da un indirizzo web, così il browser non segnala errori.
+- Foglio Informazioni: sezioni "Installa l'app" e "Novità della versione".
+- Le altre pagine pubblicate accanto all'app (test.html, mockup) si aprono sempre dalla rete, mai sostituite dall'app.
+- Verifica: `tools/pwa.mjs` (server locale e Chrome: manifest, installabilità, cache, uso senza rete, aggiornamento; 14 controlli). `node tests/run-node.js` controlla anche i file dell'app installabile: versione di `sw.js` uguale a quella dell'app, file della cache, manifest e icone (9 controlli in più, solo in Node).
+
 ## v2.3 — Nuovo aspetto (08.10.2026)
 Stessi calcoli della v2.2; cambia l'interfaccia, secondo il mockup D1 (variante A "Pellini editoriale").
 - Colori del Manuale Brand Identity Pellini (blu 7546 C, beige 4525 C) e font IBM Plex Sans, incluso nell'app (funziona anche senza rete). Tema scuro automatico quando il dispositivo è in modalità scura.

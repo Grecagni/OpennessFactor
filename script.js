@@ -6,7 +6,7 @@
 
   var OF = window.OFCore;
   var TESTI = window.OFTesti;
-  var VERSIONE = '2.3.0';
+  var VERSIONE = '2.4.0'; // uguale a VERSIONE in sw.js (lo controlla tests/run-node.js)
   var CAMPO_MM = 50;
   var INDIRIZZO = 'https://grecagni.github.io/OpennessFactor/';
   var CHIAVE_STATO = 'of.v2.stato';
@@ -37,6 +37,8 @@
     ripeti: [],
     registrato: null,      // ultimo stato registrato nella cronologia (JSON)
     toastTimer: null,
+    aggiornamento: null,   // service worker della versione nuova, in attesa di "Aggiorna"
+    richiestaInstallazione: null, // evento beforeinstallprompt (Chrome, Edge, Android)
     annuncioTimer: null
   };
   var dom = {};
@@ -75,6 +77,8 @@
     applicaTesti();
     disegna();
     firma();
+    preparaInstallazione();
+    registraServiceWorker();
   }
 
   function leggiDom() {
@@ -552,6 +556,7 @@
     });
     dom.lingue.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.lang === stato.lingua)); });
     if (dom.versione) dom.versione.textContent = t.t('versione', { v: VERSIONE });
+    aggiornaInstallazione();
   }
 
   function disegna() {
@@ -842,18 +847,23 @@
     stato.annuncioTimer = setTimeout(function () { if (dom.annuncio) dom.annuncio.textContent = testo; }, 800);
   }
 
-  function mostraToast(testo, azioneTesto, azione) {
+  // durata in ms; 0 = resta finché non si sceglie l'azione (es. "Aggiorna").
+  function mostraToast(testo, azioneTesto, azione, durata) {
     clearTimeout(stato.toastTimer);
     dom.toastTesto.textContent = testo;
     dom.toastAzione.hidden = !azioneTesto;
     dom.toastAzione.textContent = azioneTesto || '';
     dom.toastAzione._azione = azione || null;
     dom.toast.hidden = false;
-    stato.toastTimer = setTimeout(nascondiToast, azione ? 8000 : 3000);
+    var ms = durata === undefined ? (azione ? 8000 : 3000) : durata;
+    stato.toastDurata = ms;
+    if (ms > 0) stato.toastTimer = setTimeout(nascondiToast, ms);
   }
   function nascondiToast() {
     clearTimeout(stato.toastTimer);
     dom.toast.hidden = true;
+    // una versione nuova in attesa torna a essere proposta dopo gli altri messaggi
+    if (stato.aggiornamento) setTimeout(proponiAggiornamento, 400);
   }
 
   // ------------------------------------------------------------------ condivisione ed esportazione
@@ -1046,8 +1056,118 @@
   // ------------------------------------------------------------------ informazioni e firma
 
   function apriInfo() {
+    aggiornaInstallazione();
     if (typeof dom.info.showModal === 'function') dom.info.showModal(); else dom.info.setAttribute('open', '');
     dom.info.focus({ preventScroll: true }); // il foglio stesso, non il pulsante Fine
+  }
+
+  // ------------------------------------------------------------------ app installabile (v2.4)
+  // Solo da un indirizzo web (https, o http in locale per le prove): con il doppio clic
+  // l'app funziona come prima, senza service worker né installazione.
+  var DA_WEB = /^https?:$/.test(location.protocol);
+
+  // Service worker: uso senza rete e versioni nuove proposte con "Aggiorna".
+  function registraServiceWorker() {
+    if (!DA_WEB || !('serviceWorker' in navigator)) return;
+    var primaInstallazione = !navigator.serviceWorker.controller;
+    var aggiornaScelto = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      // la pagina si ricarica solo se l'utente ha scelto "Aggiorna" (non alla prima installazione)
+      if (aggiornaScelto) location.reload();
+    });
+    stato.sceltoAggiorna = function () { aggiornaScelto = true; };
+    navigator.serviceWorker.register('sw.js').then(function (reg) {
+      if (reg.waiting && navigator.serviceWorker.controller) inAttesa(reg.waiting);
+      reg.addEventListener('updatefound', function () {
+        var nuovo = reg.installing;
+        if (!nuovo) return;
+        nuovo.addEventListener('statechange', function () {
+          if (nuovo.state === 'installed' && navigator.serviceWorker.controller) inAttesa(nuovo);
+          if (nuovo.state === 'activated' && primaInstallazione) {
+            primaInstallazione = false;
+            mostraToast(stato.testi.t('toastOffline'));
+          }
+        });
+      });
+    }).catch(function () { /* senza service worker l'app funziona lo stesso, solo con la rete */ });
+  }
+
+  function inAttesa(sw) {
+    stato.aggiornamento = sw;
+    proponiAggiornamento();
+  }
+
+  function proponiAggiornamento() {
+    var sw = stato.aggiornamento;
+    if (!sw || !dom.toast.hidden) return;
+    mostraToast(stato.testi.t('toastAggiornamento'), stato.testi.t('aggiorna'), function () {
+      stato.aggiornamento = null;
+      if (stato.sceltoAggiorna) stato.sceltoAggiorna();
+      sw.postMessage('aggiorna');
+    }, 0);
+  }
+
+  // Installazione sulla schermata Home: pulsante dove il browser lo permette (Chrome, Edge,
+  // Android), altrimenti le istruzioni per iPhone/iPad e per gli altri browser.
+  function preparaInstallazione() {
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();
+      stato.richiestaInstallazione = e;
+      aggiornaInstallazione();
+    });
+    window.addEventListener('appinstalled', function () {
+      stato.richiestaInstallazione = null;
+      aggiornaInstallazione();
+    });
+    var b = document.getElementById('installa');
+    if (b) b.addEventListener('click', function () {
+      var richiesta = stato.richiestaInstallazione;
+      if (!richiesta) return;
+      richiesta.prompt();
+      Promise.resolve(richiesta.userChoice).catch(function () {}).then(function () {
+        stato.richiestaInstallazione = null;
+        aggiornaInstallazione();
+      });
+    });
+  }
+
+  function modoInstallazione() {
+    var installata = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+    if (installata) return 'installata';
+    if (!DA_WEB) return 'file';
+    if (stato.richiestaInstallazione) return 'pulsante';
+    var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    return ios ? 'ios' : 'altro';
+  }
+
+  function aggiornaInstallazione() {
+    var contenitore = document.getElementById('installa-testo');
+    var bottone = document.getElementById('installa');
+    if (!contenitore || !bottone) return;
+    var t = stato.testi;
+    var modo = modoInstallazione();
+    var righe = {
+      installata: ['installaFatto'],
+      file: ['installaLocale'],
+      pulsante: ['installaPronta'],
+      ios: ['installaIos'],
+      altro: ['installaAndroid', 'installaIos']
+    }[modo];
+    contenitore.textContent = '';
+    righe.forEach(function (chiave) {
+      var p = document.createElement('p');
+      p.textContent = t.t(chiave);
+      contenitore.appendChild(p);
+    });
+    if (modo === 'file') {
+      var p = document.createElement('p');
+      var a = document.createElement('a');
+      a.href = INDIRIZZO;
+      a.textContent = INDIRIZZO.replace(/^https:\/\//, '').replace(/\/$/, '');
+      p.appendChild(a);
+      contenitore.appendChild(p);
+    }
+    bottone.hidden = modo !== 'pulsante';
   }
 
   // Accesso di sola lettura per i test automatici (tools/e2e.mjs) e per la console.

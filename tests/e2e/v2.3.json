@@ -1486,7 +1486,14 @@
  "informazioni": {
   "aperto": true,
   "crediti": "Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico",
-  "versione": "Versione 2.3.0"
+  "versione": "Versione 2.4.0",
+  "installa": "L’installazione funziona dall’indirizzo web dell’app, non dal file aperto con doppio clic.grecagni.github.io/OpennessFactor",
+  "pulsanteInstalla": false,
+  "novita": [
+   "App installabile sulla schermata Home di telefono, tablet e PC.",
+   "Funziona anche senza rete; le versioni nuove si installano con «Aggiorna».",
+   "Nuovo aspetto in stile Pellini, in italiano e in inglese (v2.3)."
+  ]
  },
  "SVG per CAD": {
   "mm": true,

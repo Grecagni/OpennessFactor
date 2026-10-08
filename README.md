@@ -2,9 +2,17 @@
 
 Strumento web (già "Open Factor Designer") per progettare il pattern di microforatura laser del film WAVE (Pellini) e calcolarne il **fattore di apertura geometrico** (OF).
 
-- Si apre con doppio clic su `index.html`: HTML/CSS/JS vanilla, nessuna installazione.
+- Si apre con doppio clic su `index.html`: HTML/CSS/JS vanilla, nessuna installazione. Dall'indirizzo web si può anche installare come app (vedi sotto).
 - Una sola versione per tutti gli schermi: telefono (verticale e orizzontale), tablet, PC.
 - Versione ufficiale unica: **https://grecagni.github.io/OpennessFactor/**. Nasce dalla v1 (tag `v1.0`) e dalla sua variante smartphone, che oggi sono archiviate in repository privati e non sono più pubblicate. I miglioramenti seguono `docs/PIANO_v2.md`, un passo alla volta.
+
+## Installare l'app
+Dall'indirizzo https://grecagni.github.io/OpennessFactor/:
+- iPhone e iPad: in Safari tocca Condividi, poi «Aggiungi alla schermata Home»;
+- Android: menu ⋮ di Chrome, poi «Installa app», oppure il pulsante «Installa» nel foglio Informazioni (ⓘ);
+- PC con Chrome o Edge: icona di installazione nella barra degli indirizzi, oppure il pulsante nel foglio Informazioni.
+
+Installata, funziona anche senza rete. Quando esce una versione nuova l'app propone «Aggiorna».
 
 ## Cosa calcola
 L'**OF geometrico** = area dei fori nominali / area del film forato.
@@ -29,11 +37,12 @@ Dalla v2.2 l'app usa questa convenzione. I vecchi link della v1 (campi x, y; nel
 |---|---|
 | `index.html`, `script.js`, `styles.css` | l'app (interfaccia) |
 | `i18n.js` | i testi in italiano e in inglese |
+| `manifest.webmanifest`, `sw.js` | app installabile: manifest e service worker (uso senza rete, aggiornamenti) |
 | `of-core.js` | il calcolo: funzioni pure, provate dai test |
 | `assets/` | font IBM Plex Sans (licenza OFL) e icone dell'app |
 | `design/` | mockup del nuovo aspetto (D1) |
 | `test.html`, `tests/` | test del calcolo e dei testi (doppio clic su `test.html`, oppure `node tests/run-node.js`) e scenari registrati |
 | `CHANGELOG.md` | novità di ogni rilascio |
 | `CLAUDE.md` | regole di lavoro per Claude Code |
-| `tools/` | strumenti di verifica con Node + Chrome: grafica su 13 formati (`screenshot.mjs`), scenari dell'interfaccia (`e2e.mjs`), test nel browser (`test-browser.mjs`) |
+| `tools/` | strumenti di verifica con Node + Chrome: grafica su 13 formati (`screenshot.mjs`), scenari dell'interfaccia (`e2e.mjs`), test nel browser (`test-browser.mjs`), app installabile (`pwa.mjs`, con il server locale `server.mjs`) |
 | `docs/` | convenzione, piano e note di progetto |
