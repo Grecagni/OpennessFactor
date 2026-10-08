@@ -53,6 +53,10 @@
       <section class="stage" data-i18n-attr="aria-label:anteprima" aria-label="Anteprima">
         <div class="preview" id="preview">
           <svg id="pattern" viewBox="0 0 50 50" role="img" aria-label="Anteprima del pattern"></svg>
+          <div class="preview__zoom">
+            <button type="button" class="zoom-btn" id="zoom-meno" data-i18n-attr="aria-label:zoomMeno" aria-label="Riduci"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="zoom-btn" id="zoom-piu" data-i18n-attr="aria-label:zoomPiu" aria-label="Ingrandisci"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M12 6v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
           <div class="preview__scale" aria-hidden="true"><i id="scala"></i><span id="scala-testo">10 mm</span></div>
           <div class="preview__badge" aria-hidden="true"><span data-i18n="campo">campo 50 × 50 mm</span></div>
         </div>

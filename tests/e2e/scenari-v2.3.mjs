@@ -32,6 +32,8 @@ export const LETTURA = `(() => {
     scala: q('#scala-testo').textContent,
     primaLinea: (q('#pattern line.grid-line') || { getAttribute: () => null }).getAttribute('y1'),
     foriInCollisione: qa('#pattern > g > circle.hole--collision').length,
+    croci: qa('#pattern .collision-mark path').length,
+    vista: q('#pattern').getAttribute('viewBox') + ' · ' + q('.preview__badge span').textContent,
     lente: Boolean(q('#pattern svg.lens')),
     griglia: qa('#pattern line.grid-line').length > 0,
     hash: location.hash,
@@ -132,5 +134,9 @@ export default [
       const primo = document.activeElement && document.activeElement.dataset.azione; document.activeElement.click(); await frame();
       return { primaVoce: primo, focus: document.activeElement === b, menuChiuso: q('#menu-altro').hidden }; })()` },
   { nome: 'Vai ai comandi: focus sui comandi, link invariato', hash: 'd=0.6&p=4&r=2&pattern=grid&mode=of', leggi: `(async () => { q('.skip').click(); await frame(); return { hash: location.hash, focus: document.activeElement && document.activeElement.name + '=' + document.activeElement.value }; })()` },
+  { nome: 'zoom: due volte +', azioni: `await clic('#zoom-piu'); await clic('#zoom-piu');` },
+  { nome: 'zoom: + e poi − (campo intero)', azioni: `await clic('#zoom-piu'); await clic('#zoom-meno');` },
+  { nome: 'zoom: doppio clic sull’anteprima (campo intero)', azioni: `await clic('#zoom-piu'); q('#preview').dispatchEvent(new MouseEvent('dblclick', { bubbles: true })); await frame();` },
+  { nome: 'collisione: croci sui fori visibili dopo lo zoom', azioni: `await scrivi('${T('d')}', '0,9'); await scrivi('${T('P')}', '1'); await scrivi('${T('R')}', '0,5'); for (let i = 0; i < 4; i++) await clic('#zoom-piu');` },
   { nome: 'memoria del browser', azioni: `await scrivi('${T('d')}', '0,7');`, leggi: `(() => { let s = null; try { s = JSON.parse(localStorage.getItem('of.v2.stato')); } catch (e) {} return s && s.params ? { d: s.params.d, bloccato: s.bloccato } : null; })()` }
 ];

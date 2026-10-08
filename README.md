@@ -44,5 +44,5 @@ Dalla v2.2 l'app usa questa convenzione. I vecchi link della v1 (campi x, y; nel
 | `test.html`, `tests/` | test del calcolo e dei testi (doppio clic su `test.html`, oppure `node tests/run-node.js`) e scenari registrati |
 | `CHANGELOG.md` | novità di ogni rilascio |
 | `CLAUDE.md` | regole di lavoro per Claude Code |
-| `tools/` | strumenti di verifica con Node + Chrome: grafica su 13 formati (`screenshot.mjs`), scenari dell'interfaccia (`e2e.mjs`), test nel browser (`test-browser.mjs`), app installabile (`pwa.mjs`, con il server locale `server.mjs`) |
+| `tools/` | strumenti di verifica con Node + Chrome: grafica su 13 formati (`screenshot.mjs`), scenari dell'interfaccia (`e2e.mjs`), test nel browser (`test-browser.mjs`), app installabile (`pwa.mjs`, con il server locale `server.mjs`), zoom dell'anteprima (`zoom.mjs`) |
 | `docs/` | convenzione, piano e note di progetto |

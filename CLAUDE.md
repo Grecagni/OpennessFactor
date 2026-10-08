@@ -49,6 +49,7 @@ Repository: github.com/Grecagni/OpennessFactor (pubblico; in futuro da trasferir
 5. Scenari dell'interfaccia: `node --experimental-websocket tools/e2e.mjs tests/e2e/scenari-v2.3.mjs <uscita.json> --confronta tests/e2e/v2.3.json` (scenari e riferimento dell'interfaccia in uso; quelli della v2.0 e della v2.2 restano come storico). Nei passi "invisibili" tutti gli scenari restano identici; se un passo cambia dei valori di proposito, il riferimento si registra di nuovo e il commit elenca le differenze.
 6. Tema scuro: `tools/screenshot.mjs` con `--tema scuro` simula un dispositivo in modalità scura (il predefinito è chiaro, qualunque sia il tema di Windows).
 7. App installabile: `node --experimental-websocket tools/pwa.mjs` (server locale e Chrome; 14 controlli, tutti "ok").
+8. Zoom dell'anteprima: `node --experimental-websocket tools/zoom.mjs` (mouse, rotella e dita simulati da Chrome; tutti "ok").
 
 ## Commit
 - Commit diretti su `main` (niente rami né Pull Request), piccoli, uno per modifica logica, con messaggi in italiano che dicano cosa cambia. **Non** si seguono le regole della guida GitHub di Pellini (`Pellini-S-P-A/guida_github`): decisione di Jack del 07.10.2026.

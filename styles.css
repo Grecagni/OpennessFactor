@@ -146,6 +146,18 @@ a { color: var(--of-link); text-decoration: underline; text-decoration-thickness
 .preview__scale { position: absolute; left: 8px; bottom: 8px; display: flex; flex-direction: column; gap: 3px; padding: 4px 6px; background: color-mix(in srgb, var(--of-film) 88%, transparent); font-size: 12px; font-weight: 600; color: var(--of-dim-text); pointer-events: none; }
 .preview__scale i { display: block; height: 4px; border: 1.5px solid var(--of-dim); border-top: 0; }
 .preview--piccola .preview__badge { display: none; }
+/* zoom (v2.5): con il dito si scorre la pagina finché l'anteprima non è ingrandita */
+.preview { touch-action: pan-y; }
+.preview--zoom { touch-action: none; cursor: grab; }
+.preview--zoom:active { cursor: grabbing; }
+.preview .collision-mark { stroke: var(--of-navy); fill: none; stroke-linecap: round; }
+.preview__zoom { position: absolute; left: 8px; top: 8px; display: flex; gap: 8px; }
+.zoom-btn { position: relative; display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 1px solid rgba(238, 251, 251, 0.35); border-radius: 50%; background: color-mix(in srgb, var(--of-film) 82%, transparent); color: var(--of-dim-text); }
+.zoom-btn::before { content: ""; position: absolute; inset: -4px; }
+.zoom-btn svg { width: 18px; height: 18px; }
+.zoom-btn:disabled { cursor: default; }
+.zoom-btn:disabled svg { opacity: 0.35; }
+.preview--piccola .preview__zoom { display: none; }
 .preview__badge { position: absolute; right: 8px; bottom: 8px; padding: 3px 6px; background: color-mix(in srgb, var(--of-film) 88%, transparent); font-size: 12px; font-weight: 600; color: var(--of-dim-text); pointer-events: none; }
 
 /* ---------- Risultato ---------- */

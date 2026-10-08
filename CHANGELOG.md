@@ -2,6 +2,13 @@
 
 Ogni rilascio ha un tag git (`v2.1`, `v2.2`, …). I numeri dell'OF sono sempre **geometrici** (calcolati), non misurati.
 
+## v2.5 — Anteprima con zoom (08.10.2026)
+- **Zoom dell'anteprima** fino a 10× (5 × 5 mm): pizzico con due dita sul telefono, Ctrl + rotella (o pizzico sul touchpad) sul PC, pulsanti + e − sull'anteprima. Con lo zoom si sposta la vista trascinando; doppio tocco o doppio clic tornano al campo intero. L'etichetta mostra "vista N × N mm"; barra di scala e lente delle quote seguono la vista.
+- Senza zoom il dito sull'anteprima scorre la pagina come prima.
+- **Fori in collisione segnati con una croce**, riconoscibili anche senza colori (fino a 900 fori visibili; con il campo intero e fori molto fitti restano il colore e l'avviso).
+- Gli export (SVG, PNG) contengono sempre il campo intero, qualunque sia lo zoom.
+- Verifica: `tools/zoom.mjs` guida l'anteprima con mouse, rotella e dita simulati da Chrome (clic veri, non eventi finti); scenari dell'interfaccia con zoom e croci.
+
 ## v2.4 — App installabile (08.10.2026)
 - Si installa sulla schermata Home di telefono, tablet e PC e si apre come un'app, a schermo intero, con l'icona "OF":
   - Chrome, Edge e Android: pulsante "Installa" nel foglio Informazioni (o dal menu del browser);

@@ -6,7 +6,7 @@
 
   var OF = window.OFCore;
   var TESTI = window.OFTesti;
-  var VERSIONE = '2.4.0'; // uguale a VERSIONE in sw.js (lo controlla tests/run-node.js)
+  var VERSIONE = '2.5.0'; // uguale a VERSIONE in sw.js (lo controlla tests/run-node.js)
   var CAMPO_MM = 50;
   var INDIRIZZO = 'https://grecagni.github.io/OpennessFactor/';
   var CHIAVE_STATO = 'of.v2.stato';
@@ -74,6 +74,7 @@
     stato.registrato = istantanea();
 
     collegaEventi();
+    collegaZoom();
     applicaTesti();
     disegna();
     firma();
@@ -87,6 +88,9 @@
     dom.preview = id('preview');
     dom.scala = id('scala');
     dom.scalaTesto = id('scala-testo');
+    dom.badge = document.querySelector('.preview__badge span');
+    dom.zoomPiu = id('zoom-piu');
+    dom.zoomMeno = id('zoom-meno');
     dom.campi = {};
     Object.keys(CAMPI).forEach(function (k) {
       dom.campi[k] = {
@@ -702,7 +706,14 @@
     var svg = dom.svg;
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     var lato = dom.svg.getBoundingClientRect().width || 300;
-    var pxmm = lato / CAMPO_MM;
+    // vista: il campo intero o, con lo zoom, una sua parte (viewBox in mm)
+    var vis = rettangoloVista();
+    var pxmm = lato / vis.lato;
+    svg.setAttribute('viewBox', [vis.x, vis.y, vis.lato, vis.lato].map(arrotonda).join(' '));
+    dom.preview.classList.toggle('preview--zoom', vista.z > 1);
+    if (dom.badge) dom.badge.textContent = vista.z > 1.0001 ? stato.testi.t('vistaZoom', { n: stato.testi.n(vis.lato, vis.lato < 10 ? 1 : 0) }) : stato.testi.t('campo');
+    if (dom.zoomPiu) dom.zoomPiu.disabled = vista.z >= ZOOM_MAX - 1e-9;
+    if (dom.zoomMeno) dom.zoomMeno.disabled = vista.z <= 1 + 1e-9;
     var S = OF.sfalsatura(p.P, p.pattern);
     var ponte = OF.ponte(p.d, p.P, p.R, S);
     var fori = OF.disposizioneCampo(p, CAMPO_MM);
@@ -731,11 +742,23 @@
     // anteprime piccole (telefono in orizzontale): niente lente e niente scritta del campo
     var piccola = lato < 260;
     dom.preview.classList.toggle('preview--piccola', piccola);
-    if (stato.vista.quote && !piccola) disegnaLente(svg, lato, pxmm, p, S);
+    // fori in collisione: una croce su quelli visibili (riconoscibili anche senza colori),
+    // se non sono troppi da disegnare; con il campo intero e fori molto fitti basta il colore
+    if (ponte <= 1e-12) {
+      var visibili = fori.filter(function (f) { return f.x >= vis.x && f.x <= vis.x + vis.lato && f.y >= vis.y && f.y <= vis.y + vis.lato; });
+      if (visibili.length <= 900) {
+        var cg = el('g', { class: 'collision-mark', 'stroke-width': arrotonda(1.2 / pxmm) }, svg);
+        var m = Math.max(p.d / 2 * 0.7, 2.5 / pxmm);
+        visibili.forEach(function (f) {
+          el('path', { d: 'M' + arrotonda(f.x - m) + ' ' + arrotonda(f.y - m) + 'L' + arrotonda(f.x + m) + ' ' + arrotonda(f.y + m) + 'M' + arrotonda(f.x + m) + ' ' + arrotonda(f.y - m) + 'L' + arrotonda(f.x - m) + ' ' + arrotonda(f.y + m) }, cg);
+        });
+      }
+    }
+    if (stato.vista.quote && !piccola) disegnaLente(svg, lato, pxmm, p, S, vis);
   }
 
   // Lente in alto a destra: una cella ingrandita con le quote P, R, S e d, in scala.
-  function disegnaLente(svg, lato, pxmm, p, S) {
+  function disegnaLente(svg, lato, pxmm, p, S, vis) {
     var t = stato.testi;
     var P = p.P, R = p.R, d = p.d;
     var LW = Math.min(0.6 * lato, 300);          // larghezza della lente in px
@@ -760,7 +783,7 @@
     var LH = reg.h * k;
     var mmV = 1 / pxmm;                             // mm della vista per 1 px
     var lw = LW * mmV, lh = LH * mmV;
-    var lx = CAMPO_MM - lw - 8 * mmV, ly = 8 * mmV;
+    var lx = vis.x + vis.lato - lw - 8 * mmV, ly = vis.y + 8 * mmV;
     var lente = el('svg', { x: arrotonda(lx), y: arrotonda(ly), width: arrotonda(lw), height: arrotonda(lh), viewBox: [reg.x, reg.y, reg.w, reg.h].map(arrotonda).join(' '), class: 'lens' }, svg);
     var px = function (v) { return arrotonda(v / k); };      // px della lente → mm della regione
     el('rect', { x: arrotonda(reg.x), y: arrotonda(reg.y), width: arrotonda(reg.w), height: arrotonda(reg.h), class: 'lens-bg', 'stroke-width': px(2) }, lente);
@@ -1170,11 +1193,119 @@
     bottone.hidden = modo !== 'pulsante';
   }
 
+  // ------------------------------------------------------------------ zoom dell'anteprima (v2.5)
+  // Vista: zoom da 1 (campo intero di 50 mm) a 10 (5 mm), centro (cx, cy) in mm.
+  // Telefono: pizzico con due dita; con lo zoom, trascinamento con un dito; doppio tocco = campo intero.
+  // PC: Ctrl/⌘ + rotella (o pizzico sul touchpad); con lo zoom, trascinamento con il mouse;
+  // doppio clic = campo intero. Pulsanti + e − sull'anteprima (anche da tastiera).
+  // Gli export (SVG, PNG) contengono sempre il campo intero.
+
+  var ZOOM_MAX = 10;
+  var vista = { z: 1, cx: CAMPO_MM / 2, cy: CAMPO_MM / 2 };
+  var puntatori = new Map();
+  var gesto = null;
+
+  function limitaVista() {
+    vista.z = OF.clamp(vista.z, 1, ZOOM_MAX);
+    // agli estremi valori esatti: dopo + e − lo zoom torna proprio a 1 (non 1,0000000000000002),
+    // così l'anteprima smette di trattenere il dito e la pagina torna a scorrere
+    if (vista.z < 1 + 1e-9) vista.z = 1;
+    if (vista.z > ZOOM_MAX - 1e-9) vista.z = ZOOM_MAX;
+    var meta = CAMPO_MM / 2 / vista.z;
+    vista.cx = OF.clamp(vista.cx, meta, CAMPO_MM - meta);
+    vista.cy = OF.clamp(vista.cy, meta, CAMPO_MM - meta);
+  }
+
+  // rettangolo visibile, in mm
+  function rettangoloVista() {
+    var lato = CAMPO_MM / vista.z;
+    return { x: vista.cx - lato / 2, y: vista.cy - lato / 2, lato: lato };
+  }
+
+  // punto dello schermo (px, relativo all'anteprima) → mm del campo
+  function aMm(px, py) {
+    var r = rettangoloVista();
+    var w = dom.preview.getBoundingClientRect().width || 1;
+    return { x: r.x + (px / w) * r.lato, y: r.y + (py / w) * r.lato };
+  }
+
+  // zoom di un fattore tenendo fermo il punto (px, py) sotto le dita o il puntatore
+  function zoomIntorno(fattore, px, py) {
+    var prima = aMm(px, py);
+    vista.z *= fattore;
+    limitaVista();
+    var dopo = aMm(px, py);
+    vista.cx += prima.x - dopo.x;
+    vista.cy += prima.y - dopo.y;
+    limitaVista();
+    disegnaAnteprima();
+  }
+
+  function vistaIntera() {
+    vista = { z: 1, cx: CAMPO_MM / 2, cy: CAMPO_MM / 2 };
+    disegnaAnteprima();
+  }
+
+  function collegaZoom() {
+    var p = dom.preview;
+    if (!p) return;
+    // i pulsanti + e − hanno i loro clic: i gesti dell'anteprima non li devono intercettare
+    var suiPulsanti = function (e) { return Boolean(e.target && e.target.closest && e.target.closest('.preview__zoom')); };
+    p.addEventListener('wheel', function (e) {
+      if (!(e.ctrlKey || e.metaKey)) return; // la rotella da sola scorre la pagina
+      e.preventDefault();
+      var r = p.getBoundingClientRect();
+      zoomIntorno(Math.exp(-e.deltaY * 0.0025), e.clientX - r.left, e.clientY - r.top);
+    }, { passive: false });
+    p.addEventListener('dblclick', function (e) {
+      if (suiPulsanti(e)) return;
+      e.preventDefault();
+      vistaIntera();
+    });
+    p.addEventListener('pointerdown', function (e) {
+      if (suiPulsanti(e)) return;
+      puntatori.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (puntatori.size === 2 || vista.z > 1) {
+        try { p.setPointerCapture(e.pointerId); } catch (err) { /* puntatore già rilasciato */ }
+      }
+      gesto = null;
+    });
+    p.addEventListener('pointermove', function (e) {
+      if (!puntatori.has(e.pointerId)) return;
+      var r = p.getBoundingClientRect();
+      var prec = puntatori.get(e.pointerId);
+      puntatori.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (puntatori.size === 2) {
+        var lista = Array.from(puntatori.values());
+        var distanza = Math.hypot(lista[0].x - lista[1].x, lista[0].y - lista[1].y);
+        var centro = { x: (lista[0].x + lista[1].x) / 2 - r.left, y: (lista[0].y + lista[1].y) / 2 - r.top };
+        if (gesto && gesto.distanza > 0) zoomIntorno(distanza / gesto.distanza, centro.x, centro.y);
+        gesto = { distanza: distanza };
+        e.preventDefault();
+      } else if (puntatori.size === 1 && vista.z > 1) {
+        var w = r.width || 1;
+        var lato = CAMPO_MM / vista.z;
+        vista.cx -= (e.clientX - prec.x) / w * lato;
+        vista.cy -= (e.clientY - prec.y) / w * lato;
+        limitaVista();
+        disegnaAnteprima();
+        e.preventDefault();
+      }
+    });
+    var fine = function (e) { puntatori.delete(e.pointerId); gesto = null; };
+    p.addEventListener('pointerup', fine);
+    p.addEventListener('pointercancel', fine);
+    var alCentro = function (fattore) { var w = p.getBoundingClientRect().width; zoomIntorno(fattore, w / 2, w / 2); };
+    if (dom.zoomPiu) dom.zoomPiu.addEventListener('click', function () { alCentro(1.6); });
+    if (dom.zoomMeno) dom.zoomMeno.addEventListener('click', function () { alCentro(1 / 1.6); });
+  }
+
   // Accesso di sola lettura per i test automatici (tools/e2e.mjs) e per la console.
   window.OFApp = {
     versione: VERSIONE,
     stato: function () { return JSON.parse(istantanea()); },
-    svg: function () { return svgCad(); }
+    svg: function () { return svgCad(); },
+    vista: function () { return { z: vista.z, cx: vista.cx, cy: vista.cy }; }
   };
 
   function firma() {
