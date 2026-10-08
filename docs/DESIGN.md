@@ -1,8 +1,43 @@
 # Design system "Pellini × Apple" per Openness Factor (OF)
 
-**Data:** 07.10.2026
-**Stato:** PROPOSTA — da approvare con il mockup
-**Per:** Jack. Nell'app non è ancora cambiato nulla. L'aspetto grafico cambia solo dopo la tua approvazione (CLAUDE.md), e prima passa da un mockup.
+**Data:** 07.10.2026, aggiornato l'08.10.2026
+**Stato:** APPROVATO da Jack l'08.10.2026 (approvazione di tutta la roadmap). Mockup: `design/mockup.html`.
+
+---
+
+## Aggiornamento 08.10.2026 — Manuale Brand Identity Pellini
+Jack ha fornito il **Manuale Brand Identity** del Marketing. È la fonte ufficiale: **prevale** sui valori letti dal sito, marcati [sito] nel resto del documento. I token definitivi sono in `design/schermata.css` e, dal rilascio v2.3, in `styles.css`.
+
+| elemento | dal manuale (ufficiale) | sul sito (07.10) | scelta per OF |
+|---|---|---|---|
+| Blu del logotipo | Pantone 7546 C = **#243646** (RGB 36/54/70) | #1b3545 | **#243646** |
+| Beige del pittogramma | Pantone 4525 C = **#c6b784** (RGB 198/183/132) | #bdaf81 | **#c6b784** |
+| Proporzione | blu dominante, beige poco | — | beige solo per filetti, quote e accenti |
+| Palette web secondaria | blu/nero #12232e · azzurro chiaro #007cc7 · azzurro #4da8da · fondo #eefbfb e #dddddd · arancione #ff9e18 · verdi #289672 e #00af9a | in parte | fondo #eefbfb; blu notte #12232e per il tema scuro; azzurro per focus e link |
+| Font dei testi | **IBM Plex Sans** (Regular, Bold, Italic) | — | **IBM Plex Sans** incluso nell'app (licenza libera OFL, file e licenza in `assets/fonts/`) |
+| Font dei titoli | Noah Bold / Noah Heavy | Noah | non incluso (font commerciale): titoli in IBM Plex Sans SemiBold |
+| Logo | regole d'uso: area di rispetto ½ X, nessuna deformazione, solo orizzontale, su fondi scuri versione negativa o tassello bianco | — | **non incluso per ora** (vedi sotto) |
+
+**Contrasti** (calcolati, WCAG):
+- blu #243646: 12,4:1 su bianco, 11,7:1 sul fondo #eefbfb;
+- beige #c6b784: 2,0:1 su bianco, quindi **mai testo su chiaro**; 6,2:1 sul blu, quindi va bene su fondo blu e nelle quote dell'anteprima;
+- azzurro #007cc7: 4,46:1 su bianco, appena sotto 4,5. Per testo e pulsanti si usa la tinta derivata **#0273b8** (5,1:1) [proposta].
+
+Tinte derivate [proposta], tutte ≥ 4,5:1 per il testo e ≥ 3:1 per i bordi:
+- testo secondario #5b6874;
+- testo terziario #66727e;
+- bordo dei campi #879099;
+- errore #b3261e (il manuale non ha un rosso);
+- avviso #8a5300 su #fff1dc;
+- conferma #247f64.
+
+**Variante scelta: A "Pellini editoriale".** Barra blu con filetto beige, angoli vivi, titoletti in maiuscolo spaziato, segmenti a pillola come i filtri del sito, anteprima con film blu e fori chiari. La variante B "Apple chiara" resta nel mockup e si può adottare cambiando 5–6 token.
+
+**Logo.** Non è nel repository: essendo pubblico, inserirlo equivarrebbe a pubblicare il marchio aziendale, e il controllo automatico l'ha bloccato. L'identità dell'app è data dai colori, dal font e dall'icona "OF". Il logo si potrà aggiungere quando Jack lo deciderà: repository privato o nell'organizzazione Pellini, oppure con autorizzazione esplicita.
+
+**Icona "OF"** [proposta]: quadrato blu #243646, "O" ad anello beige (richiama il foro e la parentesi che "protegge" nel marchio), "F" bianca. Non riproduce né modifica il marchio Pellini.
+
+---
 
 **Legenda**
 - **[sito]** = verificato sul sito pellini.net il 07.10.2026. Accanto c'è la fonte: pagina, file o regola CSS.

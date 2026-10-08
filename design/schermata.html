@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="it" data-variant="a">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Openness Factor — prototipo</title>
+  <link rel="stylesheet" href="schermata.css" />
+</head>
+<body>
+  <header class="appbar">
+    <div class="appbar__brand">
+      <svg class="appbar__icon" viewBox="0 0 512 512" aria-hidden="true">
+        <rect width="512" height="512" rx="112" fill="#243646"/>
+        <circle cx="188" cy="256" r="71" fill="none" stroke="#c6b784" stroke-width="34"/>
+        <path fill="#ffffff" d="M304 168h108v34h-74v38h60v34h-60v70h-34z"/>
+      </svg>
+      <span class="appbar__title">Openness Factor</span>
+    </div>
+    <div class="appbar__actions">
+      <div class="lang" role="group" aria-label="Lingua" data-i18n-attr="aria-label:lingua">
+        <button type="button" class="lang__opt" data-lang="it" aria-pressed="true"><span aria-hidden="true">IT</span><span class="visually-hidden" lang="it">Italiano</span></button>
+        <button type="button" class="lang__opt" data-lang="en" aria-pressed="false"><span aria-hidden="true">EN</span><span class="visually-hidden" lang="en">English</span></button>
+      </div>
+      <button type="button" class="icon-btn" aria-label="Informazioni" data-i18n-attr="aria-label:info">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9.2"/><path d="M12 11v6"/><circle cx="12" cy="7.6" r="0.4" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <div class="viewer">
+    <section class="stage" aria-label="Anteprima" data-i18n-attr="aria-label:anteprima">
+      <div class="preview">
+        <svg id="pattern" viewBox="0 0 50 50" role="img" aria-label="Anteprima del pattern, 50 × 50 mm"></svg>
+        <div class="preview__scale" aria-hidden="true"><i id="scaleBar"></i><span>10 mm</span></div>
+        <div class="preview__badge num" data-i18n="campo">50 × 50 mm</div>
+      </div>
+      <div class="result result--strip" aria-live="off">
+        <div>
+          <p class="eyebrow" data-i18n="ofGeo">OF geometrico</p>
+          <p class="result__value" data-of-value>1,57<small>%</small></p>
+        </div>
+        <div class="result__meta">
+          <span><span data-i18n="ponte">Ponte minimo</span> <b class="num" data-n="ponte">3,04 mm</b></span>
+          <span><b class="num" data-n="fori">80.000</b> <span data-i18n="foriM2">fori/m²</span></span>
+        </div>
+      </div>
+    </section>
+      <div class="toolbar">
+        <button type="button" class="tool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3.5"/><path d="M7.5 8 12 3.5 16.5 8"/><path d="M5 12.5V19a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-6.5"/></svg><span data-i18n="esporta">Esporta</span></button>
+        <button type="button" class="tool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="6.5" height="6.5"/><rect x="14" y="3.5" width="6.5" height="6.5"/><rect x="3.5" y="14" width="6.5" height="6.5"/><path d="M14 14h2.5v2.5H14zM18 18h2.5v2.5H18zM18 14h2.5M14 18v2.5"/></svg><span data-i18n="condividi">Condividi</span></button>
+        <button type="button" class="tool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="8" height="14"/><rect x="13" y="5" width="8" height="14"/></svg><span data-i18n="confronta">Confronta</span></button>
+        <button type="button" class="tool"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5.5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18.5" cy="12" r="1.7"/></svg><span data-i18n="altro">Altro</span></button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="result result--card">
+        <p class="eyebrow" data-i18n="ofGeo">OF geometrico</p>
+        <p class="result__value" data-of-value>1,57<small>%</small></p>
+        <dl class="result__grid">
+          <div><dt data-i18n="ponte">Ponte minimo</dt><dd data-n="ponte">3,04 mm</dd></div>
+          <div><dt data-i18n="foriM2">Fori/m²</dt><dd data-n="fori">80.000</dd></div>
+          <div><dt data-i18n="areaForo">Area foro</dt><dd data-n="areaForo">0,196 mm²</dd></div>
+          <div><dt data-i18n="areaCella">Area cella P × R</dt><dd data-n="areaCella">12,50 mm²</dd></div>
+        </dl>
+        <p class="result__note" data-i18n="nota">Calcolato dai valori nominali: non è l'OF misurato.</p>
+      </div>
+
+      <section class="section" aria-labelledby="h-calcola">
+        <h2 class="eyebrow" id="h-calcola" data-i18n="calcola">Calcola</h2>
+        <fieldset class="segmented">
+          <legend class="visually-hidden" data-i18n="calcola">Calcola</legend>
+          <label class="segmented__opt"><input type="radio" name="mode" value="of" checked /><span data-i18n="modoOF">OF</span></label>
+          <label class="segmented__opt"><input type="radio" name="mode" value="step" /><span data-i18n="modoPasso">Passo</span></label>
+          <label class="segmented__opt"><input type="radio" name="mode" value="diameter" /><span data-i18n="modoD">Diametro</span></label>
+        </fieldset>
+      </section>
+
+      <section class="section" aria-labelledby="h-geo">
+        <h2 class="eyebrow" id="h-geo" data-i18n="geometria">Geometria del pattern</h2>
+        <div class="card">
+          <div class="field">
+            <div class="field__head"><label class="field__label" for="d-in" data-i18n="diametro">Diametro del foro</label><span class="field__sym">d</span></div>
+            <div class="field__control">
+              <input type="range" min="0.2" max="0.9" step="0.05" value="0.5" aria-label="Diametro del foro" data-pct />
+              <div class="input-unit"><input id="d-in" inputmode="decimal" value="0,50" /><span>mm</span></div>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field__head"><label class="field__label" for="p-in" data-i18n="passoPunti">Passo tra i punti</label><span class="field__sym">P</span></div>
+            <div class="field__control">
+              <input type="range" min="1" max="10" step="0.1" value="5" aria-label="Passo tra i punti" data-pct />
+              <div class="input-unit"><input id="p-in" inputmode="decimal" value="5,00" /><span>mm</span></div>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field__head"><label class="field__label" for="r-in" data-i18n="passoRighe">Passo tra le righe</label><span class="field__sym">R</span></div>
+            <div class="field__control">
+              <input type="range" min="0.5" max="10" step="0.05" value="2.5" aria-label="Passo tra le righe" data-pct />
+              <div class="input-unit"><input id="r-in" inputmode="decimal" value="2,50" /><span>mm</span></div>
+            </div>
+          </div>
+          <div class="row">
+            <span class="row__label" data-i18n="disposizione">Disposizione</span>
+            <fieldset class="segmented">
+              <legend class="visually-hidden" data-i18n="disposizione">Disposizione</legend>
+              <label class="segmented__opt"><input type="radio" name="pattern" value="grid" /><span data-i18n="griglia">Griglia</span></label>
+              <label class="segmented__opt"><input type="radio" name="pattern" value="staggered" checked /><span data-i18n="sfalsato">Sfalsato</span></label>
+            </fieldset>
+          </div>
+          <div class="row">
+            <span class="row__label"><span data-i18n="sfalsatura">Sfalsatura</span> <span class="field__sym">S</span></span>
+            <span class="row__value num">2,50 mm · P/2</span>
+          </div>
+        </div>
+      </section>
+
+      <p class="message message--warning" id="demo-warning" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3.5 2.8 19.5h18.4z"/><path d="M12 10v4.5"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg>
+        <span data-i18n="avvisoTronca">OF richiesto 12 % non raggiungibile con questi limiti: OF ottenuto 6,28 %.</span>
+      </p>
+
+      <p class="footnote" data-i18n="piede">Openness Factor · OF geometrico = π(d/2)² / (P·R)</p>
+    </div>
+  </main>
+
+  <div class="toast" id="demo-toast" role="status" hidden><span data-i18n="toast">Valori ripristinati</span><button type="button" data-i18n="annulla">Annulla</button></div>
+
+  <script>
+    (function () {
+      var q = new URLSearchParams(location.search);
+      var root = document.documentElement;
+      if (q.get('v')) root.dataset.variant = q.get('v');
+      if (q.get('t') && q.get('t') !== 'auto') root.dataset.theme = q.get('t');
+      if (q.get('stato') === 'avviso') document.getElementById('demo-warning').hidden = false;
+      if (q.get('stato') === 'toast') document.getElementById('demo-toast').hidden = false;
+
+      var TESTI = {
+        it: { lingua: 'Lingua', info: 'Informazioni', anteprima: 'Anteprima', campo: '50 × 50 mm', ofGeo: 'OF geometrico', ponte: 'Ponte minimo', foriM2: 'fori/m²',
+          esporta: 'Esporta', condividi: 'Condividi', confronta: 'Confronta', altro: 'Altro', areaForo: 'Area foro', areaCella: 'Area cella P × R',
+          nota: 'Calcolato dai valori nominali: non è l’OF misurato.', calcola: 'Calcola', modoOF: 'OF', modoPasso: 'Passo', modoD: 'Diametro',
+          geometria: 'Geometria del pattern', diametro: 'Diametro del foro', passoPunti: 'Passo tra i punti', passoRighe: 'Passo tra le righe',
+          disposizione: 'Disposizione', griglia: 'Griglia', sfalsato: 'Sfalsato', sfalsatura: 'Sfalsatura',
+          avvisoTronca: 'OF richiesto 12 % non raggiungibile con questi limiti: OF ottenuto 6,28 %.', piede: 'Openness Factor · OF geometrico = π(d/2)² / (P·R)',
+          toast: 'Valori ripristinati', annulla: 'Annulla' },
+        en: { lingua: 'Language', info: 'About', anteprima: 'Preview', campo: '50 × 50 mm', ofGeo: 'Geometric OF', ponte: 'Minimum bridge', foriM2: 'holes/m²',
+          esporta: 'Export', condividi: 'Share', confronta: 'Compare', altro: 'More', areaForo: 'Hole area', areaCella: 'Cell area P × R',
+          nota: 'Computed from nominal values: not the measured OF.', calcola: 'Compute', modoOF: 'OF', modoPasso: 'Pitch', modoD: 'Diameter',
+          geometria: 'Pattern geometry', diametro: 'Hole diameter', passoPunti: 'Hole pitch', passoRighe: 'Row pitch',
+          disposizione: 'Layout', griglia: 'Grid', sfalsato: 'Staggered', sfalsatura: 'Offset',
+          avvisoTronca: 'Requested OF 12 % cannot be reached within these limits: OF obtained 6.28 %.', piede: 'Openness Factor · geometric OF = π(d/2)² / (P·R)',
+          toast: 'Values restored', annulla: 'Undo' }
+      };
+      var NUMERI = { it: { of: '1,57', ponte: '3,04 mm', fori: '80.000', areaForo: '0,196 mm²', areaCella: '12,50 mm²', d: '0,50', p: '5,00', r: '2,50', s: '2,50 mm · P/2' },
+                     en: { of: '1.57', ponte: '3.04 mm', fori: '80,000', areaForo: '0.196 mm²', areaCella: '12.50 mm²', d: '0.50', p: '5.00', r: '2.50', s: '2.50 mm · P/2' } };
+
+      function lingua(l) {
+        root.lang = l;
+        document.querySelectorAll('[data-i18n]').forEach(function (el) { el.textContent = TESTI[l][el.dataset.i18n]; });
+        document.querySelectorAll('[data-i18n-attr]').forEach(function (el) {
+          var p = el.dataset.i18nAttr.split(':'); el.setAttribute(p[0], TESTI[l][p[1]]);
+        });
+        document.querySelectorAll('.lang__opt').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.lang === l)); });
+        var n = NUMERI[l];
+        document.querySelectorAll('[data-of-value]').forEach(function (el) { el.innerHTML = n.of + '<small>%</small>'; });
+        document.querySelectorAll('[data-n]').forEach(function (el) { el.textContent = n[el.dataset.n]; });
+        document.getElementById('d-in').value = n.d; document.getElementById('p-in').value = n.p; document.getElementById('r-in').value = n.r;
+        document.querySelector('.row__value').textContent = n.s;
+        disegna();
+      }
+      document.querySelectorAll('.lang__opt').forEach(function (b) { b.addEventListener('click', function () { lingua(b.dataset.lang); }); });
+
+      document.querySelectorAll('input[type=range][data-pct]').forEach(function (r) {
+        var f = function () { r.style.setProperty('--pct', ((r.value - r.min) / (r.max - r.min) * 100) + '%'); };
+        r.addEventListener('input', f); f();
+      });
+
+      // Anteprima: pattern 50 × 50 mm e lente con le quote, in scala.
+      var P = 5, R = 2.5, S = 2.5, d = 0.5;
+      var NS = 'http://www.w3.org/2000/svg';
+      function el(name, attrs, parent) { var e = document.createElementNS(NS, name); for (var k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+      function disegna() {
+        var svg = document.getElementById('pattern');
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+        var px = svg.getBoundingClientRect().width || 340;
+        var mm = px / 50; // pixel per mm
+        // fori del pattern (righe alternate 0 / S)
+        var g = el('g', {}, svg);
+        for (var r = 0; 1.25 + r * R <= 50 - d / 2; r++) {
+          var y = 1.25 + r * R;
+          for (var x = 1.25 + (r % 2 ? S : 0); x <= 50 - d / 2; x += P) el('circle', { cx: x, cy: y, r: d / 2, class: 'hole' }, g);
+        }
+        // barra di scala 10 mm
+        document.getElementById('scaleBar').style.width = (10 * mm) + 'px';
+        // lente: riquadro in alto a destra, ingrandimento della cella con le quote
+        var W = 11.2, H = 6.9;                 // area mostrata, mm
+        var LW = Math.min(0.62 * px, 300);     // larghezza della lente, px
+        var k = LW / W;                         // px per mm nella lente
+        var lw = LW / mm, lh = (LW * H / W) / mm, lx = 50 - lw - 1.2, ly = 1.2; // posizione nella vista, mm
+        var lens = el('svg', { x: lx, y: ly, width: lw, height: lh, viewBox: [-1.9, -2.2, W, H].join(' ') }, svg);
+        el('rect', { x: -1.9, y: -2.2, width: W, height: H, fill: 'var(--of-film)', stroke: 'var(--of-dim)', 'stroke-width': 1.2 / k }, lens);
+        var cg = el('g', {}, lens);
+        for (var rr = -1; rr <= 2; rr++) for (var cc = -2; cc <= 3; cc++) {
+          var hx = cc * P + (Math.abs(rr) % 2 ? S : 0), hy = rr * R;
+          if (hx > -1.9 - d && hx < W - 1.9 + d && hy > -2.2 - d && hy < H - 2.2 + d) el('circle', { cx: hx, cy: hy, r: d / 2, class: 'hole' }, cg);
+        }
+        var sw = 1.3 / k, fs = 12 / k, tick = 3 / k;
+        var dim = el('g', { 'stroke-width': sw }, lens);
+        function linea(x1, y1, x2, y2, cls) { el('line', { x1: x1, y1: y1, x2: x2, y2: y2, class: cls || 'dim', 'stroke-width': sw }, dim); }
+        function etichetta(x, y, testo, anchor) {
+          var t = el('text', { x: x, y: y, 'font-size': fs, 'text-anchor': anchor || 'middle', 'dominant-baseline': 'middle', class: 'dim-label' }, dim);
+          t.textContent = testo;
+          t.setAttribute('fill', 'var(--of-dim-text)'); t.setAttribute('font-weight', '600'); t.setAttribute('font-family', 'IBM Plex Sans, system-ui, sans-serif');
+        }
+        var dec = root.lang === 'en' ? '.' : ',';
+        var f2 = function (v) { return v.toFixed(2).replace('.', dec); };
+        // P: tra (0,0) e (P,0), sopra la riga
+        var yP = -1.05;
+        linea(0, -d / 2 - 0.15, 0, yP - tick * 0.6); linea(P, -d / 2 - 0.15, P, yP - tick * 0.6); linea(0, yP, P, yP);
+        etichetta(P / 2, yP - 0.62, 'P ' + f2(P));
+        // R: tra la riga 0 e la riga 1, a destra
+        var xR = P + 1.0;
+        linea(P + d / 2 + 0.15, 0, xR + tick * 0.6, 0);            // dal foro (P, 0) verso destra
+        linea(P + S - d / 2 - 0.15, R, xR - tick * 0.6, R);        // dal foro (P+S, R) verso sinistra
+        linea(xR, 0, xR, R);
+        etichetta(xR + 0.45, R / 2, 'R ' + f2(R), 'start');
+        // S: tra (0,0) e (S,R), sotto la riga 1
+        var yS = R + 0.95;
+        linea(0, d / 2 + 0.15, 0, yS + tick * 0.6); linea(S, R + d / 2 + 0.15, S, yS + tick * 0.6); linea(0, yS, S, yS);
+        etichetta(S / 2, yS + 0.6, 'S ' + f2(S));
+        // d: anello sul foro (P,0) e richiamo
+        el('circle', { cx: P, cy: 0, r: d / 2 + 0.28, class: 'dim-ring', 'stroke-width': sw }, dim);
+        linea(P + 0.5, -0.5, P + 1.5, -1.5);
+        etichetta(P + 1.65, -1.55, 'd ' + f2(d), 'start');
+      }
+      window.addEventListener('resize', disegna);
+      lingua(q.get('l') === 'en' ? 'en' : 'it');
+    })();
+  </script>
+</body>
+</html>

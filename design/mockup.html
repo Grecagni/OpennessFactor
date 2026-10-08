@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Openness Factor — mockup: variante A e B</title>
+  <style>
+    @font-face { font-family: "IBM Plex Sans"; font-weight: 400; src: url("../assets/fonts/IBMPlexSans-Regular-Latin1.woff2") format("woff2"); }
+    @font-face { font-family: "IBM Plex Sans"; font-weight: 600; src: url("../assets/fonts/IBMPlexSans-SemiBold-Latin1.woff2") format("woff2"); }
+    :root { color-scheme: light; --navy: #243646; --beige: #c6b784; --fondo: #eef2f5; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 15px/1.45 "IBM Plex Sans", system-ui, sans-serif; color: var(--navy); background: var(--fondo); }
+    header { position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; padding: 14px 20px; background: var(--navy); color: #fff; border-bottom: 2px solid var(--beige); }
+    header h1 { margin: 0; font-size: 17px; font-weight: 600; flex: 1 1 260px; }
+    header h1 small { display: block; font-weight: 400; font-size: 13px; opacity: .8; }
+    .comandi { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; }
+    .gruppo { display: inline-flex; border: 1px solid rgba(255,255,255,.5); border-radius: 999px; padding: 2px; }
+    .gruppo button { border: 0; background: none; color: #fff; font: inherit; font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 999px; cursor: pointer; min-height: 32px; }
+    .gruppo button[aria-pressed="true"] { background: var(--beige); color: var(--navy); }
+    main { padding: 20px; display: grid; gap: 28px; }
+    .riga { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; justify-content: center; }
+    figure { margin: 0; display: grid; gap: 8px; justify-items: center; }
+    figcaption { font-weight: 600; font-size: 15px; text-align: center; }
+    figcaption span { display: block; font-weight: 400; font-size: 13px; opacity: .75; }
+    .telefono { width: 390px; height: 844px; border: 10px solid #1d2b36; border-radius: 44px; overflow: hidden; background: #000; box-shadow: 0 20px 40px rgba(18,35,46,.25); }
+    .telefono iframe { width: 370px; height: 824px; border: 0; display: block; background: #fff; }
+    .pc { width: 664px; height: 424px; border: 12px solid #1d2b36; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 40px rgba(18,35,46,.25); background: #fff; }
+    .pc iframe { width: 1280px; height: 800px; border: 0; transform: scale(.5); transform-origin: 0 0; display: block; }
+    .note { max-width: 980px; margin: 0 auto; background: #fff; padding: 16px 20px; border-left: 3px solid var(--beige); }
+    .note h2 { margin: 0 0 6px; font-size: 15px; }
+    .note ul { margin: 0; padding-left: 18px; }
+    @media (max-width: 720px) { .telefono { transform: scale(.82); transform-origin: top center; margin-bottom: -150px; } .pc { width: 344px; height: 224px; } .pc iframe { transform: scale(.25); } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Openness Factor — mockup D1<small>Stessa schermata, due varianti. Numeri di esempio (default: d 0,5 · P 5 · R 2,5 · sfalsato).</small></h1>
+    <div class="comandi">
+      <div class="gruppo" role="group" aria-label="Tema"><button data-k="t" data-v="light" aria-pressed="true">Chiaro</button><button data-k="t" data-v="dark" aria-pressed="false">Scuro</button></div>
+      <div class="gruppo" role="group" aria-label="Lingua"><button data-k="l" data-v="it" aria-pressed="true">IT</button><button data-k="l" data-v="en" aria-pressed="false">EN</button></div>
+      <div class="gruppo" role="group" aria-label="Stato"><button data-k="stato" data-v="" aria-pressed="true">Normale</button><button data-k="stato" data-v="avviso" aria-pressed="false">Avviso</button><button data-k="stato" data-v="toast" aria-pressed="false">Conferma</button></div>
+    </div>
+  </header>
+  <main>
+    <div class="note">
+      <h2>Come leggere il mockup</h2>
+      <ul>
+        <li><b>A — Pellini editoriale</b> (consigliata): barra blu con filetto beige, angoli vivi, titoletti in maiuscolo, anteprima con film blu e fori chiari, come la luce che passa.</li>
+        <li><b>B — Apple chiara</b>: barra chiara traslucida, angoli arrotondati, anteprima chiara con fori blu, azzurro del marchio per i comandi.</li>
+        <li>In tutte e due: colori del manuale Pellini, font IBM Plex Sans, risultato "OF geometrico" in grande, lente con le quote P, R, S, d in scala, lingua IT/EN in alto, nessuna onda e nessuna sigla.</li>
+        <li>Il logo Pellini non c'è: per ora non entra nel repository pubblico.</li>
+      </ul>
+    </div>
+    <div class="riga">
+      <figure><div class="telefono"><iframe data-v="a" title="Variante A, telefono"></iframe></div><figcaption>A — Pellini editoriale<span>telefono 390 × 844</span></figcaption></figure>
+      <figure><div class="telefono"><iframe data-v="b" title="Variante B, telefono"></iframe></div><figcaption>B — Apple chiara<span>telefono 390 × 844</span></figcaption></figure>
+    </div>
+    <div class="riga">
+      <figure><div class="pc"><iframe data-v="a" title="Variante A, PC"></iframe></div><figcaption>A — Pellini editoriale<span>PC 1280 × 800</span></figcaption></figure>
+      <figure><div class="pc"><iframe data-v="b" title="Variante B, PC"></iframe></div><figcaption>B — Apple chiara<span>PC 1280 × 800</span></figcaption></figure>
+    </div>
+  </main>
+  <script>
+    (function () {
+      var stato = { t: 'light', l: 'it', stato: '' };
+      function aggiorna() {
+        document.querySelectorAll('iframe').forEach(function (f) {
+          var q = new URLSearchParams({ v: f.dataset.v, t: stato.t, l: stato.l });
+          if (stato.stato) q.set('stato', stato.stato);
+          f.src = 'schermata.html?' + q.toString();
+        });
+        document.querySelectorAll('header button').forEach(function (b) { b.setAttribute('aria-pressed', String(stato[b.dataset.k] === b.dataset.v)); });
+      }
+      document.querySelectorAll('header button').forEach(function (b) {
+        b.addEventListener('click', function () { stato[b.dataset.k] = b.dataset.v; aggiorna(); });
+      });
+      aggiorna();
+    })();
+  </script>
+</body>
+</html>
