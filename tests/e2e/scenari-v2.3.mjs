@@ -136,7 +136,7 @@ export default [
   { nome: 'Passo con P fissato e poi Griglia: il passo resta fissato', azioni: `await clic('${radio('mode', 'step')}'); await scrivi('${T('P')}', '4'); await clic('${radio('pattern', 'grid')}');` },
   { nome: 'OF irraggiungibile con P fissato: motivo “P e R negli intervalli”', azioni: `await clic('${radio('mode', 'step')}'); await scrivi('${T('d')}', '0,2'); await scrivi('${T('ofTarget')}', '12'); await scrivi('${T('P')}', '1');` },
   { nome: 'menu da tastiera: dopo una voce il focus torna al pulsante', leggi: `(async () => { const b = q('[data-menu="menu-altro"]'); b.focus(); b.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 0 })); await frame();
-      const primo = document.activeElement && document.activeElement.dataset.azione; document.activeElement.click(); await frame();
+      const primo = document.activeElement && document.activeElement.dataset.azione; q('[data-azione="quote"]').click(); await frame();
       return { primaVoce: primo, focus: document.activeElement === b, menuChiuso: q('#menu-altro').hidden }; })()` },
   { nome: 'Vai ai comandi: focus sui comandi, link invariato', hash: 'd=0.6&p=4&r=2&pattern=grid&mode=of', leggi: `(async () => { q('.skip').click(); await frame(); return { hash: location.hash, focus: document.activeElement && document.activeElement.name + '=' + document.activeElement.value }; })()` },
   { nome: 'zoom: due volte +', azioni: `await clic('#zoom-piu'); await clic('#zoom-piu');` },
@@ -161,5 +161,16 @@ export default [
     leggi: `(async () => { const pieno = { pulsante: q('#confronto-aggiungi').textContent.trim(), disattivo: q('#confronto-aggiungi').disabled };
       q('[data-variante="1"][data-azione-variante="togli"]').click(); await frame();
       return { pieno, dopo: OFApp.varianti().map((v) => v.params.d), pulsante: q('#confronto-aggiungi').textContent.trim() }; })()` },
+  { nome: 'tabella soluzioni: valori iniziali e ricerca', azioni: `await clic('[data-menu="menu-altro"]'); await clic('[data-azione="soluzioni"]'); q('#soluzioni-form').requestSubmit(); await frame();`,
+    leggi: `(() => { const f = q('#soluzioni-form'); return { aperto: q('#soluzioni').open, of: [f.elements.ofMin.value, f.elements.ofMax.value], d: [f.elements.dMin.value, f.elements.dMax.value, f.elements.dPasso.value],
+      esito: q('#sol-esito').textContent, righe: document.querySelectorAll('#sol-tabella tbody tr').length, prima: [...document.querySelectorAll('#sol-tabella tbody tr:first-child td')].map((c) => c.textContent).slice(0, 8), csv: !q('#sol-csv').disabled }; })()` },
+  { nome: 'tabella soluzioni: usa la prima', azioni: `await clic('[data-menu="menu-altro"]'); await clic('[data-azione="soluzioni"]'); q('#soluzioni-form').requestSubmit(); await frame(); await clic('#sol-tabella button[data-soluzione="0"]');`,
+    leggi: `({ chiuso: !q('#soluzioni').open, d: q('[data-testo="d"]').value, P: q('[data-testo="P"]').value, R: q('[data-testo="R"]').value, modo: q('input[name="mode"]:checked').value, toast: q('#toast-testo').textContent })` },
+  { nome: 'tabella soluzioni: valore sbagliato e nessuna soluzione', azioni: `await clic('[data-menu="menu-altro"]'); await clic('[data-azione="soluzioni"]');`,
+    leggi: `(async () => { const f = q('#soluzioni-form'); f.elements.pPasso.value = '0'; f.requestSubmit(); await frame(); const errore = { esito: q('#sol-esito').textContent, invalido: f.elements.pPasso.getAttribute('aria-invalid') };
+      f.elements.pPasso.value = '0,5'; f.elements.ofMin.value = '90'; f.elements.ofMax.value = '95'; f.requestSubmit(); await frame();
+      return { errore, nessuna: q('#sol-esito').textContent, csv: q('#sol-csv').disabled }; })()` },
+  { nome: 'tabella soluzioni: CSV', azioni: `intercettaDownload(); await clic('[data-menu="menu-altro"]'); await clic('[data-azione="soluzioni"]'); const f = q('#soluzioni-form'); f.elements.ofMin.value = '1,5'; f.elements.ofMax.value = '1,6'; f.requestSubmit(); await frame(); await clic('#sol-csv'); await attendi(200);`,
+    leggi: `(async () => { const testo = await testoDownload(0); const righe = testo.replace(String.fromCharCode(0xfeff), '').trim().split(String.fromCharCode(13, 10)); const byte = new Uint8Array(await window.__download[0].blob.arrayBuffer()); return { file: window.__download[0].nome, bom: byte[0] === 0xef && byte[1] === 0xbb && byte[2] === 0xbf, intestazione: righe[0], prima: righe[1], righe: righe.length - 1 }; })()` },
   { nome: 'memoria del browser', azioni: `await scrivi('${T('d')}', '0,7');`, leggi: `(() => { let s = null; try { s = JSON.parse(localStorage.getItem('of.v2.stato')); } catch (e) {} return s && s.params ? { d: s.params.d, bloccato: s.bloccato } : null; })()` }
 ];

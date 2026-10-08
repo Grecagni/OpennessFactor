@@ -6,7 +6,7 @@
 
   var OF = window.OFCore;
   var TESTI = window.OFTesti;
-  var VERSIONE = '2.8.0'; // uguale a VERSIONE in sw.js (lo controlla tests/run-node.js)
+  var VERSIONE = '2.9.0'; // uguale a VERSIONE in sw.js (lo controlla tests/run-node.js)
   var CAMPO_MM = 50;
   var INDIRIZZO = 'https://grecagni.github.io/OpennessFactor/';
   var CHIAVE_STATO = 'of.v2.stato';
@@ -116,6 +116,7 @@
     dom.info = id('info');
     dom.condivisione = id('condivisione');
     dom.scheda = id('scheda');
+    dom.soluzioni = id('soluzioni');
     dom.toast = id('toast');
     dom.toastTesto = id('toast-testo');
     dom.toastAzione = id('toast-azione');
@@ -340,6 +341,14 @@
     chiudiSuSfondo(dom.info);
     document.getElementById('condividi').addEventListener('click', condividi);
     document.getElementById('confronto-aggiungi').addEventListener('click', aggiungiVariante);
+    document.getElementById('chiudi-soluzioni').addEventListener('click', function () { dom.soluzioni.close(); });
+    chiudiSuSfondo(dom.soluzioni);
+    document.getElementById('soluzioni-form').addEventListener('submit', function (e) { e.preventDefault(); cercaSoluzioni(); });
+    document.getElementById('sol-csv').addEventListener('click', esportaSoluzioniCsv);
+    document.getElementById('sol-tabella').addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('button[data-soluzione]') : null;
+      if (b) usaSoluzione(Number(b.dataset.soluzione));
+    });
     document.getElementById('confronto-tabella').addEventListener('click', function (e) {
       var b = e.target.closest ? e.target.closest('button[data-variante]') : null;
       if (!b) return;
@@ -487,6 +496,7 @@
     if (azione === 'svg') esportaSvg();
     else if (azione === 'png') esportaPng();
     else if (azione === 'scheda') stampaScheda();
+    else if (azione === 'soluzioni') apriSoluzioni();
     else if (azione === 'griglia') { modifica('showGrid', !stato.params.showGrid, true); }
     else if (azione === 'quote') { stato.vista.quote = !stato.vista.quote; scriviMemoria(CHIAVE_VISTA, JSON.stringify(stato.vista)); disegna(); }
     else if (azione === 'annulla') annulla();
@@ -1182,6 +1192,126 @@
       parti.push(png.subarray(fineIhdr));
       return new Blob(parti, { type: 'image/png' });
     });
+  }
+
+  // ------------------------------------------------------------------ tabella soluzioni (v2.9)
+  // Dal menu Altro: combinazioni di d, P, R (e disposizione) con l'OF geometrico nell'intervallo
+  // voluto, calcolate da OF.tabellaSoluzioni. "Usa" porta una soluzione nei campi; "Esporta CSV"
+  // salva tutte quelle trovate (anche oltre le prime mostrate).
+
+  var MAX_RIGHE_SOLUZIONI = 200;
+  var ultimeSoluzioni = null;
+
+  function apriSoluzioni() {
+    var f = document.getElementById('soluzioni-form');
+    var t = stato.testi;
+    if (!f.dataset.pronto) {
+      // valori iniziali: OF attuale ± 0,5 punti e gli intervalli dei campi
+      var of = OF.ofGeometrico(stato.params.d, stato.params.P, stato.params.R).percent;
+      var base = Math.round(of * 10) / 10;
+      var iniziali = { ofMin: Math.max(0, base - 0.5), ofMax: base + 0.5, dMin: INTERVALLI.d.min, dMax: INTERVALLI.d.max, dPasso: 0.05,
+        pMin: INTERVALLI.P.min, pMax: INTERVALLI.P.max, pPasso: 0.5, rMin: INTERVALLI.R.min, rMax: INTERVALLI.R.max, rPasso: 0.5 };
+      Object.keys(iniziali).forEach(function (k) { f.elements[k].value = t.n(iniziali[k], 2); });
+      f.dataset.pronto = '1';
+    }
+    if (typeof dom.soluzioni.showModal === 'function') dom.soluzioni.showModal(); else dom.soluzioni.setAttribute('open', '');
+    dom.soluzioni.focus({ preventScroll: true });
+  }
+
+  // numero scritto in un campo del foglio (virgola o punto); NaN se non è un numero
+  function numeroScritto(testo) {
+    var s = String(testo || '').trim().replace(/\s/g, '').replace(',', '.');
+    return /^[+-]?(\d+\.?\d*|\.\d+)$/.test(s) ? parseFloat(s) : NaN;
+  }
+
+  function cercaSoluzioni() {
+    var f = document.getElementById('soluzioni-form');
+    var t = stato.testi;
+    var esito = document.getElementById('sol-esito');
+    var tabella = document.getElementById('sol-tabella');
+    var csv = document.getElementById('sol-csv');
+    var v = {};
+    var errori = false;
+    ['ofMin', 'ofMax', 'dMin', 'dMax', 'dPasso', 'pMin', 'pMax', 'pPasso', 'rMin', 'rMax', 'rPasso', 'ponteMin'].forEach(function (k) {
+      var campo = f.elements[k];
+      var vuoto = !campo.value.trim();
+      v[k] = vuoto ? NaN : numeroScritto(campo.value);
+      var sbagliato = k === 'ponteMin' ? (!vuoto && !Number.isFinite(v[k])) : (!Number.isFinite(v[k]) || (/Passo$/.test(k) && !(v[k] > 0)) || v[k] < 0);
+      campo.setAttribute('aria-invalid', String(sbagliato));
+      if (sbagliato) errori = true;
+    });
+    tabella.textContent = '';
+    ultimeSoluzioni = null;
+    csv.disabled = true;
+    if (errori) { esito.textContent = t.t('solErrore'); return; }
+    var disp = f.elements.solDisp.value;
+    var risultato = OF.tabellaSoluzioni({
+      of: { min: v.ofMin, max: v.ofMax },
+      d: { min: v.dMin, max: v.dMax, passo: v.dPasso },
+      P: { min: v.pMin, max: v.pMax, passo: v.pPasso },
+      R: { min: v.rMin, max: v.rMax, passo: v.rPasso },
+      disposizioni: disp === 'entrambe' ? ['grid', 'staggered'] : [disp],
+      ponteMin: Number.isFinite(v.ponteMin) ? v.ponteMin : undefined,
+      ordine: f.elements.ordine.value
+    });
+    if (risultato.troppe) { esito.textContent = t.t('solTroppe', { m: t.n(risultato.combinazioni, 0) }); return; }
+    if (!risultato.trovate) { esito.textContent = t.t('solNessuna'); return; }
+    ultimeSoluzioni = risultato.soluzioni;
+    csv.disabled = false;
+    var k = Math.min(MAX_RIGHE_SOLUZIONI, risultato.trovate);
+    esito.textContent = risultato.trovate > k
+      ? t.t('solMostrate', { n: t.n(risultato.trovate, 0), m: t.n(risultato.combinazioni, 0), k: t.n(k, 0) })
+      : t.t('solRisultato', { n: t.n(risultato.trovate, 0), m: t.n(risultato.combinazioni, 0) });
+    var tb = document.createElement('table');
+    var testa = tb.createTHead().insertRow();
+    ['d (mm)', 'P (mm)', 'R (mm)', 'S (mm)', t.t('disposizione'), t.t('ofGeo') + ' (%)', t.t('ponte') + ' (mm)', t.t('foriM2Lungo'), ''].forEach(function (h) {
+      var th = document.createElement('th');
+      th.setAttribute('scope', 'col');
+      th.textContent = h;
+      testa.appendChild(th);
+    });
+    var corpo = tb.createTBody();
+    risultato.soluzioni.slice(0, k).forEach(function (x, i) {
+      var tr = corpo.insertRow();
+      [t.n(x.d, 2), t.n(x.P, 2), t.n(x.R, 2), t.n(x.S, 2), t.t(x.pattern === 'staggered' ? 'sfalsato' : 'griglia'), t.n(x.of, 2), t.n(x.ponte, 2), t.n(x.fori, 0)].forEach(function (c) {
+        tr.insertCell().textContent = c;
+      });
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.dataset.soluzione = String(i);
+      b.textContent = t.t('solUsa');
+      b.setAttribute('aria-label', t.t('solUsaRiga', { d: t.n(x.d, 2), p: t.n(x.P, 2), r: t.n(x.R, 2) }));
+      tr.insertCell().appendChild(b);
+    });
+    tabella.appendChild(tb);
+  }
+
+  function usaSoluzione(i) {
+    var x = ultimeSoluzioni && ultimeSoluzioni[i];
+    if (!x) return;
+    var p = copia(stato.params);
+    p.d = x.d; p.P = x.P; p.R = x.R; p.pattern = x.pattern; p.mode = 'of';
+    stato.erroriCampo = {};
+    stato.passoBloccato = null;
+    stato.params = calcola(p, null);
+    registraCronologia();
+    disegna();
+    dom.soluzioni.close();
+    mostraToast(stato.testi.t('toastSoluzione'), stato.testi.t('annulla'), annulla);
+  }
+
+  // CSV per Excel: in italiano punto e virgola e virgola decimale, in inglese virgola e punto.
+  function esportaSoluzioniCsv() {
+    if (!ultimeSoluzioni) return;
+    var t = stato.testi;
+    var sep = t.decimale === ',' ? ';' : ',';
+    var num = function (v, dec) { return v.toFixed(dec).replace('.', t.decimale); };
+    var righe = [['d (mm)', 'P (mm)', 'R (mm)', 'S (mm)', t.t('disposizione'), t.t('ofGeo') + ' (%)', t.t('ponte') + ' (mm)', t.t('foriM2Lungo')].join(sep)];
+    ultimeSoluzioni.forEach(function (x) {
+      righe.push([num(x.d, 4), num(x.P, 4), num(x.R, 4), num(x.S, 4), t.t(x.pattern === 'staggered' ? 'sfalsato' : 'griglia'), num(x.of, 4), num(x.ponte, 4), String(Math.round(x.fori))].join(sep));
+    });
+    var blob = new Blob(['\ufeff' + righe.join('\r\n') + '\r\n'], { type: 'text/csv;charset=utf-8' });
+    scarica(blob, 'OF-soluzioni.csv', t.t('toastCsv'));
   }
 
   // ------------------------------------------------------------------ confronto varianti (v2.8)

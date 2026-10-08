@@ -294,6 +294,31 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border-radius
 .sheet__formula { font-size: 17px; font-weight: 600; }
 #installa-testo p + p { margin-top: 6px; }
 #installa-testo a { color: var(--of-link); font-weight: 600; overflow-wrap: anywhere; }
+/* tabella soluzioni (v2.9) */
+.sheet--largo { width: min(760px, 100vw); }
+.soluzioni__griglia { display: grid; grid-template-columns: auto repeat(3, minmax(0, 1fr)); gap: 8px 10px; align-items: center; }
+.soluzioni__griglia label { display: flex; align-items: center; gap: 6px; font-size: var(--of-fs-caption); color: var(--of-text-2); }
+.soluzioni__griglia input { width: 100%; min-width: 0; min-height: 40px; padding: 6px 8px; border: 1px solid var(--of-border); border-radius: var(--of-radius-control); background: var(--of-bg); color: var(--of-text); font-variant-numeric: tabular-nums; }
+.soluzioni__nome { font-size: var(--of-fs-callout); font-weight: 600; }
+.soluzioni__largo { grid-column: span 3; flex-wrap: wrap; }
+.soluzioni__largo input { width: 7em; flex: none; }
+.soluzioni__nota { color: var(--of-text-3); }
+.soluzioni__ordine { display: flex; align-items: center; gap: 10px; font-size: var(--of-fs-callout); }
+.soluzioni__ordine select { min-height: 40px; padding: 0 8px; border: 1px solid var(--of-border); border-radius: var(--of-radius-control); background: var(--of-bg); color: var(--of-text); }
+.soluzioni__esito { margin: 0; font-weight: 600; }
+.soluzioni__esito:empty { display: none; }
+.soluzioni__tabella { overflow-x: auto; max-height: 50vh; overflow-y: auto; border: 1px solid var(--of-separator); border-radius: var(--of-radius-control); }
+.soluzioni__tabella:empty { display: none; }
+.soluzioni__tabella table { width: 100%; border-collapse: collapse; font-size: var(--of-fs-caption); font-variant-numeric: tabular-nums; }
+.soluzioni__tabella th, .soluzioni__tabella td { padding: 6px 8px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--of-separator); }
+.soluzioni__tabella thead th { position: sticky; top: 0; background: var(--of-surface); font-weight: 600; color: var(--of-text-2); }
+.soluzioni__tabella td button { min-height: 36px; padding: 0 10px; border: 0; background: none; color: var(--of-link); font-weight: 600; }
+@media (max-width: 599px) {
+  .soluzioni__griglia { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .soluzioni__nome { grid-column: 1 / -1; margin-top: 4px; }
+  .soluzioni__griglia > span:empty { display: none; }
+}
+
 /* foglio Condividi (v2.6): il codice QR resta nero su bianco anche nel tema scuro */
 .qr { width: min(240px, 70vw); margin: 0 auto; padding: 10px; background: #ffffff; border-radius: 8px; }
 .qr svg { display: block; width: 100%; height: auto; }

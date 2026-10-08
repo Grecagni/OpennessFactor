@@ -458,11 +458,45 @@
     t.uguale('lingua iniziale: lingua sconosciuta → italiano', TESTI.linguaIniziale(null, ''), 'it');
   }
 
+  function casiSoluzioni(OF, t) {
+    t.gruppo('v2 · tabella soluzioni');
+    t.uguale('valori di un intervallo: estremi compresi, senza errori (0,2 … 0,9 passo 0,05 → 15 valori)', OF.valoriIntervallo(0.2, 0.9, 0.05).length, 15);
+    t.uguale('… ultimo valore esatto 0,9', OF.valoriIntervallo(0.2, 0.9, 0.05)[14], 0.9);
+    t.uguale('… valori puliti (0,35 e non 0,35000000000000003)', OF.valoriIntervallo(0.2, 0.9, 0.05)[3], 0.35);
+    t.uguale('min > max: si scambiano', OF.valoriIntervallo(3, 1, 1), [1, 2, 3]);
+    t.uguale('passo nullo o non numerico → nessun valore', [OF.valoriIntervallo(1, 2, 0), OF.valoriIntervallo(1, 2, NaN)], [[], []]);
+    var base = { of: { min: 1.5, max: 1.6 }, d: { min: 0.5, max: 0.5, passo: 0.05 }, P: { min: 5, max: 5, passo: 1 }, R: { min: 2.5, max: 2.5, passo: 0.5 }, disposizioni: ['staggered'] };
+    var r = OF.tabellaSoluzioni(base);
+    t.uguale('default (d 0,5, P 5, R 2,5, sfalsato) nell’intervallo 1,5–1,6 %: una soluzione', [r.trovate, r.combinazioni, r.soluzioni[0].P, r.soluzioni[0].R, r.soluzioni[0].S], [1, 1, 5, 2.5, 2.5]);
+    t.vicino('… con OF e ponte giusti', r.soluzioni[0].of + r.soluzioni[0].ponte, OF.ofGeometrico(0.5, 5, 2.5).percent + Math.sqrt(12.5) - 0.5, 1e-12);
+    r = OF.tabellaSoluzioni({ of: { min: 1.6, max: 1.7 }, d: base.d, P: base.P, R: base.R, disposizioni: ['staggered'] });
+    t.uguale('fuori intervallo → nessuna soluzione', r.trovate, 0);
+    var ampio = { of: { min: 2, max: 5 }, d: { min: 0.2, max: 0.9, passo: 0.05 }, P: { min: 1, max: 10, passo: 0.5 }, R: { min: 0.5, max: 10, passo: 0.5 } };
+    r = OF.tabellaSoluzioni(ampio);
+    t.uguale('intervallo 2–5 %: combinazioni contate su entrambe le disposizioni (15 × 19 × 20 × 2)', r.combinazioni, 11400);
+    t.ok('… tutte con OF tra 2 e 5 % e fori che non si toccano', r.trovate > 0 && r.soluzioni.every(function (x) { return x.of >= 2 - 1e-9 && x.of <= 5 + 1e-9 && x.ponte > 0; }));
+    t.ok('… ordinate per vicinanza al centro (3,5 %)', r.soluzioni.every(function (x, i, l) { return i === 0 || Math.abs(l[i - 1].of - 3.5) <= Math.abs(x.of - 3.5) + 1e-12; }));
+    var conPonte = OF.tabellaSoluzioni(Object.assign({}, ampio, { ponteMin: 1 }));
+    t.ok('ponte minimo 1 mm: meno soluzioni, tutte con ponte ≥ 1', conPonte.trovate < r.trovate && conPonte.soluzioni.every(function (x) { return x.ponte >= 1 - 1e-9; }));
+    var perPonte = OF.tabellaSoluzioni(Object.assign({}, ampio, { ordine: 'ponte' }));
+    t.ok('ordine per ponte: dal più largo', perPonte.soluzioni.every(function (x, i, l) { return i === 0 || l[i - 1].ponte >= x.ponte; }));
+    var perFori = OF.tabellaSoluzioni(Object.assign({}, ampio, { ordine: 'fori' }));
+    t.ok('ordine per fori al m²: dal minore', perFori.soluzioni.every(function (x, i, l) { return i === 0 || l[i - 1].fori <= x.fori; }));
+    t.uguale('limite: al massimo 10 soluzioni restituite, ma contate tutte', [OF.tabellaSoluzioni(Object.assign({}, ampio, { limite: 10 })).soluzioni.length, OF.tabellaSoluzioni(Object.assign({}, ampio, { limite: 10 })).trovate], [10, r.trovate]);
+    var tocco = OF.tabellaSoluzioni({ of: { min: 0, max: 100 }, d: { min: 1, max: 1, passo: 1 }, P: { min: 1, max: 1, passo: 1 }, R: { min: 1, max: 1, passo: 1 }, disposizioni: ['grid'] });
+    t.uguale('fori a contatto (ponte 0) esclusi senza ponte minimo', tocco.trovate, 0);
+    var tocco0 = OF.tabellaSoluzioni({ of: { min: 0, max: 100 }, d: { min: 1, max: 1, passo: 1 }, P: { min: 1, max: 1, passo: 1 }, R: { min: 1, max: 1, passo: 1 }, disposizioni: ['grid'], ponteMin: 0 });
+    t.uguale('… ammessi con ponte minimo 0', tocco0.trovate, 1);
+    var troppe = OF.tabellaSoluzioni({ of: { min: 0, max: 12 }, d: { min: 0.2, max: 0.9, passo: 0.001 }, P: { min: 1, max: 10, passo: 0.01 }, R: { min: 0.5, max: 10, passo: 0.01 } });
+    t.ok('troppe combinazioni: nessun calcolo, segnalato', troppe.troppe === true && troppe.soluzioni.length === 0 && troppe.combinazioni > OF.MAX_COMBINAZIONI);
+  }
+
   function tutti(OF, t, TESTI) {
     casiV1(OF, t);
     casiV2(OF, t);
     casiIngombro(OF, t);
     casiCampo(OF, t);
+    casiSoluzioni(OF, t);
     if (TESTI) casiTesti(TESTI, t);
     else t.ok('testi (i18n.js) caricati', false);
   }

@@ -2,6 +2,13 @@
 
 Ogni rilascio ha un tag git (`v2.1`, `v2.2`, …). I numeri dell'OF sono sempre **geometrici** (calcolati), non misurati.
 
+## v2.9 — Tabella soluzioni (08.10.2026)
+- **Tabella soluzioni** (menu Altro): dato un intervallo di OF geometrico e gli intervalli ammessi di d, P e R (da, a, passo), l'app elenca tutte le combinazioni valide, a griglia, sfalsate o entrambe, con OF, ponte minimo e fori al m². È quello che faceva il foglio Excel, ora dentro l'app.
+- Filtro sul ponte minimo (vuoto: basta che i fori non si tocchino). Ordine per vicinanza al centro dell'intervallo di OF, per ponte più largo o per meno fori al m².
+- "Usa" porta la soluzione nei campi (in modalità OF; si può annullare). "Esporta CSV" salva tutte le soluzioni trovate, pronte per Excel (in italiano con il punto e virgola e la virgola decimale).
+- Valori iniziali: OF attuale ± 0,5 punti e gli intervalli dei campi. Fino a 2 milioni di combinazioni; oltre, l'app chiede passi più grandi.
+- Test: 20 casi nuovi sulla ricerca (intervalli, filtri, ordini, limiti).
+
 ## v2.8 — Confronto varianti (08.10.2026)
 - Sezione **Confronto varianti**: "Aggiungi al confronto" fissa la configurazione attuale (fino a 3). La tabella affianca le varianti a quella attuale: OF geometrico, d, P, R, S, disposizione, ponte minimo, interasse minimo, fori al m². I valori diversi da quelli attuali sono evidenziati.
 - Per ogni variante: "Apri" la riporta nei campi (si può annullare con Annulla), "Togli" la elimina. Una configurazione già presente non si aggiunge due volte.

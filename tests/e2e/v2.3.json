@@ -1544,13 +1544,13 @@
  "informazioni": {
   "aperto": true,
   "crediti": "Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico",
-  "versione": "Versione 2.8.0",
+  "versione": "Versione 2.9.0",
   "installa": "L’installazione funziona dall’indirizzo web dell’app, non dal file aperto con doppio clic.grecagni.github.io/OpennessFactor",
   "pulsanteInstalla": false,
   "novita": [
-   "Confronto varianti: fino a 3 configurazioni affiancate a quella attuale, con le differenze evidenziate.",
-   "Scheda PDF con parametri, risultati, disegno in scala 1:1 e codice QR (v2.7).",
-   "Condividi con il codice QR: chi lo inquadra apre la stessa configurazione (v2.6)."
+   "Tabella soluzioni (menu Altro): tutte le combinazioni di d, P e R con l’OF nell’intervallo voluto, ordinate ed esportabili in CSV.",
+   "Confronto varianti: fino a 3 configurazioni affiancate a quella attuale (v2.8).",
+   "Scheda PDF con parametri, risultati, disegno in scala 1:1 e codice QR (v2.7)."
   ]
  },
  "SVG per CAD": {
@@ -3349,7 +3349,7 @@
   "etichetta": "Diametro del foro"
  },
  "menu da tastiera: dopo una voce il focus torna al pulsante": {
-  "primaVoce": "quote",
+  "primaVoce": "soluzioni",
   "focus": true,
   "menuChiuso": true
  },
@@ -3588,7 +3588,7 @@
   ],
   "qr": true,
   "link": "https://grecagni.github.io/OpennessFactor/#d=0.5&p=5&r=2.5&pattern=staggered&mode=of",
-  "piede": "Openness Factor 2.8.0 · Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico"
+  "piede": "Openness Factor 2.9.0 · Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico"
  },
  "scheda PDF con avviso (collisione), in inglese": {
   "titolo": "Openness Factor · Pattern sheet",
@@ -3596,7 +3596,7 @@
    "Holes overlap: the geometric OF is capped at 100 %."
   ],
   "of": "100.00%",
-  "piede": "Openness Factor 2.8.0 · Designed and developed by Giacomo Recagni · Technical Department"
+  "piede": "Openness Factor 2.9.0 · Designed and developed by Giacomo Recagni · Technical Department"
  },
  "confronto: vuoto all’inizio": {
   "vuoto": true,
@@ -3640,6 +3640,54 @@
    0.7
   ],
   "pulsante": "＋ Aggiungi al confronto"
+ },
+ "tabella soluzioni: valori iniziali e ricerca": {
+  "aperto": true,
+  "of": [
+   "1,10",
+   "2,10"
+  ],
+  "d": [
+   "0,20",
+   "0,90",
+   "0,05"
+  ],
+  "esito": "2046 soluzioni su 11.400 combinazioni (mostrate le prime 200)",
+  "righe": 200,
+  "prima": [
+   "0,50",
+   "3,50",
+   "3,50",
+   "0,00",
+   "Griglia",
+   "1,60",
+   "3,00",
+   "81.633"
+  ],
+  "csv": true
+ },
+ "tabella soluzioni: usa la prima": {
+  "chiuso": true,
+  "d": "0,50",
+  "P": "3,50",
+  "R": "3,50",
+  "modo": "of",
+  "toast": "Configurazione applicata (modalità OF)"
+ },
+ "tabella soluzioni: valore sbagliato e nessuna soluzione": {
+  "errore": {
+   "esito": "Controlla i valori evidenziati: servono numeri, con passi maggiori di 0.",
+   "invalido": "true"
+  },
+  "nessuna": "Nessuna combinazione valida: allarga l’intervallo dell’OF o quelli di d, P e R.",
+  "csv": true
+ },
+ "tabella soluzioni: CSV": {
+  "file": "OF-soluzioni.csv",
+  "bom": true,
+  "intestazione": "d (mm);P (mm);R (mm);S (mm);Disposizione;OF geometrico (%);Ponte minimo (mm);Fori al m²",
+  "prima": "0,7500;9,5000;3,0000;4,7500;Sfalsato;1,5501;4,8681;35088",
+  "righe": 214
  },
  "memoria del browser": {
   "d": 0.7,

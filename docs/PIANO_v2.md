@@ -241,6 +241,8 @@ Dopo ogni passo: stop, verifica, approvazione.
 
 **Esito v2.5 (08.10.2026).** Fatti zoom (pizzico, Ctrl + rotella, pulsanti + e −, trascinamento, doppio tocco) e croci sui fori in collisione; quote e barra di scala erano già nella v2.3. Verifica con `tools/zoom.mjs`.
 
+**v2.9 (08.10.2026): tabella soluzioni** — combinazioni di d, P, R con l'OF in un intervallo, filtro sul ponte, ordinamento, CSV (voce 4.1; i valori dell'Excel non sono nel repository).
+
 **v2.8 (08.10.2026): confronto varianti** — fino a 3 configurazioni affiancate a quella attuale, differenze evidenziate (voce 3.4).
 
 **v2.7 (08.10.2026): scheda PDF** — pagina A4 da stampare o salvare in PDF con parametri, risultati, disegno 1:1, QR e firma nel piè di pagina.

@@ -192,6 +192,8 @@
   </div>
 
   <div class="menu" id="menu-altro" role="menu" tabindex="-1" data-i18n-attr="aria-label:altro" aria-label="Altro" hidden>
+    <button type="button" class="menu__item" role="menuitem" data-azione="soluzioni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="1.5"/><path d="M3.5 9.5h17M3.5 14.5h17M9.5 9.5v10"/></svg><span data-i18n="soluzioni">Tabella soluzioni</span></button>
+    <div class="menu__sep" role="separator"></div>
     <button type="button" class="menu__item" role="menuitemcheckbox" aria-checked="true" data-azione="quote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 5v6M20 5v6"/><path d="M8 19h8M8 16v6M16 16v6" transform="translate(0 -3)"/></svg><span data-i18n="mostraQuote">Mostra quote</span></button>
     <button type="button" class="menu__item" role="menuitemcheckbox" aria-checked="false" data-azione="griglia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 9h16M4 15h16M9 4v16M15 4v16"/></svg><span data-i18n="mostraGriglia">Mostra griglia</span></button>
     <div class="menu__sep" role="separator"></div>
@@ -259,6 +261,51 @@
       </div>
       <p class="qr__link" id="qr-link"></p>
     </div>
+  </dialog>
+
+  <dialog class="sheet sheet--largo" id="soluzioni" aria-labelledby="soluzioni-titolo" tabindex="-1">
+    <div class="sheet__bar">
+      <h2 class="sheet__title" id="soluzioni-titolo" data-i18n="soluzioni">Tabella soluzioni</h2>
+      <button type="button" class="sheet__done" id="chiudi-soluzioni" data-i18n="fine">Fine</button>
+    </div>
+    <form class="sheet__body soluzioni" id="soluzioni-form" novalidate>
+      <div class="soluzioni__griglia">
+        <span class="soluzioni__nome" id="sol-of" data-i18n="solOF">OF geometrico (%)</span>
+        <label><span data-i18n="solDa">da</span> <input type="text" inputmode="decimal" name="ofMin" aria-describedby="sol-of" /></label>
+        <label><span data-i18n="solA">a</span> <input type="text" inputmode="decimal" name="ofMax" aria-describedby="sol-of" /></label>
+        <span></span>
+        <span class="soluzioni__nome" id="sol-d">d (mm)</span>
+        <label><span data-i18n="solDa">da</span> <input type="text" inputmode="decimal" name="dMin" aria-describedby="sol-d" /></label>
+        <label><span data-i18n="solA">a</span> <input type="text" inputmode="decimal" name="dMax" aria-describedby="sol-d" /></label>
+        <label><span data-i18n="solPasso">passo</span> <input type="text" inputmode="decimal" name="dPasso" aria-describedby="sol-d" /></label>
+        <span class="soluzioni__nome" id="sol-p">P (mm)</span>
+        <label><span data-i18n="solDa">da</span> <input type="text" inputmode="decimal" name="pMin" aria-describedby="sol-p" /></label>
+        <label><span data-i18n="solA">a</span> <input type="text" inputmode="decimal" name="pMax" aria-describedby="sol-p" /></label>
+        <label><span data-i18n="solPasso">passo</span> <input type="text" inputmode="decimal" name="pPasso" aria-describedby="sol-p" /></label>
+        <span class="soluzioni__nome" id="sol-r">R (mm)</span>
+        <label><span data-i18n="solDa">da</span> <input type="text" inputmode="decimal" name="rMin" aria-describedby="sol-r" /></label>
+        <label><span data-i18n="solA">a</span> <input type="text" inputmode="decimal" name="rMax" aria-describedby="sol-r" /></label>
+        <label><span data-i18n="solPasso">passo</span> <input type="text" inputmode="decimal" name="rPasso" aria-describedby="sol-r" /></label>
+        <span class="soluzioni__nome" id="sol-ponte" data-i18n="solPonte">Ponte minimo (mm)</span>
+        <label class="soluzioni__largo"><input type="text" inputmode="decimal" name="ponteMin" aria-describedby="sol-ponte sol-ponte-nota" /> <span class="soluzioni__nota" id="sol-ponte-nota" data-i18n="solPonteNota">vuoto: basta che i fori non si tocchino</span></label>
+      </div>
+      <fieldset class="segmented">
+        <legend class="visually-hidden" data-i18n="disposizione">Disposizione</legend>
+        <label class="segmented__opt"><input type="radio" name="solDisp" value="grid" /><span data-i18n="griglia">Griglia</span></label>
+        <label class="segmented__opt"><input type="radio" name="solDisp" value="staggered" /><span data-i18n="sfalsato">Sfalsato</span></label>
+        <label class="segmented__opt"><input type="radio" name="solDisp" value="entrambe" checked /><span data-i18n="entrambe">Entrambe</span></label>
+      </fieldset>
+      <label class="soluzioni__ordine"><span data-i18n="solOrdina">Ordina per</span>
+        <select name="ordine">
+          <option value="of" data-i18n="solOrdOF">Vicinanza all’OF</option>
+          <option value="ponte" data-i18n="solOrdPonte">Ponte più largo</option>
+          <option value="fori" data-i18n="solOrdFori">Meno fori al m²</option>
+        </select>
+      </label>
+      <div class="azioni"><button type="submit" class="btn" data-i18n="solCerca">Cerca</button><button type="button" class="btn btn--secondario" id="sol-csv" data-i18n="solCsv" disabled>Esporta CSV</button></div>
+      <p class="soluzioni__esito" id="sol-esito" role="status"></p>
+      <div class="soluzioni__tabella" id="sol-tabella"></div>
+    </form>
   </dialog>
 
   <section class="scheda" id="scheda" aria-hidden="true"></section>

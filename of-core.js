@@ -599,6 +599,65 @@
     return fori;
   }
 
+  // Valori da min a max con un passo, estremi compresi, senza accumulare errori di arrotondamento
+  // (min + i·passo, puliti). Se min > max si scambiano. Passo non positivo → nessun valore.
+  function valoriIntervallo(min, max, passo) {
+    if (!(Number.isFinite(min) && Number.isFinite(max) && Number.isFinite(passo) && passo > 0)) return [];
+    if (min > max) { var t = min; min = max; max = t; }
+    var n = Math.floor((max - min) / passo + 1e-9);
+    var valori = [];
+    for (var i = 0; i <= n; i++) valori.push(pulisci(min + i * passo));
+    return valori;
+  }
+
+  // Tabella soluzioni (v2.9): tutte le combinazioni d, P, R e disposizione con l'OF geometrico
+  // nell'intervallo richiesto e un ponte sufficiente. opzioni = {
+  //   of: { min, max } in %; d, P, R: { min, max, passo } in mm;
+  //   disposizioni: ['grid', 'staggered'] (una o entrambe);
+  //   ponteMin: ponte minimo in mm (se manca: basta che i fori non si tocchino);
+  //   ordine: 'of' (più vicine al centro dell'intervallo), 'ponte' (più largo), 'fori' (meno fori al m²);
+  //   limite: numero massimo di soluzioni restituite }
+  // Restituisce { soluzioni: [{ d, P, R, S, pattern, of, ponte, fori }], trovate, combinazioni, troppe }.
+  var MAX_COMBINAZIONI = 2000000;
+  function tabellaSoluzioni(o) {
+    var dV = valoriIntervallo(o.d.min, o.d.max, o.d.passo);
+    var pV = valoriIntervallo(o.P.min, o.P.max, o.P.passo);
+    var rV = valoriIntervallo(o.R.min, o.R.max, o.R.passo);
+    var disp = (o.disposizioni || []).filter(function (x) { return x === 'grid' || x === 'staggered'; });
+    if (!disp.length) disp = ['grid', 'staggered'];
+    var combinazioni = dV.length * pV.length * rV.length * disp.length;
+    if (combinazioni > MAX_COMBINAZIONI) return { soluzioni: [], trovate: 0, combinazioni: combinazioni, troppe: true };
+    var ofMin = Math.min(o.of.min, o.of.max);
+    var ofMax = Math.max(o.of.min, o.of.max);
+    var centro = (ofMin + ofMax) / 2;
+    var conPonte = Number.isFinite(o.ponteMin);
+    var trovate = [];
+    for (var a = 0; a < dV.length; a++) {
+      for (var b = 0; b < pV.length; b++) {
+        for (var c = 0; c < rV.length; c++) {
+          var d = dV[a], P = pV[b], R = rV[c];
+          var of = ofGeometrico(d, P, R).percent;
+          if (of < ofMin - 1e-9 || of > ofMax + 1e-9) continue;
+          for (var e = 0; e < disp.length; e++) {
+            var S = sfalsatura(P, disp[e]);
+            var ponteValore = distanzaMinima(P, R, S).distanza - d;
+            // senza minimo: i fori non devono toccarsi (stessa soglia dell'avviso di collisione)
+            if (conPonte ? ponteValore < o.ponteMin - 1e-9 : ponteValore <= 1e-12) continue;
+            trovate.push({ d: d, P: P, R: R, S: S, pattern: disp[e], of: of, ponte: ponteValore, fori: foriAlMetroQuadro(P, R) });
+          }
+        }
+      }
+    }
+    var ordini = {
+      ponte: function (x, y) { return y.ponte - x.ponte || Math.abs(x.of - centro) - Math.abs(y.of - centro); },
+      fori: function (x, y) { return x.fori - y.fori || Math.abs(x.of - centro) - Math.abs(y.of - centro); },
+      of: function (x, y) { return Math.abs(x.of - centro) - Math.abs(y.of - centro) || y.ponte - x.ponte; }
+    };
+    trovate.sort(ordini[o.ordine] || ordini.of);
+    var limite = o.limite > 0 ? o.limite : trovate.length;
+    return { soluzioni: trovate.slice(0, limite), trovate: trovate.length, combinazioni: combinazioni, troppe: false };
+  }
+
   return {
     PREVIEW_SIZE_MM: PREVIEW_SIZE_MM,
     clamp: clamp,
@@ -639,6 +698,9 @@
     fuoriObiettivo: fuoriObiettivo,
     daRicalcolare: daRicalcolare,
     ingombroFori: ingombroFori,
-    disposizioneCampo: disposizioneCampo
+    disposizioneCampo: disposizioneCampo,
+    valoriIntervallo: valoriIntervallo,
+    MAX_COMBINAZIONI: MAX_COMBINAZIONI,
+    tabellaSoluzioni: tabellaSoluzioni
   };
 }));
