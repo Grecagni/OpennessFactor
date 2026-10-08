@@ -275,6 +275,15 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border-radius
 .sheet__formula { font-size: 17px; font-weight: 600; }
 #installa-testo p + p { margin-top: 6px; }
 #installa-testo a { color: var(--of-link); font-weight: 600; overflow-wrap: anywhere; }
+/* foglio Condividi (v2.6): il codice QR resta nero su bianco anche nel tema scuro */
+.qr { width: min(240px, 70vw); margin: 0 auto; padding: 10px; background: #ffffff; border-radius: 8px; }
+.qr svg { display: block; width: 100%; height: auto; }
+.qr__riassunto { text-align: center; font-weight: 600; }
+.qr__nota { text-align: center; color: var(--of-text-2); }
+.qr__link { text-align: center; font-size: var(--of-fs-caption); color: var(--of-text-2); overflow-wrap: anywhere; user-select: all; }
+.azioni { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.azioni .btn { margin-top: 0; }
+.sheet .btn--secondario { background: var(--of-fill); color: var(--of-text); }
 .sheet__credits { font-size: var(--of-fs-caption); color: var(--of-text-2); text-align: center; }
 .sheet .btn { display: block; margin-top: 10px; justify-self: start; min-height: 44px; padding: 0 18px; border: 0; border-radius: var(--of-radius-control); background: var(--of-accent); color: var(--of-on-accent); font-weight: 600; }
 @media (max-width: 599px) {

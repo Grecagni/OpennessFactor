@@ -241,6 +241,8 @@ Dopo ogni passo: stop, verifica, approvazione.
 
 **Esito v2.5 (08.10.2026).** Fatti zoom (pizzico, Ctrl + rotella, pulsanti + e −, trascinamento, doppio tocco) e croci sui fori in collisione; quote e barra di scala erano già nella v2.3. Verifica con `tools/zoom.mjs`.
 
+**v2.6 (08.10.2026): condivisione con codice QR** — prima funzione del rilascio v2.6+ (per gli agenti). Foglio "Condividi" con QR del link, copia, condivisione del sistema e immagine PNG.
+
 D1 e v2.1 possono partire subito, in parallelo. I passi 2.8 e 3.5 restano condizionati (2.8 se i test confermano A5; 3.5 dopo la decisione su "cumulativa o alternata").
 
 ---

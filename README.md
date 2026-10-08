@@ -39,7 +39,7 @@ Dalla v2.2 l'app usa questa convenzione. I vecchi link della v1 (campi x, y; nel
 | `i18n.js` | i testi in italiano e in inglese |
 | `manifest.webmanifest`, `sw.js` | app installabile: manifest e service worker (uso senza rete, aggiornamenti) |
 | `of-core.js` | il calcolo: funzioni pure, provate dai test |
-| `assets/` | font IBM Plex Sans (licenza OFL) e icone dell'app |
+| `assets/` | font IBM Plex Sans (licenza OFL), icone dell'app, libreria per i codici QR (`vendor/`, licenza MIT) |
 | `design/` | mockup del nuovo aspetto (D1) |
 | `test.html`, `tests/` | test del calcolo e dei testi (doppio clic su `test.html`, oppure `node tests/run-node.js`) e scenari registrati |
 | `CHANGELOG.md` | novità di ogni rilascio |

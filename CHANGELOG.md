@@ -2,6 +2,12 @@
 
 Ogni rilascio ha un tag git (`v2.1`, `v2.2`, …). I numeri dell'OF sono sempre **geometrici** (calcolati), non misurati.
 
+## v2.6 — Condivisione con codice QR (08.10.2026)
+- "Condividi" apre un foglio con il **codice QR** del link: chi lo inquadra con la fotocamera del telefono apre la stessa configurazione (pensato per mostrarla a un cliente o a un collega).
+- Nel foglio: riassunto dei parametri, il link, e i pulsanti "Copia link", "Condividi…" (condivisione del telefono, dove c'è) e "Salva immagine" (PNG del codice con i parametri, da allegare a un'email o a un'offerta).
+- Il codice resta nero su bianco anche nel tema scuro. Il link contiene sempre l'indirizzo pubblico dell'app, anche se l'app è aperta con il doppio clic.
+- Libreria QR: qrcode-generator 2.0.4 di Kazuhiko Arase (licenza MIT, in `assets/vendor/` con la licenza accanto), inclusa nell'app: funziona anche senza rete.
+
 ## v2.5 — Anteprima con zoom (08.10.2026)
 - **Zoom dell'anteprima** fino a 10× (5 × 5 mm): pizzico con due dita sul telefono, Ctrl + rotella (o pizzico sul touchpad) sul PC, pulsanti + e − sull'anteprima. Con lo zoom si sposta la vista trascinando; doppio tocco o doppio clic tornano al campo intero. L'etichetta mostra "vista N × N mm"; barra di scala e lente delle quote seguono la vista.
 - Senza zoom il dito sull'anteprima scorre la pagina come prima.

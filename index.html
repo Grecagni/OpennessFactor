@@ -233,9 +233,28 @@
     </div>
   </dialog>
 
+  <dialog class="sheet" id="condivisione" aria-labelledby="condivisione-titolo" tabindex="-1">
+    <div class="sheet__bar">
+      <h2 class="sheet__title" id="condivisione-titolo" data-i18n="condividi">Condividi</h2>
+      <button type="button" class="sheet__done" id="chiudi-condivisione" data-i18n="fine">Fine</button>
+    </div>
+    <div class="sheet__body">
+      <div class="qr" id="qr"></div>
+      <p class="qr__riassunto" id="qr-riassunto"></p>
+      <p class="qr__nota" data-i18n="qrNota">Inquadra il codice con la fotocamera del telefono: si apre questa stessa configurazione.</p>
+      <div class="azioni">
+        <button type="button" class="btn" id="copia-link" data-i18n="copiaLink">Copia link</button>
+        <button type="button" class="btn btn--secondario" id="condividi-app" data-i18n="condividiAltro" hidden>Condividi…</button>
+        <button type="button" class="btn btn--secondario" id="salva-qr" data-i18n="salvaQr">Salva immagine</button>
+      </div>
+      <p class="qr__link" id="qr-link"></p>
+    </div>
+  </dialog>
+
   <div class="toast" id="toast" role="status" hidden><span id="toast-testo"></span><button type="button" class="toast__action" id="toast-azione" hidden></button></div>
   <div class="visually-hidden" id="annuncio" aria-live="polite"></div>
 
+  <script src="assets/vendor/qrcode.js" defer></script>
   <script src="i18n.js" defer></script>
   <script src="of-core.js" defer></script>
   <script src="script.js" defer></script>

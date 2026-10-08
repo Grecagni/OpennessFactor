@@ -6,7 +6,7 @@
 
   var OF = window.OFCore;
   var TESTI = window.OFTesti;
-  var VERSIONE = '2.5.0'; // uguale a VERSIONE in sw.js (lo controlla tests/run-node.js)
+  var VERSIONE = '2.6.0'; // uguale a VERSIONE in sw.js (lo controlla tests/run-node.js)
   var CAMPO_MM = 50;
   var INDIRIZZO = 'https://grecagni.github.io/OpennessFactor/';
   var CHIAVE_STATO = 'of.v2.stato';
@@ -110,6 +110,7 @@
     dom.messaggi = id('messaggi');
     dom.lingue = Array.prototype.slice.call(document.querySelectorAll('[data-lang]'));
     dom.info = id('info');
+    dom.condivisione = id('condivisione');
     dom.toast = id('toast');
     dom.toastTesto = id('toast-testo');
     dom.toastAzione = id('toast-azione');
@@ -333,6 +334,16 @@
     document.getElementById('chiudi-info').addEventListener('click', function () { dom.info.close(); });
     chiudiSuSfondo(dom.info);
     document.getElementById('condividi').addEventListener('click', condividi);
+    document.getElementById('chiudi-condivisione').addEventListener('click', function () { dom.condivisione.close(); });
+    chiudiSuSfondo(dom.condivisione);
+    document.getElementById('copia-link').addEventListener('click', function () {
+      copiaTesto(linkCompleto()).then(function () { mostraToast(stato.testi.t('toastLink')); },
+        function () { mostraToast(stato.testi.t('toastLinkErrore')); });
+    });
+    document.getElementById('condividi-app').addEventListener('click', function () {
+      navigator.share({ title: 'Openness Factor', text: riassunto(), url: linkCompleto() }).catch(function () {});
+    });
+    document.getElementById('salva-qr').addEventListener('click', salvaQr);
 
     Object.keys(dom.menu).forEach(function (nome) {
       var m = dom.menu[nome];
@@ -899,15 +910,90 @@
       + t.t('ofGeo') + ' ' + t.n(OF.ofGeometrico(p.d, p.P, p.R).percent, 2) + ' %';
   }
 
+  // Condividi (v2.6): foglio con il codice QR del link, il riassunto dei parametri e i pulsanti
+  // Copia link, Condividi… (condivisione del sistema, dove c'è) e Salva immagine.
   function condividi() {
     var url = linkCompleto();
-    var touch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-    if (navigator.share && touch) {
-      navigator.share({ title: 'Openness Factor', text: riassunto(), url: url }).catch(function () {});
-      return;
+    var t = stato.testi;
+    var contenitore = document.getElementById('qr');
+    contenitore.textContent = '';
+    var svg = svgQr(url);
+    if (svg) {
+      svg.setAttribute('aria-label', t.t('qrDescr'));
+      contenitore.appendChild(svg);
     }
-    copiaTesto(url).then(function () { mostraToast(stato.testi.t('toastLink')); },
-      function () { mostraToast(stato.testi.t('toastLinkErrore')); });
+    document.getElementById('qr-riassunto').textContent = riassunto();
+    document.getElementById('qr-link').textContent = url;
+    document.getElementById('condividi-app').hidden = !navigator.share;
+    if (typeof dom.condivisione.showModal === 'function') dom.condivisione.showModal(); else dom.condivisione.setAttribute('open', '');
+    dom.condivisione.focus({ preventScroll: true });
+  }
+
+  // Moduli del codice QR (libreria qrcode-generator, MIT, assets/vendor/qrcode.js):
+  // correzione d'errore M, versione scelta in base alla lunghezza del link.
+  function moduliQr(testo) {
+    if (typeof window.qrcode !== 'function') return null;
+    var qr = window.qrcode(0, 'M');
+    qr.addData(testo, 'Byte');
+    qr.make();
+    return qr;
+  }
+
+  // Codice QR come SVG: nero su bianco, con il margine di 4 moduli richiesto dallo standard.
+  function svgQr(testo) {
+    var qr = moduliQr(testo);
+    if (!qr) return null;
+    var n = qr.getModuleCount();
+    var q = 4;
+    var d = '';
+    for (var r = 0; r < n; r++) {
+      for (var c = 0; c < n; c++) {
+        if (qr.isDark(r, c)) d += 'M' + (c + q) + ' ' + (r + q) + 'h1v1h-1z';
+      }
+    }
+    var svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 ' + (n + 2 * q) + ' ' + (n + 2 * q));
+    svg.setAttribute('shape-rendering', 'crispEdges');
+    svg.setAttribute('role', 'img');
+    el('rect', { width: n + 2 * q, height: n + 2 * q, fill: '#ffffff' }, svg);
+    el('path', { d: d, fill: '#000000' }, svg);
+    return svg;
+  }
+
+  // Immagine PNG del codice QR con il riassunto dei parametri (da allegare a un'email o a un'offerta).
+  function salvaQr() {
+    var url = linkCompleto();
+    var qr = moduliQr(url);
+    if (!qr) return;
+    var n = qr.getModuleCount();
+    var modulo = Math.max(8, Math.floor(640 / (n + 8)));
+    var latoQr = modulo * (n + 8);
+    var larghezza = Math.max(latoQr, 720);
+    var c = document.createElement('canvas');
+    c.width = larghezza;
+    c.height = latoQr + 150;
+    var g = c.getContext('2d');
+    var font = (getComputedStyle(document.documentElement).getPropertyValue('--of-font') || '').trim() || 'sans-serif';
+    g.fillStyle = '#ffffff';
+    g.fillRect(0, 0, c.width, c.height);
+    g.fillStyle = '#000000';
+    var x0 = Math.round((larghezza - latoQr) / 2) + 4 * modulo;
+    for (var r = 0; r < n; r++) {
+      for (var col = 0; col < n; col++) {
+        if (qr.isDark(r, col)) g.fillRect(x0 + col * modulo, 4 * modulo + r * modulo, modulo, modulo);
+      }
+    }
+    g.fillStyle = '#c6b784';
+    g.fillRect(0, latoQr, larghezza, 4);
+    g.textAlign = 'center';
+    g.fillStyle = '#243646';
+    g.font = '600 26px ' + font;
+    scriviAdattato(g, riassunto(), larghezza / 2, latoQr + 52, larghezza - 48);
+    g.fillStyle = '#5b6874';
+    g.font = '400 18px ' + font;
+    scriviAdattato(g, url, larghezza / 2, latoQr + 92, larghezza - 48);
+    g.fillText('Openness Factor', larghezza / 2, latoQr + 126);
+    c.toBlob(function (blob) { if (blob) scarica(blob, nomeFile('png').replace(/^OF-/, 'OF-QR-'), stato.testi.t('toastQr')); }, 'image/png');
   }
 
   function copiaTesto(testo) {
@@ -1305,7 +1391,8 @@
     versione: VERSIONE,
     stato: function () { return JSON.parse(istantanea()); },
     svg: function () { return svgCad(); },
-    vista: function () { return { z: vista.z, cx: vista.cx, cy: vista.cy }; }
+    vista: function () { return { z: vista.z, cx: vista.cx, cy: vista.cy }; },
+    qr: function (testo) { var q = moduliQr(testo || linkCompleto()); return q ? { moduli: q.getModuleCount(), scuri: function (r, c) { return q.isDark(r, c); } } : null; }
   };
 
   function firma() {

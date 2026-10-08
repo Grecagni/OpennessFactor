@@ -1544,12 +1544,12 @@
  "informazioni": {
   "aperto": true,
   "crediti": "Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico",
-  "versione": "Versione 2.5.0",
+  "versione": "Versione 2.6.0",
   "installa": "L’installazione funziona dall’indirizzo web dell’app, non dal file aperto con doppio clic.grecagni.github.io/OpennessFactor",
   "pulsanteInstalla": false,
   "novita": [
-   "Zoom dell’anteprima: pizzico con due dita, Ctrl + rotella o i pulsanti + e −; doppio tocco o doppio clic per tornare al campo intero.",
-   "Fori in collisione segnati con una croce, riconoscibili anche senza colori.",
+   "Condividi con il codice QR: chi lo inquadra apre la stessa configurazione. Il link si copia o si salva come immagine.",
+   "Zoom dell’anteprima e croci sui fori in collisione (v2.5).",
    "App installabile sulla schermata Home, anche senza rete (v2.4)."
   ]
  },
@@ -1672,6 +1672,21 @@
   "toast": "Link copiato",
   "etichetta": "Diametro del foro",
   "copiato": "https://grecagni.github.io/OpennessFactor/#d=0.5&p=4.16666666667&r=3&pattern=grid&mode=step&t=1.57079632679&lock=R"
+ },
+ "Condividi: foglio con il codice QR": {
+  "aperto": true,
+  "qr": true,
+  "viewBox": "0 0 45 45",
+  "moduli": 37,
+  "etichetta": "Codice QR del link a questa configurazione",
+  "riassunto": "d 0,50 mm · P 5,00 mm · R 2,50 mm · S 2,50 mm · OF geometrico 1,57 %",
+  "link": "https://grecagni.github.io/OpennessFactor/#d=0.5&p=5&r=2.5&pattern=staggered&mode=of",
+  "sistema": true
+ },
+ "Condividi: salva l’immagine del QR": {
+  "file": "OF-QR-d0.50-P5.00-R2.50-S2.50.png",
+  "tipo": "image/png",
+  "byte": true
  },
  "Passo troncato poi griglia (l’avviso resta)": {
   "lingua": "it",
