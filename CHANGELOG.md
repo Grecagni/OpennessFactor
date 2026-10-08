@@ -2,6 +2,12 @@
 
 Ogni rilascio ha un tag git (`v2.1`, `v2.2`, …). I numeri dell'OF sono sempre **geometrici** (calcolati), non misurati.
 
+## v2.11 — Vincoli di processo (08.10.2026)
+- **Vincoli di processo** (menu Altro): diametro minimo e massimo del laser e ponte minimo ammesso. Quando la geometria non li rispetta, l'app lo segnala con un avviso, che compare anche sulla scheda PDF.
+- Nessun valore predefinito: un campo vuoto non si controlla (i valori reali del laser e del film sono da definire con l'Ufficio Tecnico). I valori restano sul dispositivo.
+- Il ponte minimo ammesso diventa il valore iniziale del filtro nella tabella soluzioni.
+- Gli intervalli dei campi (d 0,2–0,9 mm, P 1–10 mm, R 0,5–10 mm) non cambiano.
+
 ## v2.10 — Pannello reale e tempo laser (08.10.2026)
 - Sezione **Pannello reale**: larghezza, altezza e margine non forato (uguale sui quattro lati) di una tenda. L'app calcola i **fori sul pannello** (reticolo centrato, solo fori interamente nell'area forabile) e l'**OF sul pannello**, che conta anche i margini non forati.
 - **Tempo laser** = fori × tempo per foro, se si scrive il tempo per foro (in secondi; non è ancora un dato misurato sulla OT-LAS). Gli spostamenti della macchina non sono compresi.

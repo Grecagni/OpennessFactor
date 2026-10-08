@@ -512,6 +512,20 @@
     t.uguale('tempo laser senza tempo per foro → null', [OF.tempoLaser(1000, NaN), OF.tempoLaser(1000, 0)], [null, null]);
   }
 
+  function casiProcesso(OF, t) {
+    t.gruppo('v2 · vincoli di processo');
+    var def = { d: 0.5, P: 5, R: 2.5, pattern: 'staggered' };
+    t.uguale('nessun vincolo → nessuna violazione', OF.violazioniProcesso(def, {}), []);
+    t.uguale('vincoli rispettati', OF.violazioniProcesso(def, { dMin: 0.3, dMax: 0.8, ponteMin: 1 }), []);
+    t.uguale('d sotto il minimo del laser', OF.violazioniProcesso({ d: 0.2, P: 5, R: 2.5, pattern: 'staggered' }, { dMin: 0.25 }).map(function (x) { return [x.vincolo, x.valore, x.limite]; }), [['dMin', 0.2, 0.25]]);
+    t.uguale('d sopra il massimo del laser', OF.violazioniProcesso({ d: 0.9, P: 5, R: 2.5, pattern: 'staggered' }, { dMax: 0.8 }).map(function (x) { return x.vincolo; }), ['dMax']);
+    var v = OF.violazioniProcesso({ d: 0.6, P: 2, R: 0.5, pattern: 'staggered' }, { ponteMin: 0.5 });
+    t.uguale('ponte 0,40 mm sotto il minimo di 0,50', v.map(function (x) { return x.vincolo; }), ['ponteMin']);
+    t.vicino('… con il valore del ponte', v[0].valore, 0.4, 1e-12);
+    t.uguale('limite uguale al valore: rispettato', OF.violazioniProcesso({ d: 0.25, P: 5, R: 2.5, pattern: 'staggered' }, { dMin: 0.25 }), []);
+    t.uguale('limiti non numerici ignorati', OF.violazioniProcesso({ d: 0.2, P: 5, R: 2.5, pattern: 'staggered' }, { dMin: NaN, dMax: null, ponteMin: undefined }), []);
+  }
+
   function tutti(OF, t, TESTI) {
     casiV1(OF, t);
     casiV2(OF, t);
@@ -519,6 +533,7 @@
     casiCampo(OF, t);
     casiSoluzioni(OF, t);
     casiPannello(OF, t);
+    casiProcesso(OF, t);
     if (TESTI) casiTesti(TESTI, t);
     else t.ok('testi (i18n.js) caricati', false);
   }

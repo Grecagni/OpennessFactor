@@ -305,6 +305,13 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border-radius
 .sheet__formula { font-size: 17px; font-weight: 600; }
 #installa-testo p + p { margin-top: 6px; }
 #installa-testo a { color: var(--of-link); font-weight: 600; overflow-wrap: anywhere; }
+/* vincoli di processo (v2.11) */
+.processo label { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: var(--of-fs-callout); }
+.processo .input-unit { flex: none; width: 9em; }
+.processo .input-unit input { width: 100%; }
+.processo input[aria-invalid="true"] { border-color: var(--of-danger); }
+.processo__nota { color: var(--of-text-2); font-size: var(--of-fs-caption); }
+
 /* tabella soluzioni (v2.9) */
 .sheet--largo { width: min(760px, 100vw); }
 .soluzioni__griglia { display: grid; grid-template-columns: auto repeat(3, minmax(0, 1fr)); gap: 8px 10px; align-items: center; }

@@ -599,6 +599,20 @@
     return fori;
   }
 
+  // Vincoli di processo (v2.11): limiti scritti dall'utente (d minimo e massimo del laser, ponte
+  // minimo); un limite vuoto (non numerico) non si controlla. Restituisce l'elenco delle violazioni:
+  // [{ vincolo: 'dMin' | 'dMax' | 'ponteMin', valore, limite }].
+  function violazioniProcesso(params, vincoli) {
+    var v = vincoli || {};
+    var fuori = [];
+    var S = sfalsatura(params.P, params.pattern);
+    var ponteValore = distanzaMinima(params.P, params.R, S).distanza - params.d;
+    if (Number.isFinite(v.dMin) && params.d < v.dMin - 1e-9) fuori.push({ vincolo: 'dMin', valore: params.d, limite: v.dMin });
+    if (Number.isFinite(v.dMax) && params.d > v.dMax + 1e-9) fuori.push({ vincolo: 'dMax', valore: params.d, limite: v.dMax });
+    if (Number.isFinite(v.ponteMin) && ponteValore < v.ponteMin - 1e-9) fuori.push({ vincolo: 'ponteMin', valore: ponteValore, limite: v.ponteMin });
+    return fuori;
+  }
+
   // Pannello reale (v2.10): fori su un pannello di W × H mm con un margine non forato uguale sui
   // quattro lati. Il reticolo è centrato nell'area forabile, come nell'anteprima (un foro al centro,
   // righe dispari spostate di S); contano solo i fori interamente dentro l'area forabile.
@@ -734,6 +748,7 @@
     ingombroFori: ingombroFori,
     disposizioneCampo: disposizioneCampo,
     valoriIntervallo: valoriIntervallo,
+    violazioniProcesso: violazioniProcesso,
     foriPannello: foriPannello,
     tempoLaser: tempoLaser,
     MAX_COMBINAZIONI: MAX_COMBINAZIONI,

@@ -241,6 +241,8 @@ Dopo ogni passo: stop, verifica, approvazione.
 
 **Esito v2.5 (08.10.2026).** Fatti zoom (pizzico, Ctrl + rotella, pulsanti + e −, trascinamento, doppio tocco) e croci sui fori in collisione; quote e barra di scala erano già nella v2.3. Verifica con `tools/zoom.mjs`.
 
+**v2.11 (08.10.2026): vincoli di processo** — voce 4.5 con limiti scritti dall'utente e soli avvisi; gli intervalli dei campi non cambiano.
+
 **v2.10 (08.10.2026): pannello reale e tempo laser** — voci 4.2 e 4.3 con i valori scritti dall'utente (margine uniforme, tempo per foro). Restano da confermare con Jack: definizione dei margini, tempo per foro misurato; l'export delle coordinate (4.4) aspetta il formato dell'OT-LAS.
 
 **v2.9 (08.10.2026): tabella soluzioni** — combinazioni di d, P, R con l'OF in un intervallo, filtro sul ponte, ordinamento, CSV (voce 4.1; i valori dell'Excel non sono nel repository).

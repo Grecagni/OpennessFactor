@@ -1544,13 +1544,13 @@
  "informazioni": {
   "aperto": true,
   "crediti": "Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico",
-  "versione": "Versione 2.10.0",
+  "versione": "Versione 2.11.0",
   "installa": "L’installazione funziona dall’indirizzo web dell’app, non dal file aperto con doppio clic.grecagni.github.io/OpennessFactor",
   "pulsanteInstalla": false,
   "novita": [
-   "Pannello reale: fori, OF con i margini non forati e tempo laser per una tenda di misura data.",
-   "Tabella soluzioni (menu Altro): combinazioni di d, P e R con l’OF voluto, esportabili in CSV (v2.9).",
-   "Confronto varianti: fino a 3 configurazioni affiancate a quella attuale (v2.8)."
+   "Vincoli di processo (menu Altro): diametro minimo e massimo del laser e ponte minimo, con gli avvisi.",
+   "Pannello reale: fori, OF con i margini non forati e tempo laser (v2.10).",
+   "Tabella soluzioni: combinazioni di d, P e R con l’OF voluto, esportabili in CSV (v2.9)."
   ]
  },
  "SVG per CAD": {
@@ -3588,7 +3588,7 @@
   ],
   "qr": true,
   "link": "https://grecagni.github.io/OpennessFactor/#d=0.5&p=5&r=2.5&pattern=staggered&mode=of",
-  "piede": "Openness Factor 2.10.0 · Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico"
+  "piede": "Openness Factor 2.11.0 · Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico"
  },
  "scheda PDF con avviso (collisione), in inglese": {
   "titolo": "Openness Factor · Pattern sheet",
@@ -3596,7 +3596,7 @@
    "Holes overlap: the geometric OF is capped at 100 %."
   ],
   "of": "100.00%",
-  "piede": "Openness Factor 2.10.0 · Designed and developed by Giacomo Recagni · Technical Department"
+  "piede": "Openness Factor 2.11.0 · Designed and developed by Giacomo Recagni · Technical Department"
  },
  "confronto: vuoto all’inizio": {
   "vuoto": true,
@@ -3728,6 +3728,20 @@
    "1,56 %",
    "scrivi il tempo per foro"
   ]
+ },
+ "vincoli di processo: d e ponte fuori limite": {
+  "messaggi": [
+   "warning: Diametro 0,20 mm sotto il minimo del laser (0,25 mm).",
+   "warning: Ponte minimo 0,51 mm sotto il limite di processo (0,60 mm)."
+  ],
+  "memoria": {
+   "dMin": 0.25,
+   "dMax": null,
+   "ponteMin": 0.6
+  }
+ },
+ "vincoli di processo: filtro iniziale della tabella soluzioni": {
+  "ponteMin": "0,80"
  },
  "memoria del browser": {
   "d": 0.7,

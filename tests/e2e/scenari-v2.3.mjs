@@ -178,5 +178,13 @@ export default [
     leggi: `({ campi: [...document.querySelectorAll('#pannello-campi input')].map((i) => i.name + '=' + i.value), risultati: [...document.querySelectorAll('[data-pannello]')].map((d) => d.textContent), memoria: JSON.parse(localStorage.getItem('of.v2.pannello')) })` },
   { nome: 'pannello: valore sbagliato', azioni: `const i = q('#pannello-campi input[name="W"]'); i.focus(); i.value = 'abc'; i.dispatchEvent(new Event('input', { bubbles: true })); i.dispatchEvent(new Event('change', { bubbles: true }));`,
     leggi: `({ invalido: q('#pannello-campi input[name="W"]').getAttribute('aria-invalid'), risultati: [...document.querySelectorAll('[data-pannello]')].map((d) => d.textContent) })` },
+  { nome: 'vincoli di processo: d e ponte fuori limite', azioni: `await clic('[data-menu="menu-altro"]'); await clic('[data-azione="processo"]');
+    const v = (n, x) => { const i = q('#processo-form input[name="' + n + '"]'); i.value = x; i.dispatchEvent(new Event('input', { bubbles: true })); };
+    v('dMin', '0,25'); v('ponteMin', '0,6'); q('#chiudi-processo').click(); await scrivi('${T('d')}', '0,2'); await scrivi('${T('P')}', '1'); await scrivi('${T('R')}', '0,5');`,
+    leggi: `({ messaggi: [...document.querySelectorAll('#messaggi .message')].map((m) => m.className.replace('message message--', '') + ': ' + m.textContent), memoria: JSON.parse(localStorage.getItem('of.v2.processo')) })` },
+  { nome: 'vincoli di processo: filtro iniziale della tabella soluzioni', azioni: `await clic('[data-menu="menu-altro"]'); await clic('[data-azione="processo"]');
+    const i = q('#processo-form input[name="ponteMin"]'); i.value = '0,8'; i.dispatchEvent(new Event('input', { bubbles: true })); q('#chiudi-processo').click();
+    await clic('[data-menu="menu-altro"]'); await clic('[data-azione="soluzioni"]');`,
+    leggi: `({ ponteMin: q('#soluzioni-form').elements.ponteMin.value })` },
   { nome: 'memoria del browser', azioni: `await scrivi('${T('d')}', '0,7');`, leggi: `(() => { let s = null; try { s = JSON.parse(localStorage.getItem('of.v2.stato')); } catch (e) {} return s && s.params ? { d: s.params.d, bloccato: s.bloccato } : null; })()` }
 ];

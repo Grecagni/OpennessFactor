@@ -6,7 +6,7 @@
 
   var OF = window.OFCore;
   var TESTI = window.OFTesti;
-  var VERSIONE = '2.10.0'; // uguale a VERSIONE in sw.js (lo controlla tests/run-node.js)
+  var VERSIONE = '2.11.0'; // uguale a VERSIONE in sw.js (lo controlla tests/run-node.js)
   var CAMPO_MM = 50;
   var INDIRIZZO = 'https://grecagni.github.io/OpennessFactor/';
   var CHIAVE_STATO = 'of.v2.stato';
@@ -14,6 +14,7 @@
   var CHIAVE_VISTA = 'of.v2.vista';
   var CHIAVE_CONFRONTO = 'of.v2.confronto';
   var CHIAVE_PANNELLO = 'of.v2.pannello';
+  var CHIAVE_PROCESSO = 'of.v2.processo';
   var MAX_VARIANTI = 3;
 
   var INTERVALLI = OF.RANGES;
@@ -78,6 +79,7 @@
     stato.registrato = istantanea();
     stato.varianti = leggiVarianti();
     stato.pannello = leggiPannello();
+    stato.processo = leggiProcesso();
 
     collegaEventi();
     collegaZoom();
@@ -119,6 +121,7 @@
     dom.condivisione = id('condivisione');
     dom.scheda = id('scheda');
     dom.soluzioni = id('soluzioni');
+    dom.processo = id('processo');
     dom.toast = id('toast');
     dom.toastTesto = id('toast-testo');
     dom.toastAzione = id('toast-azione');
@@ -348,6 +351,12 @@
       campo.addEventListener('change', function () { confermaPannello(campo, true); });
     });
     document.getElementById('chiudi-soluzioni').addEventListener('click', function () { dom.soluzioni.close(); });
+    document.getElementById('chiudi-processo').addEventListener('click', function () { dom.processo.close(); });
+    chiudiSuSfondo(dom.processo);
+    document.getElementById('processo-form').addEventListener('submit', function (e) { e.preventDefault(); });
+    Array.prototype.slice.call(document.querySelectorAll('#processo-form input')).forEach(function (campo) {
+      campo.addEventListener('input', function () { confermaProcesso(campo); });
+    });
     chiudiSuSfondo(dom.soluzioni);
     document.getElementById('soluzioni-form').addEventListener('submit', function (e) { e.preventDefault(); cercaSoluzioni(); });
     document.getElementById('sol-csv').addEventListener('click', esportaSoluzioniCsv);
@@ -503,6 +512,7 @@
     else if (azione === 'png') esportaPng();
     else if (azione === 'scheda') stampaScheda();
     else if (azione === 'soluzioni') apriSoluzioni();
+    else if (azione === 'processo') apriProcesso();
     else if (azione === 'griglia') { modifica('showGrid', !stato.params.showGrid, true); }
     else if (azione === 'quote') { stato.vista.quote = !stato.vista.quote; scriviMemoria(CHIAVE_VISTA, JSON.stringify(stato.vista)); disegna(); }
     else if (azione === 'annulla') annulla();
@@ -672,6 +682,13 @@
     var messaggi = [];
     if (of.limitato) messaggi.push({ tipo: 'danger', testo: t.t('avvisoLimitato'), breve: t.t('richiamoCollisione') });
     else if (ponte <= 1e-12) messaggi.push({ tipo: 'danger', testo: t.t('avvisoCollisione', { ponte: valori.ponte }), breve: t.t('richiamoCollisione') });
+    // vincoli di processo scritti dall'utente (v2.11)
+    OF.violazioniProcesso(p, stato.processo).forEach(function (v) {
+      var limite = t.n(v.limite, 2) + ' mm';
+      var testo = v.vincolo === 'ponteMin' ? t.t('avvisoPonteMin', { ponte: valori.ponte, limite: limite })
+        : t.t(v.vincolo === 'dMin' ? 'avvisoDMin' : 'avvisoDMax', { d: t.n(p.d, 2) + ' mm', limite: limite });
+      messaggi.push({ tipo: 'warning', testo: testo, breve: t.t('richiamoProcesso') });
+    });
     // OF obiettivo non raggiunto (Passo o Diametro): ricavato dai valori, con la stessa soglia
     // dei link, quindi resta con "Mostra griglia" e ricompare riaprendo il link.
     if (OF.fuoriObiettivo(p)) {
@@ -1201,6 +1218,38 @@
     });
   }
 
+  // ------------------------------------------------------------------ vincoli di processo (v2.11)
+  // Limiti scritti dall'utente: d minimo e massimo del laser, ponte minimo. Vuoti = non controllati.
+
+  function leggiProcesso() {
+    var v = leggiJSON(CHIAVE_PROCESSO) || {};
+    var p = { dMin: null, dMax: null, ponteMin: null };
+    Object.keys(p).forEach(function (k) { if (typeof v[k] === 'number' && Number.isFinite(v[k]) && v[k] >= 0) p[k] = v[k]; });
+    return p;
+  }
+
+  function apriProcesso() {
+    var t = stato.testi;
+    Array.prototype.slice.call(document.querySelectorAll('#processo-form input')).forEach(function (campo) {
+      var v = stato.processo[campo.name];
+      campo.value = v === null ? '' : String(Number(v.toFixed(3))).replace('.', t.decimale);
+      campo.removeAttribute('aria-invalid');
+    });
+    if (typeof dom.processo.showModal === 'function') dom.processo.showModal(); else dom.processo.setAttribute('open', '');
+    dom.processo.focus({ preventScroll: true });
+  }
+
+  function confermaProcesso(campo) {
+    var testo = campo.value.trim();
+    var valore = testo === '' ? null : numeroScritto(testo);
+    var valido = valore === null || (Number.isFinite(valore) && valore >= 0);
+    campo.setAttribute('aria-invalid', String(!valido));
+    if (!valido) return;
+    stato.processo[campo.name] = valore;
+    scriviMemoria(CHIAVE_PROCESSO, JSON.stringify(stato.processo));
+    disegna();
+  }
+
   // ------------------------------------------------------------------ pannello reale (v2.10)
   // Fori su un pannello di W × H mm con margine non forato, OF sul pannello e tempo laser
   // (fori × tempo per foro scritto dall'utente). I valori restano nella memoria del browser.
@@ -1280,6 +1329,7 @@
       var iniziali = { ofMin: Math.max(0, base - 0.5), ofMax: base + 0.5, dMin: INTERVALLI.d.min, dMax: INTERVALLI.d.max, dPasso: 0.05,
         pMin: INTERVALLI.P.min, pMax: INTERVALLI.P.max, pPasso: 0.5, rMin: INTERVALLI.R.min, rMax: INTERVALLI.R.max, rPasso: 0.5 };
       Object.keys(iniziali).forEach(function (k) { f.elements[k].value = t.n(iniziali[k], 2); });
+      if (Number.isFinite(stato.processo.ponteMin)) f.elements.ponteMin.value = t.n(stato.processo.ponteMin, 2);
       f.dataset.pronto = '1';
     }
     if (typeof dom.soluzioni.showModal === 'function') dom.soluzioni.showModal(); else dom.soluzioni.setAttribute('open', '');
@@ -1860,6 +1910,7 @@
     vista: function () { return { z: vista.z, cx: vista.cx, cy: vista.cy }; },
     varianti: function () { return JSON.parse(JSON.stringify(stato.varianti)); },
     pannello: function () { return copia(stato.pannello); },
+    processo: function () { return copia(stato.processo); },
     qr: function (testo) { var q = moduliQr(testo || linkCompleto()); return q ? { moduli: q.getModuleCount(), scuri: function (r, c) { return q.isDark(r, c); } } : null; }
   };
 

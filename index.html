@@ -211,6 +211,7 @@
 
   <div class="menu" id="menu-altro" role="menu" tabindex="-1" data-i18n-attr="aria-label:altro" aria-label="Altro" hidden>
     <button type="button" class="menu__item" role="menuitem" data-azione="soluzioni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="1.5"/><path d="M3.5 9.5h17M3.5 14.5h17M9.5 9.5v10"/></svg><span data-i18n="soluzioni">Tabella soluzioni</span></button>
+    <button type="button" class="menu__item" role="menuitem" data-azione="processo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><span data-i18n="processo">Vincoli di processo</span></button>
     <div class="menu__sep" role="separator"></div>
     <button type="button" class="menu__item" role="menuitemcheckbox" aria-checked="true" data-azione="quote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 5v6M20 5v6"/><path d="M8 19h8M8 16v6M16 16v6" transform="translate(0 -3)"/></svg><span data-i18n="mostraQuote">Mostra quote</span></button>
     <button type="button" class="menu__item" role="menuitemcheckbox" aria-checked="false" data-azione="griglia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 9h16M4 15h16M9 4v16M15 4v16"/></svg><span data-i18n="mostraGriglia">Mostra griglia</span></button>
@@ -323,6 +324,20 @@
       <div class="azioni"><button type="submit" class="btn" data-i18n="solCerca">Cerca</button><button type="button" class="btn btn--secondario" id="sol-csv" data-i18n="solCsv" disabled>Esporta CSV</button></div>
       <p class="soluzioni__esito" id="sol-esito" role="status"></p>
       <div class="soluzioni__tabella" id="sol-tabella"></div>
+    </form>
+  </dialog>
+
+  <dialog class="sheet" id="processo" aria-labelledby="processo-titolo" tabindex="-1">
+    <div class="sheet__bar">
+      <h2 class="sheet__title" id="processo-titolo" data-i18n="processo">Vincoli di processo</h2>
+      <button type="button" class="sheet__done" id="chiudi-processo" data-i18n="fine">Fine</button>
+    </div>
+    <form class="sheet__body processo" id="processo-form" novalidate>
+      <p data-i18n="processoIntro">Limiti del laser e del film: l’app avvisa quando la geometria non li rispetta. Un campo vuoto non si controlla.</p>
+      <label><span data-i18n="processoDMin">Diametro minimo del laser</span><span class="input-unit"><input type="text" inputmode="decimal" name="dMin" autocomplete="off" placeholder="–" /><span aria-hidden="true">mm</span></span></label>
+      <label><span data-i18n="processoDMax">Diametro massimo del laser</span><span class="input-unit"><input type="text" inputmode="decimal" name="dMax" autocomplete="off" placeholder="–" /><span aria-hidden="true">mm</span></span></label>
+      <label><span data-i18n="processoPonte">Ponte minimo ammesso</span><span class="input-unit"><input type="text" inputmode="decimal" name="ponteMin" autocomplete="off" placeholder="–" /><span aria-hidden="true">mm</span></span></label>
+      <p class="processo__nota" data-i18n="processoNota">I valori restano su questo dispositivo. Il ponte minimo ammesso è anche il valore iniziale del filtro nella tabella soluzioni.</p>
     </form>
   </dialog>
 
