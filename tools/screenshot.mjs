@@ -2,10 +2,11 @@
 // Usa Chrome installato sul PC tramite il DevTools Protocol (tools/cdp.mjs): nessuna dipendenza da installare.
 //
 // Uso (dalla cartella del progetto):
-//   node --experimental-websocket tools/screenshot.mjs [cartella-out] [--confronta cartella-riferimento] [--pagina file.html]
+//   node --experimental-websocket tools/screenshot.mjs [cartella-out] [--confronta cartella-riferimento] [--pagina file.html] [--tema scuro]
 //
 // Per ogni formato salva <formato>.png (vista iniziale) e <formato>-full.png (pagina intera)
 // e stampa una tabella: scorrimento orizzontale, altezza pagina, OF mostrato, confronto.
+// Il tema del "dispositivo" è chiaro (predefinito) o scuro con --tema scuro, qualunque sia quello di Windows.
 // Esito (codice di uscita) 1 se c'è uno scorrimento orizzontale o, con --confronta, una differenza.
 //
 // Confronto: la vista iniziale deve essere identica (al più "quasi identica": ≤ 400 pixel con
@@ -23,7 +24,8 @@ import { confrontaPng } from './png.mjs';
 const here = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
 const opzione = (nome) => { const i = args.indexOf(nome); return i >= 0 ? args[i + 1] : null; };
-const valoriOpzioni = new Set(['--confronta', '--pagina'].map(opzione).filter(Boolean));
+const valoriOpzioni = new Set(['--confronta', '--pagina', '--tema'].map(opzione).filter(Boolean));
+const temaScuro = /^(scuro|dark)$/i.test(opzione('--tema') || '');
 const refDir = opzione('--confronta') ? resolve(opzione('--confronta')) : null;
 const pagina = opzione('--pagina') || 'index.html';
 const outArg = args.find((a) => !a.startsWith('--') && !valoriOpzioni.has(a));
@@ -51,6 +53,7 @@ mkdirSync(outDir, { recursive: true });
 const sha = (file) => createHash('sha256').update(readFileSync(file)).digest('hex');
 const ORDINE = ['identico', 'quasi identico', 'DIVERSO'];
 const chrome = await avviaChrome();
+await chrome.tema(temaScuro ? 'dark' : 'light');
 const rows = [];
 let problemi = 0;
 try {

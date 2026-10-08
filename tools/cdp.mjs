@@ -100,6 +100,12 @@ export async function avviaChrome() {
     await send('Emulation.setTouchEmulationEnabled', { enabled: mobile });
   }
 
+  // Tema chiaro o scuro del "dispositivo" (prefers-color-scheme), indipendente da quello di Windows.
+  async function tema(valore) {
+    await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: valore === 'dark' ? 'dark' : 'light' }] });
+  }
+  await tema('light');
+
   // Carica un indirizzo e aspetta che font e disegno siano stabili. Errore se la pagina non si apre.
   async function carica(url) {
     const caricata = evento('Page.loadEventFired');
@@ -117,5 +123,5 @@ export async function avviaChrome() {
     try { rmSync(profilo, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 }); } catch {}
   }
 
-  return { send, evento, valuta, formato, carica, chiudi };
+  return { send, evento, valuta, formato, tema, carica, chiudi };
 }

@@ -66,6 +66,20 @@ const AIUTI = `
     el.dispatchEvent(new KeyboardEvent('keydown', Object.assign({ key, bubbles: true, cancelable: true }, extra || {}))); await frame();
   };
   const attendi = (ms) => new Promise((r) => setTimeout(r, ms));
+  // Appunti e download finti: registrano cosa l'app copierebbe o scaricherebbe.
+  const intercettaAppunti = () => {
+    window.__copiato = null;
+    const finto = { writeText: (t) => { window.__copiato = String(t); return Promise.resolve(); } };
+    Object.defineProperty(navigator, 'clipboard', { value: finto, configurable: true });
+  };
+  const intercettaDownload = () => {
+    window.__download = [];
+    const crea = URL.createObjectURL.bind(URL);
+    const blobs = new Map();
+    URL.createObjectURL = (b) => { const u = crea(b); blobs.set(u, b); return u; };
+    HTMLAnchorElement.prototype.click = function () { window.__download.push({ nome: this.download, blob: blobs.get(this.href) || null }); };
+  };
+  const testoDownload = async (i) => { const d = (window.__download || [])[i || 0]; return d && d.blob ? d.blob.text() : null; };
   const impronta = (s) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(16) + ':' + s.length; };
 `;
 
@@ -74,10 +88,12 @@ const risultati = {};
 try {
   await chrome.formato(1440, 900, false);
   for (const s of scenari) {
+    // Ogni scenario parte da zero: la memoria del browser (localStorage) si svuota prima che
+    // l'app parta, con uno script eseguito all'apertura della pagina e poi tolto.
     await chrome.carica('about:blank');
-    await chrome.valuta('try { localStorage.clear(); } catch (e) {}');
+    const { identifier } = await chrome.send('Page.addScriptToEvaluateOnNewDocument', { source: 'try { localStorage.clear(); } catch (e) {}' });
     await chrome.carica(base + (s.hash ? '#' + s.hash : ''));
-    await chrome.valuta('try { localStorage.clear(); } catch (e) {}');
+    await chrome.send('Page.removeScriptToEvaluateOnNewDocument', { identifier });
     const valore = await chrome.valuta(`(async () => { ${AIUTI}
       ${s.azioni || ''}
       await frame();
