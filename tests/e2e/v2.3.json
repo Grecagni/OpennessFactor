@@ -1,0 +1,2102 @@
+{
+ "default": {
+  "lingua": "it",
+  "of": "1,57%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "3,04 mm",
+  "fori": "80.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=5&r=2.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "d 0,6 scritto con la virgola": {
+  "lingua": "it",
+  "of": "2,26%",
+  "d": {
+   "v": "0,60",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "2,94 mm",
+  "fori": "80.000",
+  "areaForo": "0,283 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.6&p=5&r=2.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "d 0.6 con il cursore": {
+  "lingua": "it",
+  "of": "2,26%",
+  "d": {
+   "v": "0,60",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "2,94 mm",
+  "fori": "80.000",
+  "areaForo": "0,283 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.6&p=5&r=2.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "griglia (OF invariato)": {
+  "lingua": "it",
+  "of": "1,57%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "grid",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "0,00 mm · 0",
+  "messaggi": [],
+  "ponte": "2,00 mm",
+  "fori": "80.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "2,50 mm",
+  "foriCampo": "171",
+  "foriDisegnati": 171,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=5&r=2.5&pattern=grid&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "P 3 e R 1 scritti": {
+  "lingua": "it",
+  "of": "6,54%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "3,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "1,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "1,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "1,30 mm",
+  "fori": "333.333",
+  "areaForo": "0,196 mm²",
+  "areaCella": "3,00 mm²",
+  "interasse": "1,80 mm",
+  "foriCampo": "809",
+  "foriDisegnati": 809,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=3&r=1&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "collisione vera d 0,9 P 1 R 0,5": {
+  "lingua": "it",
+  "of": "100,00%",
+  "d": {
+   "v": "0,90",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "1,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "0,50 mm · P/2",
+  "messaggi": [
+   "danger: I fori si sovrappongono: l’OF geometrico è limitato al 100 %."
+  ],
+  "ponte": "-0,19 mm",
+  "fori": "2.000.000",
+  "areaForo": "0,636 mm²",
+  "areaCella": "0,50 mm²",
+  "interasse": "0,71 mm",
+  "foriCampo": "4901",
+  "foriDisegnati": 4901,
+  "foriInCollisione": 4901,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.9&p=1&r=0.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "ex falso allarme d 0,6 P 2 R 0,5": {
+  "lingua": "it",
+  "of": "28,27%",
+  "d": {
+   "v": "0,60",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "2,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "1,00 mm · P/2",
+  "messaggi": [],
+  "ponte": "0,40 mm",
+  "fori": "1.000.000",
+  "areaForo": "0,283 mm²",
+  "areaCella": "1,00 mm²",
+  "interasse": "1,00 mm",
+  "foriCampo": "2425",
+  "foriDisegnati": 2425,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.6&p=2&r=0.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "modo Passo": {
+  "lingua": "it",
+  "of": "1,57%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "1,57",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "staggered",
+  "aiuto": "Imposta d e l’OF obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "3,04 mm",
+  "fori": "80.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=5&r=2.5&pattern=staggered&mode=step&t=1.57079632679",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "Passo con OF 3": {
+  "lingua": "it",
+  "of": "3,00%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "3,62",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "1,81",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "3,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "staggered",
+  "aiuto": "Imposta d e l’OF obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
+  "S": "1,81 mm · P/2",
+  "messaggi": [],
+  "ponte": "2,06 mm",
+  "fori": "152.789",
+  "areaForo": "0,196 mm²",
+  "areaCella": "6,54 mm²",
+  "interasse": "2,56 mm",
+  "foriCampo": "365",
+  "foriDisegnati": 365,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=3.61800627279&r=1.8090031364&pattern=staggered&mode=step&t=3",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "Passo con P fissato a 4": {
+  "lingua": "it",
+  "of": "1,57%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "4,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "3,13",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "1,57",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "staggered",
+  "aiuto": "Passo P fissato: l’app ricava l’altro passo. Cambia d o l’OF obiettivo per tornare al calcolo automatico.",
+  "S": "2,00 mm · P/2",
+  "messaggi": [],
+  "ponte": "3,21 mm",
+  "fori": "80.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,71 mm",
+  "foriCampo": "187",
+  "foriDisegnati": 187,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=4&r=3.125&pattern=staggered&mode=step&t=1.57079632679&lock=P",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "Passo troncato: d 0,2 e OF 12": {
+  "lingua": "it",
+  "of": "6,28%",
+  "d": {
+   "v": "0,20",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "1,00",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "12,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "staggered",
+  "aiuto": "Imposta d e l’OF obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
+  "S": "0,50 mm · P/2",
+  "messaggi": [
+   "warning: OF richiesto 12,00 % non raggiungibile con P e R negli intervalli: OF ottenuto 6,28 %."
+  ],
+  "ponte": "0,51 mm",
+  "fori": "2.000.000",
+  "areaForo": "0,031 mm²",
+  "areaCella": "0,50 mm²",
+  "interasse": "0,71 mm",
+  "foriCampo": "4901",
+  "foriDisegnati": 4901,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.2&p=1&r=0.5&pattern=staggered&mode=step&t=12",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "modo Diametro": {
+  "lingua": "it",
+  "of": "1,57%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": true,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "1,57",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "diameter",
+  "pattern": "staggered",
+  "aiuto": "Imposta l’OF obiettivo, P e R: l’app calcola d.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "3,04 mm",
+  "fori": "80.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=5&r=2.5&pattern=staggered&mode=diameter&t=1.57079632679",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "Diametro troncato con OF 8": {
+  "lingua": "it",
+  "of": "5,09%",
+  "d": {
+   "v": "0,90",
+   "solaLettura": true,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "8,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "diameter",
+  "pattern": "staggered",
+  "aiuto": "Imposta l’OF obiettivo, P e R: l’app calcola d.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [
+   "warning: OF richiesto 8,00 % non raggiungibile con d tra 0,20 e 0,90 mm: OF ottenuto 5,09 %."
+  ],
+  "ponte": "2,64 mm",
+  "fori": "80.000",
+  "areaForo": "0,636 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.9&p=5&r=2.5&pattern=staggered&mode=diameter&t=8",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "testo non numerico in d": {
+  "lingua": "it",
+  "of": "1,57%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "Scrivi un numero, per esempio 0,50.",
+   "invalido": true
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "3,04 mm",
+  "fori": "80.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=5&r=2.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "P fuori intervallo (15)": {
+  "lingua": "it",
+  "of": "0,79%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "10,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "Valore fuori intervallo (1,00–10,00 mm): usato 10,00 mm.",
+   "invalido": true
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "5,00 mm · P/2",
+  "messaggi": [],
+  "ponte": "4,50 mm",
+  "fori": "40.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "25,00 mm²",
+  "interasse": "5,00 mm",
+  "foriCampo": "85",
+  "foriDisegnati": 85,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=10&r=2.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "freccia su in d (+0,01)": {
+  "lingua": "it",
+  "of": "1,63%",
+  "d": {
+   "v": "0,51",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "3,03 mm",
+  "fori": "80.000",
+  "areaForo": "0,204 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.51&p=5&r=2.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "Maiusc + freccia giù in P (−0,5)": {
+  "lingua": "it",
+  "of": "1,75%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "4,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,25 mm · P/2",
+  "messaggi": [],
+  "ponte": "2,86 mm",
+  "fori": "88.889",
+  "areaForo": "0,196 mm²",
+  "areaCella": "11,25 mm²",
+  "interasse": "3,36 mm",
+  "foriCampo": "219",
+  "foriDisegnati": 219,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=4.5&r=2.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "lingua inglese": {
+  "lingua": "en",
+  "of": "1.57%",
+  "d": {
+   "v": "0.50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5.00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2.50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Set d, P and R: the app computes the geometric OF.",
+  "S": "2.50 mm · P/2",
+  "messaggi": [],
+  "ponte": "3.04 mm",
+  "fori": "80,000",
+  "areaForo": "0.196 mm²",
+  "areaCella": "12.50 mm²",
+  "interasse": "3.54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=5&r=2.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Hole diameter"
+ },
+ "inglese con d 0.6": {
+  "lingua": "en",
+  "of": "2.26%",
+  "d": {
+   "v": "0.60",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5.00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2.50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Set d, P and R: the app computes the geometric OF.",
+  "S": "2.50 mm · P/2",
+  "messaggi": [],
+  "ponte": "2.94 mm",
+  "fori": "80,000",
+  "areaForo": "0.283 mm²",
+  "areaCella": "12.50 mm²",
+  "interasse": "3.54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.6&p=5&r=2.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Hole diameter"
+ },
+ "annulla dopo una modifica": {
+  "lingua": "it",
+  "of": "1,57%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "3,04 mm",
+  "fori": "80.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=5&r=2.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "annulla e ripeti": {
+  "lingua": "it",
+  "of": "2,26%",
+  "d": {
+   "v": "0,60",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "2,94 mm",
+  "fori": "80.000",
+  "areaForo": "0,283 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.6&p=5&r=2.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "ripristino dal menu Altro": {
+  "lingua": "it",
+  "of": "1,57%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "3,04 mm",
+  "fori": "80.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=5&r=2.5&pattern=staggered&mode=of",
+  "toast": "Valori ripristinati [Annulla]",
+  "etichetta": "Diametro del foro"
+ },
+ "ripristino e poi Annulla nel messaggio": {
+  "lingua": "it",
+  "of": "3,08%",
+  "d": {
+   "v": "0,70",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "2,84 mm",
+  "fori": "80.000",
+  "areaForo": "0,385 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.7&p=5&r=2.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "mostra griglia dal menu": {
+  "lingua": "it",
+  "of": "1,57%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "3,04 mm",
+  "fori": "80.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": true,
+  "hash": "#d=0.5&p=5&r=2.5&pattern=staggered&mode=of&grid=1",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "quote nascoste dal menu": {
+  "lingua": "it",
+  "of": "1,57%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "3,04 mm",
+  "fori": "80.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": false,
+  "griglia": false,
+  "hash": "#d=0.5&p=5&r=2.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "vecchio link v1": {
+  "lingua": "it",
+  "of": "2,36%",
+  "d": {
+   "v": "0,60",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "4,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "3,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "grid",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "0,00 mm · 0",
+  "messaggi": [],
+  "ponte": "2,40 mm",
+  "fori": "83.333",
+  "areaForo": "0,283 mm²",
+  "areaCella": "12,00 mm²",
+  "interasse": "3,00 mm",
+  "foriCampo": "221",
+  "foriDisegnati": 221,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": true,
+  "hash": "#d=0.6&p=4&r=3&pattern=grid&mode=of&grid=1",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "link v2 con P fissato": {
+  "lingua": "it",
+  "of": "1,57%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "4,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "3,13",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "1,57",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "staggered",
+  "aiuto": "Passo P fissato: l’app ricava l’altro passo. Cambia d o l’OF obiettivo per tornare al calcolo automatico.",
+  "S": "2,00 mm · P/2",
+  "messaggi": [],
+  "ponte": "3,21 mm",
+  "fori": "80.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,71 mm",
+  "foriCampo": "187",
+  "foriDisegnati": 187,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=4&r=3.125&pattern=staggered&mode=step&t=1.5708&lock=P",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "vecchio link diametro incoerente": {
+  "lingua": "it",
+  "of": "1,57%",
+  "d": {
+   "v": "0,40",
+   "solaLettura": true,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "4,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "1,57",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "diameter",
+  "pattern": "staggered",
+  "aiuto": "Imposta l’OF obiettivo, P e R: l’app calcola d.",
+  "S": "2,00 mm · P/2",
+  "messaggi": [],
+  "ponte": "2,43 mm",
+  "fori": "125.000",
+  "areaForo": "0,126 mm²",
+  "areaCella": "8,00 mm²",
+  "interasse": "2,83 mm",
+  "foriCampo": "313",
+  "foriDisegnati": 313,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.4&p=4&r=2&pattern=staggered&mode=diameter&t=1.57079632679",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "link incollato nella stessa scheda": {
+  "lingua": "it",
+  "of": "6,28%",
+  "d": {
+   "v": "0,60",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "3,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "1,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "grid",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "0,00 mm · 0",
+  "messaggi": [],
+  "ponte": "0,90 mm",
+  "fori": "222.222",
+  "areaForo": "0,283 mm²",
+  "areaCella": "4,50 mm²",
+  "interasse": "1,50 mm",
+  "foriCampo": "561",
+  "foriDisegnati": 561,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.6&p=3&r=1.5&pattern=grid&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "menu Esporta aperto": {
+  "aperto": true,
+  "espanso": "true",
+  "focus": "svg"
+ },
+ "menu chiuso con Esc": {
+  "aperto": false,
+  "espanso": "false"
+ },
+ "informazioni": {
+  "aperto": true,
+  "crediti": "Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico",
+  "versione": "Versione 2.3.0"
+ },
+ "SVG per CAD": {
+  "mm": true,
+  "cerchi": 181,
+  "autore": true,
+  "raggio": "0.25",
+  "primo": [
+   "2.5",
+   "2.5"
+  ]
+ },
+ "Condividi: copia il link completo": {
+  "lingua": "it",
+  "of": "1,90%",
+  "d": {
+   "v": "0,55",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "2,99 mm",
+  "fori": "80.000",
+  "areaForo": "0,238 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.55&p=5&r=2.5&pattern=staggered&mode=of",
+  "toast": "Link copiato",
+  "etichetta": "Diametro del foro",
+  "copiato": "https://grecagni.github.io/OpennessFactor/#d=0.55&p=5&r=2.5&pattern=staggered&mode=of"
+ },
+ "Condividi con R fissato (griglia, Passo)": {
+  "lingua": "it",
+  "of": "1,57%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "4,17",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "3,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "1,57",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "grid",
+  "aiuto": "Passo R fissato: l’app ricava l’altro passo. Cambia d o l’OF obiettivo per tornare al calcolo automatico.",
+  "S": "0,00 mm · 0",
+  "messaggi": [],
+  "ponte": "2,50 mm",
+  "fori": "80.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,00 mm",
+  "foriCampo": "187",
+  "foriDisegnati": 187,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=4.16666666667&r=3&pattern=grid&mode=step&t=1.57079632679&lock=R",
+  "toast": "Link copiato",
+  "etichetta": "Diametro del foro",
+  "copiato": "https://grecagni.github.io/OpennessFactor/#d=0.5&p=4.16666666667&r=3&pattern=grid&mode=step&t=1.57079632679&lock=R"
+ },
+ "Passo troncato poi griglia (l’avviso resta)": {
+  "lingua": "it",
+  "of": "6,28%",
+  "d": {
+   "v": "0,20",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "1,00",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "12,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "staggered",
+  "aiuto": "Imposta d e l’OF obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
+  "S": "0,50 mm · P/2",
+  "messaggi": [
+   "warning: OF richiesto 12,00 % non raggiungibile con P e R negli intervalli: OF ottenuto 6,28 %."
+  ],
+  "ponte": "0,51 mm",
+  "fori": "2.000.000",
+  "areaForo": "0,031 mm²",
+  "areaCella": "0,50 mm²",
+  "interasse": "0,71 mm",
+  "foriCampo": "4901",
+  "foriDisegnati": 4901,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": true,
+  "hash": "#d=0.2&p=1&r=0.5&pattern=staggered&mode=step&t=12&grid=1",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "Diametro troncato poi griglia (l’avviso resta)": {
+  "lingua": "it",
+  "of": "5,09%",
+  "d": {
+   "v": "0,90",
+   "solaLettura": true,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "8,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "diameter",
+  "pattern": "staggered",
+  "aiuto": "Imposta l’OF obiettivo, P e R: l’app calcola d.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [
+   "warning: OF richiesto 8,00 % non raggiungibile con d tra 0,20 e 0,90 mm: OF ottenuto 5,09 %."
+  ],
+  "ponte": "2,64 mm",
+  "fori": "80.000",
+  "areaForo": "0,636 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": true,
+  "hash": "#d=0.9&p=5&r=2.5&pattern=staggered&mode=diameter&t=8&grid=1",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "Passo a griglia, d 0,2, OF 4 (si raggiunge fissando P)": {
+  "lingua": "it",
+  "of": "3,14%",
+  "d": {
+   "v": "0,20",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "1,00",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "1,00",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "4,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "grid",
+  "aiuto": "Imposta d e l’OF obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
+  "S": "0,00 mm · 0",
+  "messaggi": [
+   "warning: OF richiesto 4,00 % non raggiungibile con P = R (si raggiunge fissando P): OF ottenuto 3,14 %."
+  ],
+  "ponte": "0,80 mm",
+  "fori": "1.000.000",
+  "areaForo": "0,031 mm²",
+  "areaCella": "1,00 mm²",
+  "interasse": "1,00 mm",
+  "foriCampo": "2401",
+  "foriDisegnati": 2401,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.2&p=1&r=1&pattern=grid&mode=step&t=4",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "… e fissando P = 1": {
+  "lingua": "it",
+  "of": "4,00%",
+  "d": {
+   "v": "0,20",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "1,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "0,79",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "4,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "grid",
+  "aiuto": "Passo P fissato: l’app ricava l’altro passo. Cambia d o l’OF obiettivo per tornare al calcolo automatico.",
+  "S": "0,00 mm · 0",
+  "messaggi": [],
+  "ponte": "0,59 mm",
+  "fori": "1.273.240",
+  "areaForo": "0,031 mm²",
+  "areaCella": "0,79 mm²",
+  "interasse": "0,79 mm",
+  "foriCampo": "3087",
+  "foriDisegnati": 3087,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.2&p=1&r=0.785398163397&pattern=grid&mode=step&t=4&lock=P",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "Passo con OF 0": {
+  "lingua": "it",
+  "of": "0,39%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "10,00",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "0,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "staggered",
+  "aiuto": "Imposta d e l’OF obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
+  "S": "5,00 mm · P/2",
+  "messaggi": [
+   "warning: OF richiesto 0,00 % non raggiungibile con P e R negli intervalli: OF ottenuto 0,39 %."
+  ],
+  "ponte": "6,57 mm",
+  "fori": "20.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "50,00 mm²",
+  "interasse": "7,07 mm",
+  "foriCampo": "41",
+  "foriDisegnati": 41,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=10&r=5&pattern=staggered&mode=step&t=0",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "Diametro con OF 0": {
+  "lingua": "it",
+  "of": "0,25%",
+  "d": {
+   "v": "0,20",
+   "solaLettura": true,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "0,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "diameter",
+  "pattern": "staggered",
+  "aiuto": "Imposta l’OF obiettivo, P e R: l’app calcola d.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [
+   "warning: OF richiesto 0,00 % non raggiungibile con d tra 0,20 e 0,90 mm: OF ottenuto 0,25 %."
+  ],
+  "ponte": "3,34 mm",
+  "fori": "80.000",
+  "areaForo": "0,031 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.2&p=5&r=2.5&pattern=staggered&mode=diameter&t=0",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "Diametro P 1,6 R 1 OF 1,96 (d 0,2 a meno di 0,005: nessun avviso)": {
+  "lingua": "it",
+  "of": "1,96%",
+  "d": {
+   "v": "0,20",
+   "solaLettura": true,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "1,60",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "1,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "1,96",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "diameter",
+  "pattern": "staggered",
+  "aiuto": "Imposta l’OF obiettivo, P e R: l’app calcola d.",
+  "S": "0,80 mm · P/2",
+  "messaggi": [],
+  "ponte": "1,08 mm",
+  "fori": "625.000",
+  "areaForo": "0,031 mm²",
+  "areaCella": "1,60 mm²",
+  "interasse": "1,28 mm",
+  "foriCampo": "1543",
+  "foriDisegnati": 1543,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.2&p=1.6&r=1&pattern=staggered&mode=diameter&t=1.96",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "fori a contatto: griglia d 0,9 P 1 R 0,9": {
+  "lingua": "it",
+  "of": "70,69%",
+  "d": {
+   "v": "0,90",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "1,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "0,90",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "grid",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "0,00 mm · 0",
+  "messaggi": [
+   "danger: Fori sovrapposti o a contatto: ponte minimo 0,00 mm."
+  ],
+  "ponte": "0,00 mm",
+  "fori": "1.111.111",
+  "areaForo": "0,636 mm²",
+  "areaCella": "0,90 mm²",
+  "interasse": "0,90 mm",
+  "foriCampo": "2695",
+  "foriDisegnati": 2695,
+  "foriInCollisione": 2695,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.9&p=1&r=0.9&pattern=grid&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "tre frecce su in R (link senza rumore: r=2.65)": {
+  "lingua": "it",
+  "of": "1,48%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,65",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "3,14 mm",
+  "fori": "75.472",
+  "areaForo": "0,196 mm²",
+  "areaCella": "13,25 mm²",
+  "interasse": "3,64 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=5&r=2.65&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "vecchio link v1 Passo con x fissato (geometria conservata)": {
+  "lingua": "it",
+  "of": "10,01%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "1,20",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "1,64",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "10,01",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "staggered",
+  "aiuto": "Passo P fissato: l’app ricava l’altro passo. Cambia d o l’OF obiettivo per tornare al calcolo automatico.",
+  "S": "0,60 mm · P/2",
+  "messaggi": [],
+  "ponte": "0,70 mm",
+  "fori": "509.684",
+  "areaForo": "0,196 mm²",
+  "areaCella": "1,96 mm²",
+  "interasse": "1,20 mm",
+  "foriCampo": "1287",
+  "foriDisegnati": 1287,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=1.2&r=1.635&pattern=staggered&mode=step&t=10.0076218578&lock=P",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "link v2 con R fissato": {
+  "lingua": "it",
+  "of": "2,00%",
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "3,27",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "3,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "2,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "grid",
+  "aiuto": "Passo R fissato: l’app ricava l’altro passo. Cambia d o l’OF obiettivo per tornare al calcolo automatico.",
+  "S": "0,00 mm · 0",
+  "messaggi": [],
+  "ponte": "2,50 mm",
+  "fori": "101.859",
+  "areaForo": "0,196 mm²",
+  "areaCella": "9,82 mm²",
+  "interasse": "3,00 mm",
+  "foriCampo": "255",
+  "foriDisegnati": 255,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=3.27249234749&r=3&pattern=grid&mode=step&t=2&lock=R",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "link v2 con la virgola": {
+  "lingua": "it",
+  "of": "8,08%",
+  "d": {
+   "v": "0,60",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "3,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "1,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "grid",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "0,00 mm · 0",
+  "messaggi": [],
+  "ponte": "0,40 mm",
+  "fori": "285.714",
+  "areaForo": "0,283 mm²",
+  "areaCella": "3,50 mm²",
+  "interasse": "1,00 mm",
+  "foriCampo": "735",
+  "foriDisegnati": 735,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.6&p=3.5&r=1&pattern=grid&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "link troncato riaperto (avviso)": {
+  "lingua": "it",
+  "of": "6,28%",
+  "d": {
+   "v": "0,20",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "1,00",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "12,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "staggered",
+  "aiuto": "Imposta d e l’OF obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
+  "S": "0,50 mm · P/2",
+  "messaggi": [
+   "warning: OF richiesto 12,00 % non raggiungibile con P e R negli intervalli: OF ottenuto 6,28 %."
+  ],
+  "ponte": "0,51 mm",
+  "fori": "2.000.000",
+  "areaForo": "0,031 mm²",
+  "areaCella": "0,50 mm²",
+  "interasse": "0,71 mm",
+  "foriCampo": "4901",
+  "foriDisegnati": 4901,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.2&p=1&r=0.5&pattern=staggered&mode=step&t=12",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "memoria del browser": {
+  "d": 0.7,
+  "bloccato": null
+ }
+}

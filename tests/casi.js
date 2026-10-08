@@ -272,7 +272,11 @@
     t.ok('… ma l’OF 4 % è raggiungibile negli intervalli', ragg({ ofTarget: 4, d: 0.2, pattern: 'grid' }) === true);
     r = passo({ ofTarget: 4, d: 0.2, pattern: 'grid', P: 1 }, 'P');
     t.ok('… fissando P = 1: R 0,785, OF 4 %, non troncato', Math.abs(r.R - PI * 0.01 / 0.04) < 1e-10 && Math.abs(r.ofOttenuto - 4) < 1e-9 && r.troncato === false);
-    t.ok('sfalsato, d 0,5, OF 0,3 %: raggiungibile (fissando R = 10)', ragg({ ofTarget: 0.3 }) === true);
+    t.ok('sfalsato, d 0,5, OF 0,3 %: raggiungibile', ragg({ ofTarget: 0.3 }) === true);
+    r = passo({ ofTarget: 0.3 });
+    t.uguale('… con P = 2R si arriva solo a P 10, R 5 (troncato)', [r.P, r.R, r.troncato], [10, 5, true]);
+    r = passo({ ofTarget: 0.3, P: 10 }, 'P');
+    t.ok('… fissando P al valore che ha (10): R 6,545, OF 0,3 %, non troncato', Math.abs(r.ofOttenuto - 0.3) < 1e-9 && r.troncato === false && r.R > 5);
     t.ok('OF 12 % con d 0,2: non raggiungibile in nessun modo', ragg({ ofTarget: 12, d: 0.2 }) === false);
     t.ok('OF 0: non raggiungibile', ragg({ ofTarget: 0 }) === false);
     t.ok('ai bordi: P 1 × R 0,5 esatti → raggiungibile', ragg({ ofTarget: A05 / 0.5 * 100 }) === true);
@@ -339,6 +343,12 @@
     t.ok('modalità Passo con R fissato: il link conserva lock=R', /(^|&)lock=R(&|$)/.test(link));
     t.uguale('… e lo rilegge', OF.leggiLink(link, DEFAULTS_V2).bloccato, 'R');
     t.uguale('lock non valido ignorato', OF.leggiLink('#mode=step&lock=X&d=0.5', DEFAULTS_V2).bloccato, null);
+    letto = OF.leggiLink('#d=0.50&x=1.20&y=3.27&n=20&m=10&grid=0&pattern=staggered&mode=step&t=10.00', DEFAULTS_V2);
+    t.uguale('vecchio link v1 Passo con x ≠ y: P fissato (la geometria resta quella del link)', [letto.params.P, letto.params.R, letto.bloccato], [1.2, 1.635, 'P']);
+    letto = OF.leggiLink('#d=0.50&x=5.00&y=5.00&pattern=staggered&mode=step&t=1.57', DEFAULTS_V2);
+    t.uguale('vecchio link v1 Passo con x = y (P = 2R): nessun passo fissato', letto.bloccato, null);
+    letto = OF.leggiLink('#d=0.5&p=1.2&r=1.635&pattern=staggered&mode=step&t=10', DEFAULTS_V2);
+    t.uguale('link v2 senza lock: nessun passo fissato, anche con P ≠ 2R', letto.bloccato, null);
 
     t.gruppo('v2 · link coerenti e incoerenti');
     t.ok('modalità OF: mai da ricalcolare, anche con un OF obiettivo diverso da quello della geometria', OF.daRicalcolare({ mode: 'of', d: 0.6, P: 4, R: 3, ofTarget: 5 }) === false);
@@ -374,10 +384,75 @@
     t.uguale('bordo: griglia d 0,3, P 1, R 0,5 → 5000 fori (prima 4950)', disegno(0.3, 1, 0.5, 'grid').holes.length, 5000);
   }
 
-  function tutti(OF, t) {
+  function casiCampo(OF, t) {
+    t.gruppo('v2 · fori nel campo 50 × 50 mm (anteprima ed export)');
+    var campo = function (extra) {
+      var p = {}; Object.keys(DEFAULTS_V2).forEach(function (k) { p[k] = DEFAULTS_V2[k]; });
+      Object.keys(extra || {}).forEach(function (k) { p[k] = extra[k]; });
+      return OF.disposizioneCampo(p, 50);
+    };
+    var dentro = function (fori, d) {
+      return fori.every(function (f) { return f.x >= d / 2 - 1e-9 && f.x <= 50 - d / 2 + 1e-9 && f.y >= d / 2 - 1e-9 && f.y <= 50 - d / 2 + 1e-9; });
+    };
+    var baricentro = function (fori) {
+      var sx = 0, sy = 0;
+      fori.forEach(function (f) { sx += f.x; sy += f.y; });
+      return [sx / fori.length, sy / fori.length];
+    };
+    var f0 = campo({});
+    t.uguale('default: 181 fori (19 righe alternate da 9 e 10)', f0.length, 181);
+    t.ok('default: tutti i fori interi dentro il campo', dentro(f0, 0.5));
+    t.ok('default: un foro esattamente al centro (25; 25)', f0.some(function (f) { return f.x === 25 && f.y === 25; }));
+    var b = baricentro(f0);
+    t.vicino('default: reticolo centrato (baricentro x)', b[0], 25, 1e-9);
+    t.vicino('default: reticolo centrato (baricentro y)', b[1], 25, 1e-9);
+    t.uguale('default: prima riga a y = 2,5, primo foro a x = 2,5 (riga dispari, spostata di S)', [f0[0].x, f0[0].y], [2.5, 2.5]);
+    var riga = f0.filter(function (f) { return f.y === 25; });
+    t.vicino('riga centrale: passo tra i fori = P', riga[1].x - riga[0].x, 5, 1e-12);
+    var sopra = f0.filter(function (f) { return f.y === 22.5; });
+    t.vicino('riga adiacente spostata di S = P/2', sopra[0].x - riga[0].x, -2.5, 1e-12);
+    var fg = campo({ pattern: 'grid' });
+    t.uguale('griglia: 171 fori (19 righe da 9)', fg.length, 171);
+    t.ok('griglia: righe allineate (nessuno spostamento)', fg.filter(function (f) { return f.y === 22.5; })[0].x === fg.filter(function (f) { return f.y === 25; })[0].x);
+    t.uguale('fitto d 0,9 P 1 R 0,5: 4901 fori', campo({ d: 0.9, P: 1, R: 0.5 }).length, 4901);
+    t.ok('fitto: tutti dentro il campo', dentro(campo({ d: 0.9, P: 1, R: 0.5 }), 0.9));
+    t.uguale('rado P 10 R 10: 23 fori', campo({ P: 10, R: 10 }).length, 23);
+    t.uguale('parametri non validi → nessun foro', OF.disposizioneCampo({ d: 0.5, P: 0, R: 2.5, pattern: 'grid' }, 50), []);
+  }
+
+  function casiTesti(TESTI, t) {
+    t.gruppo('testi · italiano e inglese (i18n.js)');
+    var it = TESTI.TESTI.it;
+    var en = TESTI.TESTI.en;
+    var chiaviIt = Object.keys(it).sort();
+    var chiaviEn = Object.keys(en).sort();
+    t.uguale('stesse chiavi in italiano e in inglese', chiaviIt, chiaviEn);
+    var vuote = chiaviIt.filter(function (k) { return !String(it[k]).trim() || !String(en[k] || '').trim(); });
+    t.uguale('nessun testo vuoto', vuote, []);
+    var segnaposti = function (s) { return (String(s).match(/\{\w+\}/g) || []).sort().join(','); };
+    var diversi = chiaviIt.filter(function (k) { return segnaposti(it[k]) !== segnaposti(en[k]); });
+    t.uguale('stessi segnaposto {…} nelle due lingue', diversi, []);
+    var tIt = TESTI.crea('it');
+    var tEn = TESTI.crea('en');
+    t.uguale('numeri in italiano: virgola decimale', tIt.n(1.5708, 2), '1,57');
+    t.uguale('numeri in inglese: punto decimale', tEn.n(1.5708, 2), '1.57');
+    t.uguale('migliaia in inglese', tEn.n(80000, 0), '80,000');
+    t.uguale('numero non valido → trattino', tIt.n(NaN, 2), '–');
+    t.uguale('segnaposto sostituiti', tIt.t('versione', { v: '2.3.0' }), 'Versione 2.3.0');
+    t.uguale('chiave mancante → si vede la chiave (errore evidente)', tIt.t('chiave-inesistente'), 'chiave-inesistente');
+    t.uguale('lingua iniziale: scelta salvata', TESTI.linguaIniziale('en', 'it-IT'), 'en');
+    t.uguale('lingua iniziale: dispositivo in italiano', TESTI.linguaIniziale(null, 'it-IT'), 'it');
+    t.uguale('lingua iniziale: dispositivo in tedesco → inglese', TESTI.linguaIniziale(null, 'de-DE'), 'en');
+    t.uguale('lingua iniziale: lingua sconosciuta → italiano', TESTI.linguaIniziale(null, ''), 'it');
+  }
+
+  function tutti(OF, t, TESTI) {
     casiV1(OF, t);
     casiV2(OF, t);
     casiIngombro(OF, t);
+    casiCampo(OF, t);
+    if (TESTI) casiTesti(TESTI, t);
+    else t.ok('testi (i18n.js) caricati', false);
   }
 
   return { tutti: tutti, DEFAULTS_V1: DEFAULTS_V1, RANGES_V1: RANGES_V1, DEFAULTS_V2: DEFAULTS_V2 };

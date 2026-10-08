@@ -20,7 +20,7 @@ Repository: github.com/Grecagni/OpennessFactor (pubblico; in futuro da trasferir
 
 ## Cosa non si cambia senza approvazione
 - Formule, valori di default e intervalli (min/max/step) dei campi: si cambiano solo dentro un passo del piano approvato da Jack.
-- Aspetto grafico: non cambia senza approvazione di Jack. Riferimento: quello fissato dal passo U (vedi verifica minima, punto 3).
+- Aspetto grafico: non cambia senza approvazione di Jack. Riferimento: il nuovo aspetto della v2.3 (mockup D1, variante A, `docs/DESIGN.md`).
 - Un passo alla volta: si implementa solo il passo approvato, poi ci si ferma e si mostra il risultato.
 
 ## Convenzione del pattern (decisa da Jack il 06.10.2026)
@@ -43,9 +43,9 @@ Repository: github.com/Grecagni/OpennessFactor (pubblico; in futuro da trasferir
 ## Verifica minima (dopo ogni modifica)
 1. Con i default l'OF geometrico è **1,57%**.
 2. Con d = 0,6 (resto ai default) l'OF geometrico è **2,26%**.
-3. Grafica: `node --experimental-websocket tools/screenshot.mjs <cartella> --confronta <cartella-riferimento>` (12 formati, dal telefono al desktop). Nessuno scorrimento orizzontale; i formati che il passo non deve toccare restano "identico". Riferimento grafico dal passo U (07.10.2026): telefono verticale = OF-mobile, desktop ≥ 1440 × 900 = v1; tablet, telefono orizzontale e desktop basso come da passo U.
+3. Grafica: `node --experimental-websocket tools/screenshot.mjs <cartella> --confronta <cartella-riferimento>` (12 formati, dal telefono al desktop). Nessuno scorrimento orizzontale; i formati che il passo non deve toccare restano "identico". Riferimento grafico dalla v2.3: il nuovo aspetto, in tema chiaro e scuro (punto 6).
 4. Test del calcolo verdi: `node tests/run-node.js` e `test.html` (doppio clic, oppure `node --experimental-websocket tools/test-browser.mjs`).
-5. Scenari dell'interfaccia: `node --experimental-websocket tools/e2e.mjs tests/e2e/scenari-v2.2.mjs <uscita.json> --confronta tests/e2e/v2.2.json` (scenari e riferimento dell'interfaccia in uso). Nei passi "invisibili" tutti gli scenari restano identici; se un passo cambia dei valori di proposito, il riferimento si registra di nuovo e il commit elenca le differenze.
+5. Scenari dell'interfaccia: `node --experimental-websocket tools/e2e.mjs tests/e2e/scenari-v2.3.mjs <uscita.json> --confronta tests/e2e/v2.3.json` (scenari e riferimento dell'interfaccia in uso; quelli della v2.0 e della v2.2 restano come storico). Nei passi "invisibili" tutti gli scenari restano identici; se un passo cambia dei valori di proposito, il riferimento si registra di nuovo e il commit elenca le differenze.
 6. Tema scuro: `tools/screenshot.mjs` con `--tema scuro` simula un dispositivo in modalità scura (il predefinito è chiaro, qualunque sia il tema di Windows).
 
 ## Commit

@@ -20,17 +20,19 @@ Convenzione del pattern della v2 (`docs/CONVENZIONE_PASSO.md`):
 Dalla v2.2 l'app usa questa convenzione. I vecchi link della v1 (campi x, y; nello sfalsato y = 2R) si aprono convertiti, con la loro geometria.
 
 ## Limiti noti
-- L'anteprima è un campo di 50 × 50 mm adattato allo schermo, non una vista in scala 1:1 sul monitor.
+- L'anteprima è un campo di 50 × 50 mm adattato allo schermo, con la barra di scala: non è una vista in scala 1:1 sul monitor.
 - Per la sfalsatura sono gestiti solo i casi S = 0 (griglia) e S = P/2 (sfalsato): una S qualsiasi richiede prima di decidere se dalla terza riga si applica in modo cumulativo o alternato.
 - L'SVG esportato ha le dimensioni in mm (50 × 50 mm); la prova di importazione in un CAD dell'Ufficio Tecnico è ancora da fare.
-- Nei campi numerici la virgola decimale funziona solo con il browser in italiano (il punto sempre); nei link valgono entrambi.
 
 ## File
 | file | contenuto |
 |---|---|
 | `index.html`, `script.js`, `styles.css` | l'app (interfaccia) |
+| `i18n.js` | i testi in italiano e in inglese |
 | `of-core.js` | il calcolo: funzioni pure, provate dai test |
-| `test.html`, `tests/` | test del calcolo (doppio clic su `test.html`, oppure `node tests/run-node.js`) e scenari registrati |
+| `assets/` | font IBM Plex Sans (licenza OFL) e icone dell'app |
+| `design/` | mockup del nuovo aspetto (D1) |
+| `test.html`, `tests/` | test del calcolo e dei testi (doppio clic su `test.html`, oppure `node tests/run-node.js`) e scenari registrati |
 | `CHANGELOG.md` | novità di ogni rilascio |
 | `CLAUDE.md` | regole di lavoro per Claude Code |
 | `tools/` | strumenti di verifica con Node + Chrome: grafica su 12 formati (`screenshot.mjs`), scenari dell'interfaccia (`e2e.mjs`), test nel browser (`test-browser.mjs`) |

@@ -1,883 +1,864 @@
+/* Openness Factor — interfaccia.
+   Il calcolo è in of-core.js (window.OFCore), i testi in i18n.js (window.OFTesti).
+   Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico. */
 (function () {
-  // Openness Factor — interfaccia della v2.2 (aspetto della v1, convenzione P, R, S).
-  // Il calcolo è in of-core.js (window.OFCore).
-  const PX_PER_MM = 10;
-  const CALC_MODES = {
-    OF: 'of',
-    STEP: 'step',
-    DIAMETER: 'diameter'
+  'use strict';
+
+  var OF = window.OFCore;
+  var TESTI = window.OFTesti;
+  var VERSIONE = '2.3.0';
+  var CAMPO_MM = 50;
+  var INDIRIZZO = 'https://grecagni.github.io/OpennessFactor/';
+  var CHIAVE_STATO = 'of.v2.stato';
+  var CHIAVE_LINGUA = 'of.v2.lingua';
+  var CHIAVE_VISTA = 'of.v2.vista';
+
+  var INTERVALLI = OF.RANGES;
+  var DEFAULTS = {
+    d: 0.5, P: 5, R: 2.5, pattern: 'staggered', mode: 'of',
+    ofTarget: OF.ofGeometrico(0.5, 5, 2.5).percent, showGrid: false
+  };
+  // Campi numerici: decimali mostrati, unità, passo delle frecce della tastiera.
+  var CAMPI = {
+    d: { decimali: 2, unita: 'mm', freccia: 0.01 },
+    P: { decimali: 2, unita: 'mm', freccia: 0.05 },
+    R: { decimali: 2, unita: 'mm', freccia: 0.05 },
+    ofTarget: { decimali: 2, unita: '%', freccia: 0.01 }
   };
 
-  // Geometria di default della v1 nella convenzione decisa: P 5, R 2,5, sfalsato (S = P/2), d 0,5.
-  // L'OF obiettivo di default è l'OF di questa geometria (1,5708 %): così passare a "Passo"
-  // o "Diametro" non cambia nulla (prima: 10 nello script e 8 nell'HTML).
-  const defaults = {
-    d: 0.5,
-    P: 5,
-    R: 2.5,
-    rows: 12,
-    cols: 12,
-    showGrid: false,
-    pattern: 'staggered',
-    mode: CALC_MODES.OF,
-    ofTarget: OFCore.ofGeometrico(0.5, 5, 2.5).percent
-  };
-  // Valori di riserva per il disegno, che riusa la disposizione dei fori della v1 (campi x, y).
-  const DEFAULTS_V1 = { d: 0.5, x: 5, y: 5 };
-  const CHIAVI = ['ofTarget', 'd', 'P', 'R'];
-
-  const PREVIEW_SIZE_MM = 50;
-  const PREVIEW_MARGIN_MM = 0;
-  const SVG_EMBEDDED_STYLES = `
-    .preview-rect { fill: none; stroke: #9aa4b5; stroke-width: 1; }
-    .hole { fill: #ffffff; stroke: #4b5563; stroke-width: 1; }
-    .grid-line { stroke: #c5ccd8; stroke-width: 0.8; stroke-dasharray: 4 4; }
-    .preview-watermark {
-      fill: #5f6f86;
-      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      opacity: 0.4;
-    }
-  `.trim();
-  const PREVIEW_CLIP_ID = 'previewWaveClip';
-  const PREVIEW_WAVE_FILL_GRADIENT_ID = 'previewWaveFillGradient';
-  const PREVIEW_WAVE_GLOSS_GRADIENT_ID = 'previewWaveGlossGradient';
-  const PREVIEW_WAVE_STRIPE_PATTERN_ID = 'previewWaveStripePattern';
-
-  const state = {
-    params: { ...defaults },
-    baseWidthPx: 0,
-    baseHeightPx: 0,
+  var stato = {
+    params: copia(DEFAULTS),
     passoBloccato: null,   // 'P' o 'R' quando, in modalità Passo, l'utente fissa un passo
-    renderHandle: null,
-    waveEnabled: true
+    erroriCampo: {},       // chiave → testo dell'avviso sotto il campo
+    lingua: 'it',
+    testi: null,
+    vista: { quote: true },
+    annulla: [],
+    ripeti: [],
+    registrato: null,      // ultimo stato registrato nella cronologia (JSON)
+    toastTimer: null,
+    annuncioTimer: null
   };
+  var dom = {};
 
-  const editingFields = new Set();
-  const sliderMap = {};
-  const dom = {};
+  document.addEventListener('DOMContentLoaded', avvia);
 
-  document.addEventListener('DOMContentLoaded', init);
+  // ------------------------------------------------------------------ avvio
 
-  function init() {
-    cacheDom();
-    setupSlider('ofTarget', 2);
-    setupSlider('d', 2);
-    setupSlider('P', 2);
-    setupSlider('R', 2);
-    dom.gridToggle.addEventListener('change', () => updateFromUI('grid'));
-    dom.patternSelect.addEventListener('change', () => updateFromUI('pattern'));
-    dom.modeSelect.addEventListener('change', () => updateFromUI('mode'));
-    dom.resetBtn.addEventListener('click', resetDefaults);
-    dom.exportSvgBtn.addEventListener('click', exportSVG);
-    dom.exportPngBtn.addEventListener('click', exportPNG);
-    dom.copyHashBtn.addEventListener('click', copyParamsHash);
-    if (dom.waveToggleBtn) {
-      dom.waveToggleBtn.addEventListener('click', toggleWaveEffect);
+  function avvia() {
+    leggiDom();
+    stato.lingua = TESTI.linguaIniziale(leggiMemoria(CHIAVE_LINGUA), navigator.language);
+    stato.testi = TESTI.crea(stato.lingua);
+    var vista = leggiJSON(CHIAVE_VISTA);
+    if (vista && typeof vista.quote === 'boolean') stato.vista.quote = vista.quote;
+
+    // Priorità: link (anche dei vecchi formati), poi ultimo stato salvato, poi valori di default.
+    var daLink = OF.leggiLink(location.hash, DEFAULTS);
+    var origine = null;
+    var iniziali;
+    if (daLink) {
+      iniziali = daLink.params;
+      stato.passoBloccato = daLink.bloccato;
+      origine = origineLink(daLink);
+    } else {
+      var salvati = leggiJSON(CHIAVE_STATO);
+      iniziali = salvati && salvati.params ? normalizza(salvati.params) : copia(DEFAULTS);
+      stato.passoBloccato = salvati && (salvati.bloccato === 'P' || salvati.bloccato === 'R') ? salvati.bloccato : null;
     }
+    stato.params = calcola(iniziali, origine);
+    stato.registrato = istantanea();
 
-    const origine = applicaLink();
-    applyParamsToUI(state.params);
-    updateFromUI(origine || null);
-    applyWaveToggleState();
-    // Link incollato nella stessa scheda (cambia solo la parte dopo #) o tasto Indietro.
-    window.addEventListener('hashchange', () => {
-      const origineLink = applicaLink();
-      if (origineLink === undefined) return;
-      applyParamsToUI(state.params);
-      updateFromUI(origineLink);
+    collegaEventi();
+    applicaTesti();
+    disegna();
+    firma();
+  }
+
+  function leggiDom() {
+    var id = function (x) { return document.getElementById(x); };
+    dom.svg = id('pattern');
+    dom.preview = id('preview');
+    dom.scala = id('scala');
+    dom.scalaTesto = id('scala-testo');
+    dom.campi = {};
+    Object.keys(CAMPI).forEach(function (k) {
+      dom.campi[k] = {
+        riga: document.querySelector('[data-campo="' + k + '"]'),
+        cursore: document.querySelector('[data-cursore="' + k + '"]'),
+        testo: document.querySelector('[data-testo="' + k + '"]'),
+        badge: document.querySelector('[data-badge="' + k + '"]'),
+        msg: document.querySelector('[data-msg="' + k + '"]')
+      };
+    });
+    dom.modi = Array.prototype.slice.call(document.querySelectorAll('input[name="mode"]'));
+    dom.pattern = Array.prototype.slice.call(document.querySelectorAll('input[name="pattern"]'));
+    dom.aiuto = id('aiuto-modo');
+    dom.sezioneObiettivo = id('sezione-obiettivo');
+    dom.sfalsatura = id('valore-s');
+    dom.messaggi = id('messaggi');
+    dom.lingue = Array.prototype.slice.call(document.querySelectorAll('[data-lang]'));
+    dom.info = id('info');
+    dom.toast = id('toast');
+    dom.toastTesto = id('toast-testo');
+    dom.toastAzione = id('toast-azione');
+    dom.annuncio = id('annuncio');
+    dom.versione = id('info-versione');
+    dom.menu = {};
+    Array.prototype.slice.call(document.querySelectorAll('[data-menu]')).forEach(function (b) {
+      dom.menu[b.dataset.menu] = { bottone: b, menu: id(b.dataset.menu) };
     });
   }
 
-  // Legge i parametri dal link (parte dopo #) e li mette nello stato.
-  // Link della v2: uno coerente si riapre esattamente com'era; uno incoerente (OF della
-  // geometria diverso dall'OF obiettivo) viene ricalcolato.
-  // Vecchi link della v1 (x, y con 2 decimali): si apre la loro geometria, come faceva la v1,
-  // e l'OF obiettivo si allinea a quella geometria (niente ricalcoli né avvisi dovuti agli
+  // ------------------------------------------------------------------ calcolo e stato
+
+  function copia(o) {
+    var c = {};
+    Object.keys(o).forEach(function (k) { c[k] = o[k]; });
+    return c;
+  }
+
+  // Origine del calcolo per un link appena letto. Link della v2: uno coerente si riapre
+  // esattamente com'era (null), uno incoerente viene ricalcolato ('link').
+  // Vecchi link della v1 (x, y con 2 decimali): si apre la loro geometria, come nella v1, e
+  // l'OF obiettivo si allinea a quella geometria (niente ricalcoli né avvisi dovuti agli
   // arrotondamenti a 2 decimali).
-  // Restituisce l'origine per updateFromUI ('link' da ricalcolare, null), oppure undefined
-  // se il link non contiene parametri.
-  function applicaLink() {
-    const daLink = OFCore.leggiLink(location.hash, defaults, getSliderRanges());
-    if (!daLink) return undefined;
-    state.params = daLink.params;
-    state.passoBloccato = daLink.bloccato;
+  function origineLink(daLink) {
+    var p = daLink.params;
     if (daLink.legacy) {
-      const p = state.params;
-      p.ofTarget = OFCore.clampToRange(OFCore.ofGeometrico(p.d, p.P, p.R).percent, getSliderRanges().ofTarget, defaults.ofTarget);
+      p.ofTarget = OF.clampToRange(OF.ofGeometrico(p.d, p.P, p.R).percent, INTERVALLI.ofTarget, DEFAULTS.ofTarget);
       return null;
     }
-    return OFCore.daRicalcolare(state.params) ? 'link' : null;
+    return OF.daRicalcolare(p) ? 'link' : null;
   }
 
-  function cacheDom() {
-    dom.svg = document.getElementById('patternSvg');
-    dom.svgWrapper = document.getElementById('svgWrapper');
-    dom.gridToggle = document.getElementById('gridToggle');
-    dom.patternSelect = document.getElementById('patternSelect');
-    dom.modeSelect = document.getElementById('modeSelect');
-    dom.modeHelp = document.getElementById('modeHelp');
-    dom.resetBtn = document.getElementById('resetBtn');
-    dom.exportSvgBtn = document.getElementById('exportSvgBtn');
-    dom.exportPngBtn = document.getElementById('exportPngBtn');
-    dom.copyHashBtn = document.getElementById('copyHashBtn');
-    dom.waveToggleBtn = document.getElementById('waveToggleBtn');
-    dom.previewFrame = document.getElementById('previewFrame');
-    dom.previewWidthLabel = document.getElementById('previewWidthLabel');
-    dom.previewHeightLabel = document.getElementById('previewHeightLabel');
-    dom.info = {
-      holeArea: document.getElementById('holeArea'),
-      cellArea: document.getElementById('cellArea'),
-      ponte: document.getElementById('ponteMin'),
-      foriM2: document.getElementById('foriM2'),
-      sfalsatura: document.getElementById('sfalsaturaS'),
-      interasse: document.getElementById('interasse'),
-      cellsCount: document.getElementById('cellsCount'),
-      warning: document.getElementById('warningMessage')
-    };
-    dom.ofInlineValue = document.getElementById('ofInlineValue');
-    dom.statusMessage = document.getElementById('statusMessage');
-    dom.controlRows = {
-      mode: document.querySelector('[data-control="mode"]'),
-      ofTarget: document.querySelector('[data-control="ofTarget"]'),
-      d: document.querySelector('[data-control="d"]'),
-      P: document.querySelector('[data-control="P"]'),
-      R: document.querySelector('[data-control="R"]')
-    };
+  // Valori salvati in memoria: tipi e intervalli verificati prima di usarli.
+  function normalizza(p) {
+    var n = copia(DEFAULTS);
+    ['d', 'P', 'R', 'ofTarget'].forEach(function (k) {
+      if (typeof p[k] === 'number' && Number.isFinite(p[k])) n[k] = OF.clampToRange(p[k], INTERVALLI[k], DEFAULTS[k]);
+    });
+    if (p.pattern === 'grid' || p.pattern === 'staggered') n.pattern = p.pattern;
+    if (p.mode === 'of' || p.mode === 'step' || p.mode === 'diameter') n.mode = p.mode;
+    if (typeof p.showGrid === 'boolean') n.showGrid = p.showGrid;
+    return n;
   }
 
-  function setupSlider(key, decimals) {
-    const range = document.querySelector(`[data-range="${key}"]`);
-    if (!range) return;
-    const number = document.querySelector(`[data-number="${key}"]`) || null;
-    sliderMap[key] = { range, number, decimals, scritto: false };
-    if (number) {
-      number.addEventListener('focus', () => editingFields.add(key));
-      number.addEventListener('blur', () => {
-        editingFields.delete(key);
-        const ctrl = sliderMap[key];
-        if (ctrl.scritto) {
-          // il valore scritto viene confermato (e poi mostrato con 2 decimali)
-          ctrl.scritto = false;
-          updateFromUI(key);
-        } else {
-          // nessuna modifica: si rimette il valore attuale, senza rileggerlo arrotondato dal campo
-          applyParamsToUI(state.params);
+  // Applica la modalità di calcolo. origine = campo appena cambiato dall'utente
+  // ('d', 'P', 'R', 'ofTarget', 'pattern', 'mode'; 'showGrid' non ricalcola), 'link' per un
+  // link incoerente da ricalcolare, oppure null (avvio, link coerente, annulla): con null non
+  // si ricalcola nulla, così un link riproduce esattamente i valori salvati.
+  // L'avviso "OF non raggiungibile" non si memorizza: disegna() lo ricava dai valori.
+  function calcola(p, origine) {
+    var ricalcola = origine !== null && origine !== 'showGrid';
+    if (p.mode === 'of') {
+      p.ofTarget = OF.clampToRange(OF.ofGeometrico(p.d, p.P, p.R).percent, INTERVALLI.ofTarget, DEFAULTS.ofTarget);
+      stato.passoBloccato = null;
+    } else if (p.mode === 'step') {
+      if (origine === 'P' || origine === 'R') stato.passoBloccato = origine;
+      else if (ricalcola && origine !== 'link') stato.passoBloccato = null;
+      if (ricalcola) {
+        var r = OF.passiDaObiettivo(p, stato.passoBloccato);
+        if (r) {
+          p.P = r.P;
+          p.R = r.R;
+        }
+      }
+    } else if (p.mode === 'diameter') {
+      stato.passoBloccato = null;
+      if (ricalcola) {
+        var dd = OF.diametroDaObiettivo(p);
+        if (dd) p.d = dd.d;
+      }
+    }
+    return p;
+  }
+
+  // Modifica di un valore da parte dell'utente; registra = aggiunge alla cronologia (annulla).
+  function modifica(chiave, valore, registra) {
+    var p = copia(stato.params);
+    p[chiave] = valore;
+    stato.params = calcola(p, chiave);
+    if (registra) registraCronologia();
+    disegna();
+  }
+
+  // Istantanea per la cronologia (annulla/ripeti) e per la memoria: valori e passo fissato.
+  function istantanea() {
+    return JSON.stringify({ params: stato.params, bloccato: stato.passoBloccato });
+  }
+
+  function registraCronologia() {
+    var attuale = istantanea();
+    if (attuale === stato.registrato) return;
+    if (stato.registrato) {
+      stato.annulla.push(stato.registrato);
+      if (stato.annulla.length > 100) stato.annulla.shift();
+    }
+    stato.ripeti = [];
+    stato.registrato = attuale;
+    salva();
+  }
+
+  function annulla() {
+    if (!stato.annulla.length) return false;
+    stato.ripeti.push(stato.registrato);
+    stato.registrato = stato.annulla.pop();
+    ripristinaRegistrato();
+    return true;
+  }
+
+  function ripeti() {
+    if (!stato.ripeti.length) return false;
+    stato.annulla.push(stato.registrato);
+    stato.registrato = stato.ripeti.pop();
+    ripristinaRegistrato();
+    return true;
+  }
+
+  function ripristinaRegistrato() {
+    var s = JSON.parse(stato.registrato);
+    stato.erroriCampo = {};
+    stato.passoBloccato = s.bloccato === 'P' || s.bloccato === 'R' ? s.bloccato : null;
+    stato.params = calcola(normalizza(s.params), null);
+    salva();
+    disegna();
+  }
+
+  function ripristinaIniziali() {
+    stato.erroriCampo = {};
+    stato.passoBloccato = null;
+    stato.params = calcola(copia(DEFAULTS), null);
+    registraCronologia();
+    disegna();
+    mostraToast(stato.testi.t('toastRipristino'), stato.testi.t('annulla'), annulla);
+  }
+
+  // ------------------------------------------------------------------ eventi
+
+  function collegaEventi() {
+    Object.keys(CAMPI).forEach(function (k) {
+      var c = dom.campi[k];
+      if (!c.cursore) return;
+      c.cursore.addEventListener('input', function () {
+        delete stato.erroriCampo[k];
+        modifica(k, parseFloat(c.cursore.value), false);
+      });
+      c.cursore.addEventListener('change', function () { registraCronologia(); });
+      c.testo.addEventListener('change', function () { confermaTesto(k); });
+      c.testo.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); confermaTesto(k); c.testo.select(); }
+        else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+          if (c.testo.readOnly) return;
+          e.preventDefault();
+          var passo = CAMPI[k].freccia * (e.shiftKey ? 10 : 1) * (e.key === 'ArrowUp' ? 1 : -1);
+          var nuovo = OF.clampToRange(OF.pulisci(Math.round((stato.params[k] + passo) / CAMPI[k].freccia) * CAMPI[k].freccia), INTERVALLI[k], stato.params[k]);
+          delete stato.erroriCampo[k];
+          modifica(k, nuovo, true);
+          // il campo ha il focus: va aggiornato qui (disegna() non tocca il campo in modifica)
+          c.testo.value = stato.testi.n(stato.params[k], CAMPI[k].decimali);
+          c.testo.select();
         }
       });
-      number.addEventListener('input', () => {
-        const raw = number.value.trim();
-        if (!raw || raw === '-' || raw === '.' || raw === '-.') {
-          return;
-        }
-        const numeric = parseFloat(raw);
-        if (Number.isFinite(numeric)) {
-          // solo un numero scritto conta come modifica (un campo svuotato no: non fissa il passo)
-          sliderMap[key].scritto = true;
-          range.value = numeric;
-          updateFromUI(key);
-        }
+      c.testo.addEventListener('focus', function () { c.testo.select(); });
+      // uscendo dal campo si mostra il valore in uso, formattato (es. "0,6" → "0,60")
+      c.testo.addEventListener('blur', function () {
+        c.testo.value = stato.testi.n(stato.params[k], CAMPI[k].decimali);
       });
-    }
-    range.addEventListener('input', () => {
-      const numeric = parseFloat(range.value);
-      if (number && !editingFields.has(key)) {
-        number.value = numeric.toFixed(decimals);
-      }
-      updateFromUI(key);
     });
-  }
-
-  // Mostra i valori dello stato su cursori e campi (il campo in modifica non viene toccato).
-  function applyParamsToUI(params) {
-    CHIAVI.forEach((key) => {
-      const ctrl = sliderMap[key];
-      if (!ctrl || !ctrl.range) return;
-      ctrl.range.value = params[key];
-      if (ctrl.number && !editingFields.has(key)) {
-        ctrl.number.value = params[key].toFixed(ctrl.decimals);
-      }
+    dom.modi.forEach(function (r) {
+      r.addEventListener('change', function () { if (r.checked) { stato.erroriCampo = {}; modifica('mode', r.value, true); } });
     });
-    dom.gridToggle.checked = params.showGrid;
-    dom.patternSelect.value = params.pattern;
-    if (dom.modeSelect) {
-      dom.modeSelect.value = params.mode || CALC_MODES.OF;
+    dom.pattern.forEach(function (r) {
+      r.addEventListener('change', function () { if (r.checked) modifica('pattern', r.value, true); });
+    });
+    dom.lingue.forEach(function (b) {
+      b.addEventListener('click', function () { cambiaLingua(b.dataset.lang); });
+    });
+    document.getElementById('apri-info').addEventListener('click', apriInfo);
+    document.getElementById('chiudi-info').addEventListener('click', function () { dom.info.close(); });
+    dom.info.addEventListener('click', function (e) { if (e.target === dom.info) dom.info.close(); });
+    document.getElementById('condividi').addEventListener('click', condividi);
+
+    Object.keys(dom.menu).forEach(function (nome) {
+      var m = dom.menu[nome];
+      // e.detail === 0: aperto da tastiera (Invio o Spazio) → il focus va sulla prima voce
+      m.bottone.addEventListener('click', function (e) { e.stopPropagation(); alternaMenu(nome, e.detail === 0); });
+      m.menu.addEventListener('keydown', function (e) { tastieraMenu(e, nome); });
+    });
+    document.addEventListener('click', function (e) {
+      Object.keys(dom.menu).forEach(function (nome) {
+        if (!dom.menu[nome].menu.hidden && !dom.menu[nome].menu.contains(e.target)) chiudiMenu(nome, false);
+      });
+    });
+    document.querySelectorAll('[data-azione]').forEach(function (b) {
+      b.addEventListener('click', function () { esegui(b.dataset.azione); });
+    });
+    dom.toastAzione.addEventListener('click', function () {
+      var azione = dom.toastAzione._azione;
+      nascondiToast();
+      if (azione) azione();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') Object.keys(dom.menu).forEach(function (n) { chiudiMenu(n, true); });
+      var mod = e.ctrlKey || e.metaKey;
+      if (!mod || e.altKey) return;
+      var t = e.target;
+      if (t && t.tagName === 'INPUT' && t.type === 'text') return; // nei campi di testo vale l'annulla del campo
+      var k = e.key.toLowerCase();
+      if (k === 'z' && !e.shiftKey) { if (annulla()) e.preventDefault(); }
+      else if ((k === 'z' && e.shiftKey) || k === 'y') { if (ripeti()) e.preventDefault(); }
+    });
+
+    // Link incollato nella stessa scheda: si applica come un'apertura.
+    window.addEventListener('hashchange', function () {
+      if (location.hash === '#' + OF.costruisciLink(stato.params, stato.passoBloccato)) return;
+      var daLink = OF.leggiLink(location.hash, DEFAULTS);
+      if (!daLink) return;
+      stato.erroriCampo = {};
+      stato.passoBloccato = daLink.bloccato;
+      stato.params = calcola(daLink.params, origineLink(daLink));
+      registraCronologia();
+      disegna();
+    });
+
+    if (window.ResizeObserver && dom.preview) {
+      new ResizeObserver(function () { disegnaAnteprima(); }).observe(dom.preview);
+    } else {
+      window.addEventListener('resize', disegnaAnteprima);
     }
   }
 
-  function toggleWaveEffect() {
-    state.waveEnabled = !state.waveEnabled;
-    applyWaveToggleState();
-    requestRender();
-  }
-
-  function applyWaveToggleState() {
-    if (dom.svgWrapper) {
-      dom.svgWrapper.classList.toggle('wave-on', state.waveEnabled);
-    }
-    if (dom.waveToggleBtn) {
-      dom.waveToggleBtn.setAttribute('aria-pressed', String(state.waveEnabled));
-      dom.waveToggleBtn.classList.toggle('is-active', state.waveEnabled);
-      dom.waveToggleBtn.setAttribute('aria-label', state.waveEnabled ? 'Wave attivo' : 'Wave spento');
-      const label = dom.waveToggleBtn.querySelector('.wave-toggle__label');
-      if (label) {
-        label.textContent = state.waveEnabled ? 'Wave attivo' : 'Wave spento';
-      }
-    }
-  }
-
-  // Aggiornamento guidato dallo stato: dalla pagina si rilegge solo il campo che l'utente
-  // ha appena cambiato (sourceKey); gli altri valori restano quelli esatti dello stato,
-  // senza passare dagli arrotondamenti di cursori e campi (difetto A5 della v1).
-  function updateFromUI(sourceKey = null) {
-    const next = { ...state.params };
-    next.mode = sanitizeMode(dom.modeSelect ? dom.modeSelect.value : defaults.mode);
-    if (CHIAVI.indexOf(sourceKey) >= 0) {
-      next[sourceKey] = sanitizeDimension(sourceKey, state.params[sourceKey]);
-    }
-    next.showGrid = dom.gridToggle.checked;
-    next.pattern = dom.patternSelect.value === 'grid' ? 'grid' : 'staggered';
-    applyModeCalculations(next, sourceKey);
-    enforceAutoGrid(next);
-    state.params = next;
-    applyParamsToUI(next);
-    updateModeHelpText(next);
-    updateInfoBox(next);
-    requestRender();
-  }
-
-  // Valore del campo appena cambiato: quello scritto (se è un numero) o quello del cursore,
-  // limitato all'intervallo del cursore.
-  function sanitizeDimension(key, fallback) {
-    const ctrl = sliderMap[key];
-    if (!ctrl || !ctrl.range) return fallback;
-    const { range, number } = ctrl;
-    const min = parseFloat(range.min);
-    const max = parseFloat(range.max);
-    const numberValue = number ? parseFloat(number.value) : NaN;
-    const rangeValue = parseFloat(range.value);
-    let value = Number.isFinite(numberValue) ? numberValue : rangeValue;
-    if (!Number.isFinite(value)) {
-      value = fallback;
-    }
-    return clamp(value, min, max);
-  }
-
-  function sanitizeMode(value) {
-    if (value === CALC_MODES.STEP || value === CALC_MODES.DIAMETER) {
-      return value;
-    }
-    return CALC_MODES.OF;
-  }
-
-  // Modalità di calcolo. sourceKey = campo appena cambiato ('d', 'P', 'R', 'ofTarget',
-  // 'pattern', 'mode', 'grid'), 'link' per un link incoerente da ricalcolare, oppure null
-  // (avvio, link coerente, ripristino): con null non si ricalcola nulla.
-  function applyModeCalculations(params, sourceKey) {
-    const ranges = getSliderRanges();
-    if (params.mode === CALC_MODES.OF) {
-      state.passoBloccato = null;
-      params.ofTarget = OFCore.clampToRange(OFCore.ofGeometrico(params.d, params.P, params.R).percent, ranges.ofTarget, defaults.ofTarget);
+  // Conferma del valore scritto in un campo di testo (accetta virgola o punto).
+  function confermaTesto(k) {
+    var c = dom.campi[k];
+    if (c.testo.readOnly) return;
+    var t = stato.testi;
+    var grezzo = c.testo.value.trim().replace(/\s/g, '').replace(',', '.');
+    var valore = /^[+-]?(\d+\.?\d*|\.\d+)$/.test(grezzo) ? parseFloat(grezzo) : NaN;
+    if (!Number.isFinite(valore)) {
+      stato.erroriCampo[k] = t.t('avvisoNumero', { esempio: t.n(DEFAULTS[k], CAMPI[k].decimali) });
+      disegna();
       return;
     }
-    if (params.mode === CALC_MODES.STEP) {
-      if (sourceKey === 'P' || sourceKey === 'R') {
-        state.passoBloccato = sourceKey;
-      } else if (sourceKey === 'd' || sourceKey === 'ofTarget' || sourceKey === 'pattern' || sourceKey === 'mode') {
-        state.passoBloccato = null;
-      }
-      if (sourceKey === null || sourceKey === 'grid') return;
-      const r = OFCore.passiDaObiettivo(params, state.passoBloccato, ranges);
-      if (r) {
-        params.P = r.P;
-        params.R = r.R;
-      }
-      return;
+    var limitato = OF.clampToRange(valore, INTERVALLI[k], DEFAULTS[k]);
+    if (limitato !== valore) {
+      stato.erroriCampo[k] = t.t('avvisoIntervallo', {
+        min: t.n(INTERVALLI[k].min, CAMPI[k].decimali), max: t.n(INTERVALLI[k].max, CAMPI[k].decimali),
+        unita: CAMPI[k].unita, usato: t.n(limitato, CAMPI[k].decimali) + ' ' + CAMPI[k].unita
+      });
+    } else {
+      delete stato.erroriCampo[k];
     }
-    if (params.mode === CALC_MODES.DIAMETER) {
-      state.passoBloccato = null;
-      if (sourceKey === null || sourceKey === 'grid') return;
-      const r = OFCore.diametroDaObiettivo(params, ranges);
-      if (r) {
-        params.d = r.d;
-      }
-    }
+    // In modalità Passo, confermare P o R (anche con il valore che ha già) fissa quel passo.
+    var fissaPasso = stato.params.mode === 'step' && (k === 'P' || k === 'R') && stato.passoBloccato !== k;
+    if (limitato === stato.params[k] && !fissaPasso) { disegna(); return; }
+    modifica(k, limitato, true);
   }
 
-  // Intervalli {min, max} letti dagli slider dell'HTML (unica fonte degli intervalli).
-  function getSliderRanges() {
-    const ranges = {};
-    Object.keys(sliderMap).forEach((key) => {
-      const ctrl = sliderMap[key];
-      if (ctrl && ctrl.range) {
-        ranges[key] = { min: parseFloat(ctrl.range.min), max: parseFloat(ctrl.range.max) };
-      }
+  function cambiaLingua(l) {
+    if (l === stato.lingua) return;
+    stato.lingua = l;
+    stato.testi = TESTI.crea(l);
+    scriviMemoria(CHIAVE_LINGUA, l);
+    stato.erroriCampo = {};
+    applicaTesti();
+    disegna();
+  }
+
+  function esegui(azione) {
+    Object.keys(dom.menu).forEach(function (n) { chiudiMenu(n, false); });
+    if (azione === 'svg') esportaSvg();
+    else if (azione === 'png') esportaPng();
+    else if (azione === 'griglia') { modifica('showGrid', !stato.params.showGrid, true); }
+    else if (azione === 'quote') { stato.vista.quote = !stato.vista.quote; scriviMemoria(CHIAVE_VISTA, JSON.stringify(stato.vista)); disegna(); }
+    else if (azione === 'annulla') annulla();
+    else if (azione === 'ripeti') ripeti();
+    else if (azione === 'ripristina') ripristinaIniziali();
+  }
+
+  // ------------------------------------------------------------------ menu
+
+  function alternaMenu(nome, daTastiera) {
+    var m = dom.menu[nome];
+    if (m.menu.hidden) apriMenu(nome, daTastiera); else chiudiMenu(nome, true);
+  }
+
+  function apriMenu(nome, daTastiera) {
+    Object.keys(dom.menu).forEach(function (n) { if (n !== nome) chiudiMenu(n, false); });
+    var m = dom.menu[nome];
+    aggiornaVociMenu();
+    m.menu.hidden = false;
+    m.bottone.setAttribute('aria-expanded', 'true');
+    posizionaMenu(m.menu, m.bottone);
+    var prima = m.menu.querySelector('[role^="menuitem"]:not([disabled])');
+    if (daTastiera && prima) prima.focus();
+    else m.menu.focus({ preventScroll: true }); // con il dito o il mouse: le frecce funzionano, senza riquadro sulla prima voce
+  }
+
+  function chiudiMenu(nome, rimettiFocus) {
+    var m = dom.menu[nome];
+    if (!m || m.menu.hidden) return;
+    m.menu.hidden = true;
+    m.bottone.setAttribute('aria-expanded', 'false');
+    if (rimettiFocus) m.bottone.focus();
+  }
+
+  function posizionaMenu(menu, bottone) {
+    var r = bottone.getBoundingClientRect();
+    var w = menu.offsetWidth;
+    var h = menu.offsetHeight;
+    var margine = 12;
+    var left = Math.min(Math.max(margine, r.left + r.width / 2 - w / 2), window.innerWidth - w - margine);
+    var top = r.bottom + 6;
+    if (top + h > window.innerHeight - margine && r.top - h - 6 > margine) top = r.top - h - 6;
+    menu.style.left = left + 'px';
+    menu.style.top = Math.max(margine, top) + 'px';
+  }
+
+  function tastieraMenu(e, nome) {
+    var voci = Array.prototype.slice.call(dom.menu[nome].menu.querySelectorAll('[role^="menuitem"]:not([disabled])'));
+    var i = voci.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown') { e.preventDefault(); voci[(i + 1) % voci.length].focus(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); voci[(i - 1 + voci.length) % voci.length].focus(); }
+    else if (e.key === 'Home') { e.preventDefault(); voci[0].focus(); }
+    else if (e.key === 'End') { e.preventDefault(); voci[voci.length - 1].focus(); }
+    else if (e.key === 'Tab') { chiudiMenu(nome, false); }
+  }
+
+  function aggiornaVociMenu() {
+    var g = document.querySelector('[data-azione="griglia"]');
+    if (g) g.setAttribute('aria-checked', String(stato.params.showGrid));
+    var q = document.querySelector('[data-azione="quote"]');
+    if (q) q.setAttribute('aria-checked', String(stato.vista.quote));
+    var a = document.querySelector('[data-azione="annulla"]');
+    if (a) a.disabled = !stato.annulla.length;
+    var r = document.querySelector('[data-azione="ripeti"]');
+    if (r) r.disabled = !stato.ripeti.length;
+  }
+
+  // ------------------------------------------------------------------ disegno dell'interfaccia
+
+  function applicaTesti() {
+    var t = stato.testi;
+    document.documentElement.lang = stato.lingua;
+    document.querySelectorAll('[data-i18n]').forEach(function (el) { el.textContent = t.t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-attr]').forEach(function (el) {
+      el.dataset.i18nAttr.split(';').forEach(function (coppia) {
+        var p = coppia.split(':');
+        el.setAttribute(p[0].trim(), t.t(p[1].trim()));
+      });
     });
-    return ranges;
+    dom.lingue.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.lang === stato.lingua)); });
+    if (dom.versione) dom.versione.textContent = t.t('versione', { v: VERSIONE });
   }
 
-  function updateModeHelpText(params) {
-    if (!dom.modeHelp) return;
-    let text = 'Calcola l\'OF geometrico da d, P e R.';
-    if (params.mode === CALC_MODES.STEP) {
-      text = state.passoBloccato
-        ? `Passo ${state.passoBloccato} fissato: l'altro passo si aggiorna per mantenere OF e d. Cambia d o OF per tornare al calcolo automatico.`
-        : 'Calcola P e R da d e OF (sfalsato P = 2R, griglia P = R). Modifica P o R per fissarlo.';
-    } else if (params.mode === CALC_MODES.DIAMETER) {
-      text = 'Calcola il diametro dei fori da OF, P e R.';
-    }
-    dom.modeHelp.textContent = text;
-  }
+  function disegna() {
+    var t = stato.testi;
+    var p = stato.params;
+    var S = OF.sfalsatura(p.P, p.pattern);
+    var of = OF.ofGeometrico(p.d, p.P, p.R);
+    var dist = OF.distanzaMinima(p.P, p.R, S);
+    var ponte = dist.distanza - p.d;
 
-  function updateInfoBox(params) {
-    const S = OFCore.sfalsatura(params.P, params.pattern);
-    const of = OFCore.ofGeometrico(params.d, params.P, params.R);
-    const distanza = OFCore.distanzaMinima(params.P, params.R, S).distanza;
-    const ponte = distanza - params.d;
-    if (dom.ofInlineValue) {
-      dom.ofInlineValue.textContent = `${of.percent.toFixed(2)}%`;
+    // campi
+    Object.keys(CAMPI).forEach(function (k) {
+      var c = dom.campi[k];
+      if (!c.cursore) return;
+      var calcolato = (p.mode === 'diameter' && k === 'd') || (p.mode === 'step' && (k === 'P' || k === 'R') && stato.passoBloccato !== k);
+      var solaLettura = p.mode === 'diameter' && k === 'd';
+      var valore = p[k];
+      var pct = (OF.clamp(valore, INTERVALLI[k].min, INTERVALLI[k].max) - INTERVALLI[k].min) / (INTERVALLI[k].max - INTERVALLI[k].min) * 100;
+      c.cursore.value = String(valore);
+      c.cursore.style.setProperty('--pct', pct + '%');
+      c.cursore.disabled = solaLettura;
+      c.cursore.setAttribute('aria-valuetext', t.n(valore, CAMPI[k].decimali) + ' ' + CAMPI[k].unita);
+      if (document.activeElement !== c.testo || solaLettura) c.testo.value = t.n(valore, CAMPI[k].decimali);
+      c.testo.readOnly = solaLettura;
+      c.riga.classList.toggle('field--computed', calcolato);
+      c.riga.classList.toggle('field--invalid', Boolean(stato.erroriCampo[k]));
+      if (c.badge) c.badge.hidden = !calcolato;
+      if (c.msg) { c.msg.textContent = stato.erroriCampo[k] || ''; c.msg.hidden = !stato.erroriCampo[k]; }
+      if (c.msg) c.testo.setAttribute('aria-invalid', String(Boolean(stato.erroriCampo[k])));
+    });
+    dom.modi.forEach(function (r) { r.checked = r.value === p.mode; });
+    dom.pattern.forEach(function (r) { r.checked = r.value === p.pattern; });
+    dom.sezioneObiettivo.hidden = p.mode === 'of';
+    dom.aiuto.textContent = p.mode === 'of' ? t.t('aiutoOF')
+      : p.mode === 'diameter' ? t.t('aiutoD')
+      : stato.passoBloccato ? t.t('aiutoPassoBloccato', { passo: stato.passoBloccato }) : t.t('aiutoPasso');
+    dom.sfalsatura.textContent = t.t('sfalsaturaValore', { s: t.n(S, 2) + ' mm', regola: p.pattern === 'staggered' ? 'P/2' : '0' });
+
+    // risultati
+    var testoOF = t.n(of.percent, 2);
+    document.querySelectorAll('[data-of-value]').forEach(function (el) {
+      el.textContent = testoOF;
+      var u = document.createElement('small');
+      u.textContent = '%';
+      el.appendChild(u);
+    });
+    var valori = {
+      ponte: t.n(ponte, 2) + ' mm',
+      fori: t.n(OF.foriAlMetroQuadro(p.P, p.R), 0),
+      areaForo: t.n(OF.holeArea(p.d), 3) + ' mm²',
+      areaCella: t.n(OF.areaCella(p.P, p.R), 2) + ' mm²',
+      interasse: t.n(dist.distanza, 2) + ' mm'
+    };
+    document.querySelectorAll('[data-valore]').forEach(function (el) {
+      el.textContent = valori[el.dataset.valore];
+      el.classList.toggle('value--alert', el.dataset.valore === 'ponte' && ponte <= 0);
+    });
+
+    // messaggi
+    var messaggi = [];
+    if (of.limitato) messaggi.push({ tipo: 'danger', testo: t.t('avvisoLimitato') });
+    else if (ponte <= 1e-12) messaggi.push({ tipo: 'danger', testo: t.t('avvisoCollisione', { ponte: valori.ponte }) });
+    // OF obiettivo non raggiunto (Passo o Diametro): ricavato dai valori, con la stessa soglia
+    // dei link, quindi resta con "Mostra griglia" e ricompare riaprendo il link.
+    if (OF.fuoriObiettivo(p)) {
+      messaggi.push({ tipo: 'warning', testo: t.t('avvisoTronca', {
+        richiesto: t.n(p.ofTarget, 2) + ' %', ottenuto: t.n(of.percent, 2) + ' %', motivo: motivoFuoriObiettivo(p)
+      }) });
     }
-    dom.info.holeArea.textContent = `${OFCore.holeArea(params.d).toFixed(4)} mm²`;
-    dom.info.cellArea.textContent = `${OFCore.areaCella(params.P, params.R).toFixed(4)} mm²`;
-    dom.info.ponte.textContent = `${ponte.toFixed(2)} mm`;
-    // migliaia separate da uno spazio sottile: il punto qui è il separatore decimale
-    dom.info.foriM2.textContent = String(Math.round(OFCore.foriAlMetroQuadro(params.P, params.R))).replace(/\B(?=(\d{3})+(?!\d))/g, '\u202f');
-    dom.info.sfalsatura.textContent = `${S.toFixed(2)} mm (${params.pattern === 'staggered' ? 'P/2' : '0'})`;
-    dom.info.interasse.textContent = `${distanza.toFixed(2)} mm`;
-    // Collisione: ponte (bordo–bordo tra i fori più vicini) nullo o negativo.
-    const collision = ponte <= 1e-12;
-    // OF obiettivo non raggiunto (modalità Passo o Diametro): si ricava dallo stato, quindi
-    // resta anche dopo "Mostra griglia" e ricompare riaprendo il link.
-    const fuori = OFCore.fuoriObiettivo(params);
-    let testo = `Geometria valida: ponte minimo ${ponte.toFixed(2)} mm.`;
-    if (collision) {
-      testo = `ATTENZIONE: fori sovrapposti o a contatto (ponte minimo ${ponte.toFixed(2)} mm).`;
-    } else if (fuori) {
-      testo = `OF richiesto ${params.ofTarget.toFixed(2)}% non raggiungibile ${motivoFuoriObiettivo(params)}: OF ottenuto ${of.percent.toFixed(2)}%.`;
-    }
-    dom.info.warning.classList.toggle('visible', collision || fuori);
-    dom.info.warning.textContent = testo;
-    dom.controlRows.d.classList.toggle('invalid', collision);
+    disegnaMessaggi(messaggi);
+
+    disegnaAnteprima();
+    aggiornaLink();
+    salva();
+    annuncia(t.t('ofGeo') + ' ' + testoOF + ' %. ' + t.t('ponte') + ' ' + valori.ponte + '.');
   }
 
   // Perché l'OF obiettivo non si raggiunge: i limiti dei campi, con il vincolo della modalità.
-  function motivoFuoriObiettivo(params) {
-    const rg = getSliderRanges();
-    if (params.mode === CALC_MODES.DIAMETER) {
-      return `con d tra ${rg.d.min.toFixed(2)} e ${rg.d.max.toFixed(2)} mm`;
-    }
-    if (state.passoBloccato) {
-      return `con ${state.passoBloccato} fissato a ${params[state.passoBloccato].toFixed(2)} mm`;
-    }
-    const vincolo = params.pattern === 'staggered' ? 'P = 2R' : 'P = R';
-    return OFCore.obiettivoRaggiungibile(params, rg)
-      ? `con ${vincolo} (si raggiunge fissando P o R)`
-      : `con P e R negli intervalli`;
+  function motivoFuoriObiettivo(p) {
+    var t = stato.testi;
+    if (p.mode === 'diameter') return t.t('motivoD', { min: t.n(INTERVALLI.d.min, 2), max: t.n(INTERVALLI.d.max, 2) });
+    if (stato.passoBloccato) return t.t('motivoBloccato', { passo: stato.passoBloccato, valore: t.n(p[stato.passoBloccato], 2) });
+    if (OF.obiettivoRaggiungibile(p)) return t.t('motivoVincolo', { vincolo: p.pattern === 'staggered' ? 'P = 2R' : 'P = R' });
+    return t.t('motivoIntervalli');
   }
 
-  // Parametri nella forma della v1 per il disegno: x = P; y = R a griglia, 2R nello sfalsato.
-  function paramsDisegno(params) {
-    const v1 = OFCore.aV1(params.P, params.R, params.pattern);
-    return { ...params, x: v1.x, y: v1.y };
+  var ICONA_AVVISO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3.5 2.8 19.5h18.4z"/><path d="M12 10v4.5"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg>';
+
+  function disegnaMessaggi(messaggi) {
+    var chiave = JSON.stringify(messaggi);
+    if (dom.messaggi._chiave === chiave) return;
+    dom.messaggi._chiave = chiave;
+    dom.messaggi.textContent = '';
+    messaggi.forEach(function (m) {
+      var el = document.createElement('p');
+      el.className = 'message message--' + m.tipo;
+      el.innerHTML = ICONA_AVVISO;
+      var s = document.createElement('span');
+      s.textContent = m.testo;
+      el.appendChild(s);
+      dom.messaggi.appendChild(el);
+    });
   }
 
-  function render(stato) {
+  // ------------------------------------------------------------------ anteprima (SVG in mm)
+
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(nome, attributi, genitore) {
+    var e = document.createElementNS(NS, nome);
+    Object.keys(attributi).forEach(function (k) { e.setAttribute(k, attributi[k]); });
+    if (genitore) genitore.appendChild(e);
+    return e;
+  }
+  function arrotonda(v) { return Math.round(v * 10000) / 10000; }
+
+  function disegnaAnteprima() {
     if (!dom.svg) return;
-    const params = paramsDisegno(stato);
-    const layout = OFCore.layoutV1(params, DEFAULTS_V1, {
-      previewSizeMm: PREVIEW_SIZE_MM,
-      marginMm: PREVIEW_MARGIN_MM,
-      pxPerMm: PX_PER_MM
-    });
-    const {
-      widthPx, heightPx, marginPx, cellWidthPx, cellHeightPx, holeRadiusPx,
-      previewWidthPx, previewHeightPx, contentLeftPx, contentTopPx,
-      boundedWidthPx, boundedHeightPx, startCx, startCy
-    } = layout;
-    state.baseWidthPx = widthPx;
-    state.baseHeightPx = heightPx;
-    updatePreviewFrameOffsets({
-      widthPx,
-      heightPx,
-      contentLeftPx,
-      contentTopPx,
-      contentWidthPx: boundedWidthPx,
-      contentHeightPx: boundedHeightPx
-    });
+    var p = stato.params;
+    var svg = dom.svg;
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var lato = dom.svg.getBoundingClientRect().width || 300;
+    var pxmm = lato / CAMPO_MM;
+    var S = OF.sfalsatura(p.P, p.pattern);
+    var ponte = OF.ponte(p.d, p.P, p.R, S);
+    var fori = OF.disposizioneCampo(p, CAMPO_MM);
 
-    const fragments = [];
-    fragments.push(`<style>${SVG_EMBEDDED_STYLES}</style>`);
-    const borderFrame = buildPreviewBorderFragments({
-      left: marginPx,
-      top: marginPx,
-      width: previewWidthPx,
-      height: previewHeightPx,
-      holeRadiusPx
-    });
-    const fillFragments = buildPreviewWaveFillFragments(borderFrame);
-    fillFragments.forEach((fragment) => fragments.push(fragment));
-    borderFrame.fragments.forEach((fragment) => fragments.push(fragment));
+    if (p.showGrid) {
+      var gg = el('g', { 'stroke-width': arrotonda(1 / pxmm) }, svg);
+      var c = CAMPO_MM / 2;
+      for (var y = c - Math.floor(c / p.R) * p.R; y <= CAMPO_MM; y += p.R) el('line', { x1: 0, y1: arrotonda(y), x2: CAMPO_MM, y2: arrotonda(y), class: 'grid-line' }, gg);
+      for (var x = c - Math.floor(c / p.P) * p.P; x <= CAMPO_MM; x += p.P) el('line', { x1: arrotonda(x), y1: 0, x2: arrotonda(x), y2: CAMPO_MM, class: 'grid-line' }, gg);
+    }
+    var g = el('g', {}, svg);
+    var classe = ponte <= 1e-12 ? 'hole hole--collision' : 'hole';
+    var r = arrotonda(p.d / 2);
+    fori.forEach(function (f) { el('circle', { cx: arrotonda(f.x), cy: arrotonda(f.y), r: r, class: classe }, g); });
+    svg.setAttribute('aria-label', stato.testi.t('anteprimaDescr') + ': ' + fori.length + ' ' + stato.testi.t('foriCampo').toLowerCase());
 
-    const contentFragments = [];
-    const watermarkFragment = buildWatermarkFragment({
-      contentLeftPx,
-      contentTopPx,
-      contentWidthPx: boundedWidthPx,
-      contentHeightPx: boundedHeightPx
-    });
-    if (watermarkFragment) {
-      contentFragments.push(watermarkFragment);
-    }
+    // barra di scala: 1, 2, 5, 10 o 20 mm, lunga tra 48 e 120 px
+    var lunghezze = [1, 2, 5, 10, 20];
+    var L = lunghezze[lunghezze.length - 1];
+    for (var i = 0; i < lunghezze.length; i++) { if (lunghezze[i] * pxmm >= 48) { L = lunghezze[i]; break; } }
+    if (dom.scala) dom.scala.style.width = (L * pxmm) + 'px';
+    if (dom.scalaTesto) dom.scalaTesto.textContent = stato.testi.t('scala', { n: L });
 
-    if (params.showGrid) {
-      for (let c = 0; c <= params.cols; c += 1) {
-        const x = startCx + c * cellWidthPx;
-        contentFragments.push(`<line x1="${x}" y1="${contentTopPx}" x2="${x}" y2="${contentTopPx + boundedHeightPx}" class="grid-line" />`);
-      }
-      for (let r = 0; r <= params.rows; r += 1) {
-        const y = startCy + r * cellHeightPx;
-        contentFragments.push(`<line x1="${contentLeftPx}" y1="${y}" x2="${contentLeftPx + boundedWidthPx}" y2="${y}" class="grid-line" />`);
-      }
-    }
+    document.querySelectorAll('[data-valore="foriCampo"]').forEach(function (e) { e.textContent = stato.testi.n(fori.length, 0); });
 
-    layout.holes.forEach(({ cx, cy }) => {
-      contentFragments.push(`<circle cx="${cx}" cy="${cy}" r="${holeRadiusPx}" class="hole" />`);
-    });
-    const holesDrawn = layout.holes.length;
-
-    const shouldClipContent = state.waveEnabled && Boolean(borderFrame.wavePath) && contentFragments.length > 0;
-    if (shouldClipContent) {
-      fragments.push(
-        `<defs data-preview-only="true"><clipPath id="${PREVIEW_CLIP_ID}" clipPathUnits="userSpaceOnUse"><path d="${borderFrame.wavePath}" /></clipPath></defs>`
-      );
-      fragments.push(`<g data-preview-clip-group="true" clip-path="url(#${PREVIEW_CLIP_ID})">`);
-      fragments.push(...contentFragments);
-      fragments.push('</g>');
-    } else {
-      fragments.push(...contentFragments);
-    }
-
-    dom.svg.innerHTML = fragments.join('');
-    dom.svg.setAttribute('viewBox', `0 0 ${widthPx} ${heightPx}`);
-    dom.svg.setAttribute('width', widthPx);
-    dom.svg.setAttribute('height', heightPx);
-    if (dom.info && dom.info.cellsCount) {
-      dom.info.cellsCount.textContent = `${holesDrawn} fori`;
-    }
-    // Quote dell'anteprima: ingombro dei fori davvero disegnati (righe sfalsate comprese).
-    const ingombro = OFCore.ingombroFori(layout, params.d, PX_PER_MM);
-    if (dom.previewWidthLabel) {
-      dom.previewWidthLabel.textContent = `${ingombro.larghezza.toFixed(1)} mm`;
-    }
-    if (dom.previewHeightLabel) {
-      dom.previewHeightLabel.textContent = `${ingombro.altezza.toFixed(1)} mm`;
-    }
+    // anteprime piccole (telefono in orizzontale): niente lente e niente scritta del campo
+    var piccola = lato < 260;
+    dom.preview.classList.toggle('preview--piccola', piccola);
+    if (stato.vista.quote && !piccola) disegnaLente(svg, lato, pxmm, p, S);
   }
 
-  function buildWatermarkFragment({ contentLeftPx, contentTopPx, contentWidthPx, contentHeightPx }) {
-    if (!Number.isFinite(contentWidthPx) || !Number.isFinite(contentHeightPx)) {
-      return '';
+  // Lente in alto a destra: una cella ingrandita con le quote P, R, S e d, in scala.
+  function disegnaLente(svg, lato, pxmm, p, S) {
+    var t = stato.testi;
+    var P = p.P, R = p.R, d = p.d;
+    var LW = Math.min(0.6 * lato, 300);          // larghezza della lente in px
+    var fsPx = 12;                                 // corpo del testo in px
+    var etichetta = function (s) { return s.length * 0.62 * fsPx; }; // larghezza stimata in px
+    var testoP = 'P ' + t.n(P, 2), testoR = 'R ' + t.n(R, 2), testoS = 'S ' + t.n(S, 2), testoD = 'd ' + t.n(d, 2);
+    // regione mostrata (mm), calcolata in due passate perché le etichette hanno misure fisse in px
+    var k = LW / (P * 2);
+    var reg;
+    for (var giro = 0; giro < 3; giro++) {
+      var mm = function (px) { return px / k; };
+      var gap = mm(6);
+      var alto = d / 2 + mm(34);                                  // spazio sopra: quota P e sua etichetta
+      var destra = Math.max(S > 0 ? S + d / 2 : d / 2, mm(16)) + mm(10) + mm(etichetta(testoR));
+      var basso = R + d / 2 + (S > 0 ? mm(36) : mm(12));
+      var sinistra = d / 2 + gap + mm(4);
+      reg = { x: -sinistra, y: -alto, w: sinistra + P + destra, h: alto + basso };
+      k = LW / reg.w;
     }
-    if (contentWidthPx <= 0 || contentHeightPx <= 0) {
-      return '';
-    }
-    const inset = clamp(Math.min(contentWidthPx, contentHeightPx) * 0.06, 8, 16);
-    const x = contentLeftPx + contentWidthPx - inset;
-    const y = contentTopPx + contentHeightPx - inset;
-    return `<text x="${formatSvgNum(x)}" y="${formatSvgNum(y)}" class="preview-watermark" text-anchor="end">GR</text>`;
-  }
-
-  function updatePreviewFrameOffsets({ widthPx, heightPx, contentLeftPx, contentTopPx, contentWidthPx, contentHeightPx }) {
-    if (!dom.previewFrame) {
-      return;
-    }
-    const safeWidth = Number.isFinite(widthPx) && widthPx > 0 ? widthPx : 1;
-    const safeHeight = Number.isFinite(heightPx) && heightPx > 0 ? heightPx : 1;
-    const leftPct = clamp((contentLeftPx / safeWidth) * 100, 0, 100);
-    const topPct = clamp((contentTopPx / safeHeight) * 100, 0, 100);
-    const widthPct = clamp((contentWidthPx / safeWidth) * 100, 0, 100);
-    const heightPct = clamp((contentHeightPx / safeHeight) * 100, 0, 100);
-    dom.previewFrame.style.setProperty('--content-left', `${leftPct.toFixed(4)}%`);
-    dom.previewFrame.style.setProperty('--content-top', `${topPct.toFixed(4)}%`);
-    dom.previewFrame.style.setProperty('--content-width', `${widthPct.toFixed(4)}%`);
-    dom.previewFrame.style.setProperty('--content-height', `${heightPct.toFixed(4)}%`);
-  }
-
-  function requestRender() {
-    if (state.renderHandle !== null) {
-      return;
-    }
-    const scheduler = window.requestAnimationFrame || ((cb) => window.setTimeout(cb, 16));
-    state.renderHandle = scheduler(() => {
-      state.renderHandle = null;
-      render(state.params);
+    var LH = reg.h * k;
+    if (LH > 0.6 * lato) { k = (0.6 * lato) / reg.h; LH = 0.6 * lato; LW = reg.w * k; }
+    var mmV = 1 / pxmm;                             // mm della vista per 1 px
+    var lw = LW * mmV, lh = LH * mmV;
+    var lx = CAMPO_MM - lw - 8 * mmV, ly = 8 * mmV;
+    var lente = el('svg', { x: arrotonda(lx), y: arrotonda(ly), width: arrotonda(lw), height: arrotonda(lh), viewBox: [reg.x, reg.y, reg.w, reg.h].map(arrotonda).join(' '), class: 'lens' }, svg);
+    var px = function (v) { return arrotonda(v / k); };      // px della lente → mm della regione
+    el('rect', { x: arrotonda(reg.x), y: arrotonda(reg.y), width: arrotonda(reg.w), height: arrotonda(reg.h), class: 'lens-bg', 'stroke-width': px(2) }, lente);
+    var fg = el('g', {}, lente);
+    var ponte = OF.ponte(d, P, R, S);
+    // solo i quattro fori che servono alle quote: (0, 0), (P, 0) sulla riga 0; (S, R), (S + P, R) sulla riga 1
+    [[0, 0], [P, 0], [S, R], [S + P, R]].forEach(function (c) {
+      el('circle', { cx: arrotonda(c[0]), cy: arrotonda(c[1]), r: arrotonda(d / 2), class: ponte <= 1e-12 ? 'hole hole--collision' : 'hole' }, fg);
     });
-  }
-
-  function exportSVG() {
-    const source = buildExportSvgSource();
-    if (!source) {
-      setStatus('Anteprima non pronta.', true);
-      return;
-    }
-    const blob = new Blob([source], { type: 'image/svg+xml;charset=utf-8' });
-    downloadBlob(blob, buildFileName('pattern.svg'));
-    setStatus('SVG esportato (50 × 50 mm).');
-  }
-
-  function exportPNG() {
-    const source = buildExportSvgSource();
-    if (!source) {
-      setStatus('Anteprima non pronta.', true);
-      return;
-    }
-    const svgBlob = new Blob([source], { type: 'image/svg+xml;charset=utf-8' });
-    const url = URL.createObjectURL(svgBlob);
-    const img = new Image();
-    const scale = window.devicePixelRatio || 1;
-    const canvas = document.createElement('canvas');
-    const targetWidth = Math.max(1, Math.round(state.baseWidthPx * scale));
-    const targetHeight = Math.max(1, Math.round(state.baseHeightPx * scale));
-    canvas.width = targetWidth;
-    canvas.height = targetHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    img.onload = () => {
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      URL.revokeObjectURL(url);
-      canvas.toBlob((blob) => {
-        if (!blob) return;
-        downloadBlob(blob, buildFileName('pattern.png'));
-        setStatus('PNG esportato.');
-      });
+    var q = el('g', { 'stroke-width': px(1.3) }, lente);
+    var linea = function (x1, y1, x2, y2) { el('line', { x1: arrotonda(x1), y1: arrotonda(y1), x2: arrotonda(x2), y2: arrotonda(y2), class: 'dim' }, q); };
+    var testo = function (x, y, s, ancora) {
+      var e = el('text', { x: arrotonda(x), y: arrotonda(y), 'font-size': px(fsPx), 'text-anchor': ancora || 'middle', 'dominant-baseline': 'middle', class: 'dim-text' }, q);
+      e.textContent = s;
     };
-    img.onerror = () => {
-      URL.revokeObjectURL(url);
-      setStatus('Impossibile esportare PNG.', true);
-    };
-    img.src = url;
-  }
-
-  // SVG esportato: dimensioni in millimetri (50 × 50 mm; la prova in un CAD è ancora da fare).
-  // Il disegno interno resta in unità dell'anteprima (10 unità = 1 mm).
-  function buildExportSvgSource() {
-    if (!dom.svg || !state.baseWidthPx || !state.baseHeightPx) {
-      return null;
+    var sporgenza = px(4), stacco = px(3) + d / 2;
+    // P: sopra la riga 0, tra (0, 0) e (P, 0)
+    var yP = -(d / 2 + px(12));
+    linea(0, -stacco, 0, yP - sporgenza); linea(P, -stacco, P, yP - sporgenza); linea(0, yP, P, yP);
+    testo(P / 2, yP - px(9), testoP);
+    // R: a destra, tra la riga 0 e la riga 1
+    var xR = P + d / 2 + px(14);
+    linea(P + stacco, 0, xR + sporgenza, 0);
+    if (S > 0) linea(P + S - stacco, R, xR - sporgenza, R); else linea(P + stacco, R, xR + sporgenza, R);
+    linea(xR, 0, xR, R);
+    testo(xR + px(6), R / 2, testoR, 'start');
+    // S: sotto la riga 1, tra (0, 0) e (S, R)
+    if (S > 0) {
+      var yS = R + d / 2 + px(14);
+      linea(0, stacco, 0, yS + sporgenza); linea(S, R + stacco, S, yS + sporgenza); linea(0, yS, S, yS);
+      testo(S / 2, yS + px(10), testoS);
     }
-    const clone = dom.svg.cloneNode(true);
-    clone.querySelectorAll('[data-preview-only="true"]').forEach((node) => node.remove());
-    clone.querySelectorAll('[data-preview-hidden-border]').forEach((node) => {
-      node.removeAttribute('data-preview-hidden-border');
-      node.removeAttribute('stroke-opacity');
-      node.removeAttribute('opacity');
-      node.removeAttribute('stroke');
-      node.removeAttribute('style');
-    });
-    clone.querySelectorAll('[data-preview-clip-group]').forEach((node) => {
-      node.removeAttribute('data-preview-clip-group');
-      node.removeAttribute('clip-path');
-      const parent = node.parentNode;
-      if (!parent) {
-        return;
-      }
-      while (node.firstChild) {
-        parent.insertBefore(node.firstChild, node);
-      }
-      parent.removeChild(node);
-    });
-    clone.setAttribute('viewBox', `0 0 ${state.baseWidthPx} ${state.baseHeightPx}`);
-    clone.setAttribute('width', `${state.baseWidthPx / PX_PER_MM}mm`);
-    clone.setAttribute('height', `${state.baseHeightPx / PX_PER_MM}mm`);
-    const serializer = new XMLSerializer();
-    return serializer.serializeToString(clone);
+    // d: anello sul foro (P, 0) e richiamo verso l'alto a destra
+    el('circle', { cx: arrotonda(P), cy: 0, r: arrotonda(d / 2 + px(3)), class: 'dim-ring', 'stroke-width': px(1.3) }, q);
+    var dx = (d / 2 + px(3)) * 0.7071;
+    linea(P + dx, -dx, P + dx + px(10), -dx - px(10));
+    testo(P + dx + px(12), -dx - px(12), testoD, 'start');
   }
 
-  function downloadBlob(blob, filename) {
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+  // ------------------------------------------------------------------ link, memoria, annunci
+
+  function aggiornaLink() {
+    var hash = '#' + OF.costruisciLink(stato.params, stato.passoBloccato);
+    if (location.hash !== hash) {
+      try { history.replaceState(null, '', hash); } catch (e) { /* file:// in alcuni browser */ }
+    }
   }
 
-  function buildFileName(base) {
-    const { d, P, R, pattern } = state.params;
-    const S = OFCore.sfalsatura(P, pattern);
-    const safe = `${base.replace(/\.[a-z]+$/i, '')}-d${d.toFixed(2)}-P${P.toFixed(2)}-R${R.toFixed(2)}-S${S.toFixed(2)}`;
-    const ext = base.split('.').pop();
-    return `${safe}.${ext}`.replace(/[^a-z0-9_.-]+/gi, '_');
+  function linkCompleto() {
+    var base = /^https?:$/.test(location.protocol) ? location.href.split('#')[0] : INDIRIZZO;
+    return base + '#' + OF.costruisciLink(stato.params, stato.passoBloccato);
   }
 
-  function resetDefaults() {
-    state.params = { ...defaults };
-    state.passoBloccato = null;
-    state.waveEnabled = true;
-    applyParamsToUI(state.params);
-    updateFromUI(null);
-    applyWaveToggleState();
-    setStatus('Parametri ripristinati.');
+  function salva() {
+    scriviMemoria(CHIAVE_STATO, istantanea());
   }
 
-  // Copia negli appunti l'indirizzo completo con i parametri (e il passo fissato, se c'è).
-  function copyParamsHash() {
-    const hash = OFCore.costruisciLink(state.params, state.passoBloccato);
-    location.hash = hash;
-    const full = location.href;
+  function leggiMemoria(k) {
+    try { return window.localStorage.getItem(k); } catch (e) { return null; }
+  }
+  function scriviMemoria(k, v) {
+    try { window.localStorage.setItem(k, v); } catch (e) { /* memoria non disponibile: l'app funziona lo stesso */ }
+  }
+  function leggiJSON(k) {
+    var v = leggiMemoria(k);
+    if (!v) return null;
+    try { return JSON.parse(v); } catch (e) { return null; }
+  }
+
+  function annuncia(testo) {
+    clearTimeout(stato.annuncioTimer);
+    stato.annuncioTimer = setTimeout(function () { if (dom.annuncio) dom.annuncio.textContent = testo; }, 800);
+  }
+
+  function mostraToast(testo, azioneTesto, azione) {
+    clearTimeout(stato.toastTimer);
+    dom.toastTesto.textContent = testo;
+    dom.toastAzione.hidden = !azioneTesto;
+    dom.toastAzione.textContent = azioneTesto || '';
+    dom.toastAzione._azione = azione || null;
+    dom.toast.hidden = false;
+    stato.toastTimer = setTimeout(nascondiToast, azione ? 8000 : 3000);
+  }
+  function nascondiToast() {
+    clearTimeout(stato.toastTimer);
+    dom.toast.hidden = true;
+  }
+
+  // ------------------------------------------------------------------ condivisione ed esportazione
+
+  function riassunto() {
+    var t = stato.testi;
+    var p = stato.params;
+    var S = OF.sfalsatura(p.P, p.pattern);
+    return 'd ' + t.n(p.d, 2) + ' mm · P ' + t.n(p.P, 2) + ' mm · R ' + t.n(p.R, 2) + ' mm · S ' + t.n(S, 2) + ' mm · '
+      + t.t('ofGeo') + ' ' + t.n(OF.ofGeometrico(p.d, p.P, p.R).percent, 2) + ' %';
+  }
+
+  function condividi() {
+    var url = linkCompleto();
+    var touch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    if (navigator.share && touch) {
+      navigator.share({ title: 'Openness Factor', text: riassunto(), url: url }).catch(function () {});
+      return;
+    }
+    copiaTesto(url).then(function () { mostraToast(stato.testi.t('toastLink')); },
+      function () { mostraToast(stato.testi.t('toastLinkErrore')); });
+  }
+
+  function copiaTesto(testo) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(full).then(() => {
-        setStatus('Link copiato negli appunti.');
-      }).catch(() => fallbackCopy(full));
-    } else {
-      fallbackCopy(full);
+      return navigator.clipboard.writeText(testo).catch(function () { return copiaVecchioStile(testo); });
     }
+    return copiaVecchioStile(testo);
   }
-
-  function fallbackCopy(text) {
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.setAttribute('readonly', 'true');
-    textarea.style.position = 'absolute';
-    textarea.style.left = '-9999px';
-    document.body.appendChild(textarea);
-    textarea.select();
-    try {
-      document.execCommand('copy');
-      setStatus('Link copiato negli appunti.');
-    } catch (err) {
-      setStatus('Impossibile copiare negli appunti.', true);
-    }
-    document.body.removeChild(textarea);
-  }
-
-  function setStatus(message, isError = false) {
-    if (!dom.statusMessage) return;
-    dom.statusMessage.textContent = message;
-    dom.statusMessage.style.color = isError ? '#b42318' : '#475467';
-  }
-
-  function clamp(value, min, max) {
-    return Math.min(Math.max(value, min), max);
-  }
-
-  function buildPreviewWaveFillFragments(frameData) {
-    if (!state.waveEnabled || !frameData || !frameData.wavePath) {
-      return [];
-    }
-    const bounds = frameData.bounds || {};
-    const patternWidth = Math.max(bounds.width || 0, 1);
-    const stripeLight = 48;
-    const stripeDark = 48;
-    const stripePeriod = stripeLight + stripeDark;
-    const defs = `
-      <defs data-preview-only="true">
-        <linearGradient id="${PREVIEW_WAVE_FILL_GRADIENT_ID}" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#e9f0fb" />
-          <stop offset="40%" stop-color="#d7e3f6" />
-          <stop offset="100%" stop-color="#c2d0e9" />
-        </linearGradient>
-        <linearGradient id="${PREVIEW_WAVE_GLOSS_GRADIENT_ID}" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.55" />
-          <stop offset="45%" stop-color="#ffffff" stop-opacity="0.18" />
-          <stop offset="70%" stop-color="#0f2654" stop-opacity="0.08" />
-          <stop offset="100%" stop-color="#0f2654" stop-opacity="0.18" />
-        </linearGradient>
-        <pattern id="${PREVIEW_WAVE_STRIPE_PATTERN_ID}" x="${bounds.left || 0}" y="${bounds.top || 0}" width="${patternWidth}" height="${stripePeriod}" patternUnits="userSpaceOnUse">
-          <rect x="0" y="0" width="${patternWidth}" height="${stripeLight}" fill="rgba(255, 255, 255, 0.55)" />
-          <rect x="0" y="${stripeLight}" width="${patternWidth}" height="${stripeDark}" fill="rgba(15, 38, 84, 0.22)" />
-        </pattern>
-      </defs>
-    `.trim();
-    return [
-      defs,
-      `<path data-preview-only="true" class="preview-wave-fill" d="${frameData.wavePath}" fill="url(#${PREVIEW_WAVE_FILL_GRADIENT_ID})" />`,
-      `<path data-preview-only="true" class="preview-wave-fill stripes" d="${frameData.wavePath}" fill="url(#${PREVIEW_WAVE_STRIPE_PATTERN_ID})" />`,
-      `<path data-preview-only="true" class="preview-wave-fill overlay" d="${frameData.wavePath}" fill="url(#${PREVIEW_WAVE_GLOSS_GRADIENT_ID})" />`
-    ];
-  }
-
-  function buildPreviewBorderFragments(options) {
-    const { left, top, width, height, holeRadiusPx } = options || {};
-    const result = { fragments: [], wavePath: '', bounds: { left, top, width, height } };
-    const fallbackRect = `<rect x="${left}" y="${top}" width="${width}" height="${height}" class="preview-rect" />`;
-    if (!state.waveEnabled) {
-      result.fragments.push(fallbackRect);
-      return result;
-    }
-    const hiddenRect = `<rect x="${left}" y="${top}" width="${width}" height="${height}" class="preview-rect" data-preview-hidden-border="true" stroke="none" stroke-opacity="0" opacity="0" style="stroke: none;" />`;
-    result.fragments.push(hiddenRect);
-    if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
-      return result;
-    }
-    const amplitudeBase = Math.min(Math.max(holeRadiusPx || 0, 4), width * 0.08);
-    const waveAmplitudePx = clamp(amplitudeBase || 0, 6, Math.max(width * 0.12, 10));
-    const cyclesEstimate = Math.round(Math.max(height, 1) / 70);
-    const waveCycles = clamp(cyclesEstimate || 0, 3, 14);
-    const frameShape = buildWaveFrameShape({
-      left,
-      top,
-      width,
-      height,
-      amplitude: waveAmplitudePx,
-      waves: waveCycles
+  function copiaVecchioStile(testo) {
+    return new Promise(function (ok, ko) {
+      var a = document.createElement('textarea');
+      a.value = testo; a.setAttribute('readonly', ''); a.style.position = 'fixed'; a.style.left = '-9999px';
+      document.body.appendChild(a); a.select();
+      var riuscito = false;
+      try { riuscito = document.execCommand('copy'); } catch (e) { riuscito = false; }
+      document.body.removeChild(a);
+      if (riuscito) ok(); else ko();
     });
-    if (frameShape.path) {
-      result.fragments.push(`<path data-preview-only="true" class="preview-wave-frame" d="${frameShape.path}" />`);
-      result.wavePath = frameShape.path;
-    }
-    return result;
   }
 
-  function buildWaveFramePath(config) {
-    const { path } = buildWaveFrameShape(config);
-    return path;
+  function nomeFile(est) {
+    var p = stato.params;
+    var f = function (v) { return v.toFixed(2); };
+    return 'OF-d' + f(p.d) + '-P' + f(p.P) + '-R' + f(p.R) + '-S' + f(OF.sfalsatura(p.P, p.pattern)) + '.' + est;
   }
 
-  function buildWaveFrameShape(config) {
-    const commands = buildWaveFrameCommands(config);
-    if (!commands.length) {
-      return { path: '' };
+  function scarica(blob, nome, testoToast) {
+    var file = typeof File === 'function' ? new File([blob], nome, { type: blob.type }) : null;
+    var standaloneIos = window.navigator.standalone === true;
+    if (standaloneIos && file && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: nome }).catch(function () {});
+      return;
     }
-    const svgPath = serializeWaveCommands(commands, (value) => formatSvgNum(value));
-    return { path: svgPath };
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = nome;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1500);
+    if (testoToast) mostraToast(testoToast);
   }
 
-  function buildWaveFrameCommands(config) {
-    const { left, top, width, height, amplitude, waves } = config || {};
-    if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
-      return [];
-    }
-    if (!Number.isFinite(amplitude) || amplitude <= 0) {
-      return [];
-    }
-    const safeWaves = Math.max(1, Math.round(waves));
-    const segments = safeWaves * 2;
-    const right = left + width;
-    const bottom = top + height;
-    const maxInset = Math.max(width / 2 - 1, 1);
-    const axisInset = Math.min(Math.max(amplitude, 0), maxInset);
-    if (axisInset <= 0) {
-      return [];
-    }
-    const effectiveAmplitude = axisInset;
-    const rightAxis = right - axisInset;
-    const leftAxis = left + axisInset;
-    const rightWave = buildWaveSegmentSequence({
-      startX: rightAxis,
-      startY: top,
-      height,
-      amplitude: effectiveAmplitude,
-      segments,
-      direction: -1,
-      orientation: 'down'
+  function escapeXml(s) {
+    return String(s).replace(/[<>&"']/g, function (c) { return { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' }[c]; });
+  }
+
+  // SVG per CAD: unità in mm (width/height in mm, viewBox 0 0 50 50), solo contorni dei fori.
+  function esportaSvg() {
+    scarica(new Blob([svgCad()], { type: 'image/svg+xml;charset=utf-8' }), nomeFile('svg'), stato.testi.t('toastSvg'));
+  }
+
+  function svgCad() {
+    var p = stato.params;
+    var S = OF.sfalsatura(p.P, p.pattern);
+    var of = OF.ofGeometrico(p.d, p.P, p.R).percent;
+    var fori = OF.disposizioneCampo(p, CAMPO_MM);
+    var f = function (v) { return v.toFixed(2); };
+    var titolo = 'Openness Factor - d ' + f(p.d) + ' P ' + f(p.P) + ' R ' + f(p.R) + ' S ' + f(S) + ' mm - OF geometrico ' + f(of) + '%';
+    var oggi = new Date().toISOString().slice(0, 10);
+    var righe = [];
+    righe.push('<?xml version="1.0" encoding="UTF-8"?>');
+    righe.push('<svg xmlns="http://www.w3.org/2000/svg" width="' + CAMPO_MM + 'mm" height="' + CAMPO_MM + 'mm" viewBox="0 0 ' + CAMPO_MM + ' ' + CAMPO_MM + '">');
+    righe.push('<title>' + escapeXml(titolo) + '</title>');
+    righe.push('<metadata><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">'
+      + '<rdf:Description dc:title="' + escapeXml(titolo) + '" dc:creator="Giacomo Recagni - Ufficio Tecnico Pellini" dc:date="' + oggi + '"'
+      + ' dc:source="Openness Factor v' + VERSIONE + ' - ' + INDIRIZZO + '" dc:format="image/svg+xml"'
+      + ' dc:description="Campo di ' + CAMPO_MM + ' x ' + CAMPO_MM + ' mm. Unita: mm. OF geometrico calcolato dai valori nominali, non misurato."/>'
+      + '</rdf:RDF></metadata>');
+    righe.push('<rect x="0" y="0" width="' + CAMPO_MM + '" height="' + CAMPO_MM + '" fill="none" stroke="#000000" stroke-width="0.05"/>');
+    righe.push('<g fill="none" stroke="#000000" stroke-width="0.02">');
+    var r = arrotonda(p.d / 2);
+    fori.forEach(function (h) { righe.push('<circle cx="' + arrotonda(h.x) + '" cy="' + arrotonda(h.y) + '" r="' + r + '"/>'); });
+    righe.push('</g>');
+    righe.push('</svg>');
+    return righe.join('\n') + '\n';
+  }
+
+  // PNG: il pattern come nell'anteprima, con una didascalia dei parametri.
+  function esportaPng() {
+    var p = stato.params;
+    var lato = 1200, banda = 120;
+    var c = document.createElement('canvas');
+    c.width = lato; c.height = lato + banda;
+    var g = c.getContext('2d');
+    var font = (getComputedStyle(document.documentElement).getPropertyValue('--of-font') || '').trim() || 'sans-serif';
+    // colori fissi del marchio: l'immagine è uguale in tema chiaro e scuro
+    g.fillStyle = '#243646'; g.fillRect(0, 0, lato, lato);
+    g.fillStyle = '#eefbfb';
+    var s = lato / CAMPO_MM;
+    OF.disposizioneCampo(p, CAMPO_MM).forEach(function (h) {
+      g.beginPath(); g.arc(h.x * s, h.y * s, (p.d / 2) * s, 0, Math.PI * 2); g.fill();
     });
-    const leftWave = buildWaveSegmentSequence({
-      startX: leftAxis,
-      startY: bottom,
-      height,
-      amplitude: effectiveAmplitude,
-      segments,
-      direction: 1,
-      orientation: 'up'
-    });
-    if (!rightWave.length || !leftWave.length) {
-      return [];
-    }
-    const commands = [
-      { cmd: 'M', points: [{ x: left, y: top }] },
-      { cmd: 'L', points: [{ x: right, y: top }] }
-    ];
-    if (rightAxis !== right) {
-      commands.push({ cmd: 'L', points: [{ x: rightAxis, y: top }] });
-    }
-    commands.push(...rightWave);
-    if (rightAxis !== right) {
-      commands.push({ cmd: 'L', points: [{ x: right, y: bottom }] });
-    }
-    commands.push({ cmd: 'L', points: [{ x: left, y: bottom }] });
-    if (leftAxis !== left) {
-      commands.push({ cmd: 'L', points: [{ x: leftAxis, y: bottom }] });
-    }
-    commands.push(...leftWave);
-    if (leftAxis !== left) {
-      commands.push({ cmd: 'L', points: [{ x: left, y: top }] });
-    }
-    commands.push({ cmd: 'Z', points: [] });
-    return commands;
+    g.fillStyle = '#ffffff'; g.fillRect(0, lato, lato, banda);
+    g.fillStyle = '#c6b784'; g.fillRect(0, lato, lato, 4);
+    g.fillStyle = '#243646';
+    g.font = '600 34px ' + font;
+    g.fillText(riassunto(), 32, lato + 54);
+    g.fillStyle = '#5b6874';
+    g.font = '400 24px ' + font;
+    g.fillText('Openness Factor · ' + stato.testi.t('campo') + ' · ' + stato.testi.t('notaOF'), 32, lato + 94);
+    c.toBlob(function (blob) { if (blob) scarica(blob, nomeFile('png'), stato.testi.t('toastPng')); }, 'image/png');
   }
 
-  function buildWaveSegmentSequence(options) {
-    const { startX, startY, height, amplitude, segments, direction = 1, orientation = 'down' } = options || {};
-    if (!Number.isFinite(height) || height <= 0) {
-      return [];
-    }
-    if (!Number.isFinite(amplitude) || amplitude <= 0) {
-      return [];
-    }
-    if (!Number.isFinite(segments) || segments <= 0) {
-      return [];
-    }
-    const sign = orientation === 'up' ? -1 : 1;
-    const segmentHeight = (height / segments) * sign;
-    let currentY = startY;
-    const commands = [];
-    for (let i = 0; i < segments; i += 1) {
-      const swing = amplitude * (i % 2 === 0 ? 1 : -1) * direction;
-      const ctrlX = startX + swing;
-      const ctrlY = currentY + segmentHeight / 2;
-      currentY += segmentHeight;
-      commands.push({
-        cmd: 'Q',
-        points: [
-          { x: ctrlX, y: ctrlY },
-          { x: startX, y: currentY }
-        ]
-      });
-    }
-    return commands;
+  // ------------------------------------------------------------------ informazioni e firma
+
+  function apriInfo() {
+    if (typeof dom.info.showModal === 'function') dom.info.showModal(); else dom.info.setAttribute('open', '');
+    dom.info.focus({ preventScroll: true }); // il foglio stesso, non il pulsante Fine
   }
 
-  function serializeWaveCommands(commands, formatter) {
-    if (!Array.isArray(commands) || commands.length === 0) {
-      return '';
+  // Accesso di sola lettura per i test automatici (tools/e2e.mjs) e per la console.
+  window.OFApp = {
+    versione: VERSIONE,
+    stato: function () { return JSON.parse(istantanea()); },
+    svg: function () { return svgCad(); }
+  };
+
+  function firma() {
+    if (window.console && console.log) {
+      console.log('%cOpenness Factor ' + VERSIONE + '%c\nProgettata e sviluppata da Giacomo Recagni · Ufficio Tecnico',
+        'font-weight:600;color:#243646', 'color:#5b6874');
     }
-    const parts = [];
-    commands.forEach(({ cmd, points }) => {
-      if (cmd === 'Z') {
-        parts.push('Z');
-        return;
-      }
-      if (!Array.isArray(points) || points.length === 0) {
-        return;
-      }
-      const coords = [];
-      points.forEach((point) => {
-        coords.push(formatter(point.x, 'x'));
-        coords.push(formatter(point.y, 'y'));
-      });
-      parts.push(`${cmd} ${coords.join(' ')}`);
-    });
-    return parts.join(' ');
   }
-
-  function formatSvgNum(value) {
-    if (!Number.isFinite(value)) {
-      return '0';
-    }
-    return Number(value).toFixed(2);
-  }
-
-
-  // Righe e colonne dell'anteprima: sempre automatiche, quante ne stanno nel riquadro di 50 mm.
-  // (I vecchi link con righe e colonne fissate, n e m, non bloccano più la griglia.)
-  function enforceAutoGrid(params) {
-    if (!params) return;
-    params.cols = OFCore.computeAutoCount(params.P, params.d, PREVIEW_SIZE_MM);
-    params.rows = OFCore.computeAutoCount(params.R, params.d, PREVIEW_SIZE_MM);
-  }
-
 })();

@@ -2,6 +2,25 @@
 
 Ogni rilascio ha un tag git (`v2.1`, `v2.2`, …). I numeri dell'OF sono sempre **geometrici** (calcolati), non misurati.
 
+## v2.3 — Nuovo aspetto (08.10.2026)
+Stessi calcoli della v2.2; cambia l'interfaccia, secondo il mockup D1 (variante A "Pellini editoriale").
+- Colori del Manuale Brand Identity Pellini (blu 7546 C, beige 4525 C) e font IBM Plex Sans, incluso nell'app (funziona anche senza rete). Tema scuro automatico quando il dispositivo è in modalità scura.
+- **OF geometrico** in grande, con ponte minimo, fori al m², area foro, area cella, interasse minimo e fori nel campo. La nota ricorda che è calcolato dai valori nominali, non misurato.
+- Modalità di calcolo con pulsanti a segmenti: OF · Passo · Diametro. Il valore calcolato è segnalato ("calcolato"); in modalità Diametro il diametro è in sola lettura.
+- Campi con l'unità di misura, che accettano la virgola o il punto con qualunque lingua del browser. I valori fuori intervallo vengono limitati, con un avviso sotto il campo. Le frecce della tastiera cambiano il valore (Maiusc per passi dieci volte più grandi).
+- In modalità Passo, confermare un valore in P o R (anche quello che c'è già) fissa quel passo. Quando l'OF non si raggiunge con P = 2R (P = R a griglia) ma fissando P sì, l'avviso lo dice.
+- **Lente delle quote** sull'anteprima: P, R, S e d disegnati su una cella, in scala. Si nasconde dal menu Altro e, da sola, sulle anteprime molto piccole.
+- Anteprima su un campo di 50 × 50 mm con il reticolo centrato, un foro al centro (181 fori con i default) e una barra di scala. Il contatore conta i fori davvero disegnati.
+- Avvisi chiari per fori sovrapposti e per OF non raggiungibile.
+- **Italiano e inglese** con il selettore IT | EN in alto. Numeri nel formato della lingua: virgola in italiano, punto in inglese.
+- Annulla e ripeti: dal menu Altro, con Ctrl+Z e Ctrl+Maiusc+Z, e dopo "Ripristina valori iniziali" anche dal messaggio di conferma. L'app ricorda l'ultima configurazione.
+- Il link nella barra degli indirizzi è sempre aggiornato. "Condividi" usa la condivisione del telefono oppure copia il link (con l'indirizzo pubblico, anche se l'app è aperta con il doppio clic).
+- I vecchi link della v1 in modalità Passo con x diverso da y si aprono con P fissato (prima: P e R entrambi "calcolati").
+- Esportazione: SVG per CAD in mm (solo i contorni dei fori, con i metadati di autore e parametri) e immagine PNG con una didascalia dei parametri.
+- Foglio **Informazioni**: versione, formula, convenzione e crediti.
+- Tolti l'effetto Wave e la sigla "GR". La firma resta nei crediti e nei metadati dei file esportati.
+- Test: 203 casi, tra cui la disposizione nel campo e i testi nelle due lingue; 49 scenari dell'interfaccia nuova (`tests/e2e/v2.3.json`). Gli scenari della v2.2 restano come riferimento storico.
+
 ## v2.2 — Convenzione P, R, S (08.10.2026)
 Stesso aspetto della v2.0: cambiano i nomi dei campi e, dove deciso, alcuni numeri.
 - Campi **P** (passo tra i punti) e **R** (passo tra le righe); **S** (sfalsatura) è calcolata: 0 a griglia, P/2 sfalsato. **OF geometrico = π(d/2)² / (P·R)** per tutti i pattern.

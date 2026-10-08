@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Openness Factor — test del calcolo</title>
+  <title>Openness Factor — test del calcolo e dei testi</title>
   <style>
     :root { color-scheme: light dark; --ok: #1e7a5a; --no: #b42318; --testo: #243646; --fondo: #f4f7f9; --riga: #dde3e8; }
     @media (prefers-color-scheme: dark) { :root { --ok: #6fd0a8; --no: #ff8a7a; --testo: #e8f0f4; --fondo: #12232e; --riga: #2c4250; } }
@@ -22,12 +22,13 @@
 </head>
 <body>
   <main>
-    <h1>Test del calcolo (of-core.js)</h1>
+    <h1>Test del calcolo (of-core.js) e dei testi (i18n.js)</h1>
     <p>Gli stessi casi girano anche con <code>node tests/run-node.js</code>.</p>
     <div id="sintesi" class="sintesi no" role="status">Esecuzione non avviata: se il messaggio resta, uno dei file dei test non si è caricato.</div>
     <div id="elenco"></div>
   </main>
   <script src="of-core.js"></script>
+  <script src="i18n.js"></script>
   <script src="tests/harness.js"></script>
   <script src="tests/casi.js"></script>
   <script>
@@ -36,6 +37,7 @@
       var elenco = document.getElementById('elenco');
       var mancanti = [];
       if (typeof OFCore === 'undefined') mancanti.push('of-core.js');
+      if (typeof OFTesti === 'undefined') mancanti.push('i18n.js');
       if (typeof OFHarness === 'undefined') mancanti.push('tests/harness.js');
       if (typeof OFCasi === 'undefined') mancanti.push('tests/casi.js');
       if (mancanti.length) {

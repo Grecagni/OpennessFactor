@@ -229,11 +229,13 @@ Dopo ogni passo: stop, verifica, approvazione.
 | **D1 Mockup** ✔ | progettazione | 2 varianti statiche, fuori dall'app (A "Pellini editoriale", B "Apple chiara"; vedi `DESIGN.md`); Jack sceglie o mescola; `DESIGN.md` approvato | materiali di Jack (facoltativi) | solo il mockup |
 | **v2.1 Fondamenta** ✔ | ingegneria | passo 0.1–0.2: `of-core.js` e test; `CHANGELOG.md` | — | nulla (invisibile) |
 | **v2.2 Convenzione** ✔ | ingegneria | passo 1 (P, R, S) + passo 2: ponte vero, avviso di troncamento, SVG in mm (prova in CAD da fare), link completo e robusto, quote coerenti con il disegno (contatore fori: v2.3), default OF, README | v2.1 | nuove etichette e avvisi |
-| **v2.3 Nuovo aspetto** | incontro | token CSS dal mockup scelto; intestazione con nome e selettore lingua IT/EN; riquadro "OF geometrico"; controlli a segmenti; campi con unità; numeri nel formato della lingua; toast; avvisi sul campo; tema scuro; via Wave e "GR"; foglio "Informazioni" con la firma; metadati autore negli export | D1, v2.2 | l'app rinnovata |
+| **v2.3 Nuovo aspetto** ✔ | incontro | token CSS dal mockup scelto; intestazione con nome e selettore lingua IT/EN; riquadro "OF geometrico"; controlli a segmenti; campi con unità; numeri nel formato della lingua; toast; avvisi sul campo; tema scuro; via Wave e "GR"; foglio "Informazioni" con la firma; metadati autore negli export | D1, v2.2 | l'app rinnovata |
 | **v2.4 App** | ingegneria | PWA: manifest (inserito solo in http/https, nessun errore da doppio clic), icone, service worker per l'uso offline, istruzioni di installazione per iPhone e Android | v2.3; nome, indirizzo e icona definitivi | si installa sulla Home |
 | *distribuzione* | — | prova su telefoni veri, poi link o QR agli agenti | v2.4 | — |
 | **v2.5 Anteprima** | entrambi | quote P/R/S/d disegnate sui fori, barra di scala, collisioni evidenziate (anche senza colore), zoom | v2.3 | anteprima "parlante" |
 | **v2.6+ Funzioni** | — | per gli agenti: condivisione con QR, scheda PDF (con la firma nel piè di pagina), preset. Per Jack: tabella soluzioni, confronto varianti. Per la produzione: pannello reale, tempo laser, export coordinate, vincoli di processo | v2.5; dati da Jack | una funzione per rilascio |
+
+**Esito v2.3 (08.10.2026).** Fatto tutto quello che è in tabella. In più, anticipati dalla v2.5: lente delle quote P/R/S/d e barra di scala. La disposizione dei fori è quella propria della v2 (`disposizioneCampo`, reticolo centrato nel campo di 50 mm), e il contatore conta i fori disegnati (chiude la voce 2.7). Alla v2.5 restano zoom e collisioni evidenziate anche senza colore.
 
 D1 e v2.1 possono partire subito, in parallelo. I passi 2.8 e 3.5 restano condizionati (2.8 se i test confermano A5; 3.5 dopo la decisione su "cumulativa o alternata").
 

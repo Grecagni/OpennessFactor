@@ -6,7 +6,8 @@
    Due gruppi di funzioni:
    - convenzione della v1 (campi x, y; nello sfalsato le righe distano y/2): registrano il
      comportamento della v2.0 e servono alla conversione dei vecchi link;
-   - convenzione della v2 (P, R, S, decisa da Jack il 06.10.2026): usata dall'app dalla v2.2. */
+   - convenzione della v2 (P, R, S, decisa da Jack il 06.10.2026): usata dall'app dalla v2.2;
+     dalla v2.3 anche la disposizione dei fori nell'anteprima (disposizioneCampo). */
 (function (root, factory) {
   'use strict';
   var api = factory();
@@ -427,7 +428,8 @@
 
   // Modalità Passo: esiste una coppia P, R dentro gli intervalli che dà l'OF obiettivo?
   // Senza passo fissato il calcolo cerca solo P = R (griglia) o P = 2R (sfalsato): quando
-  // quella coppia esce dagli intervalli, fissando P o R si può ancora raggiungere l'obiettivo.
+  // quella coppia esce dagli intervalli ma l'obiettivo è raggiungibile, basta fissare P al
+  // valore che ha (P minimo a griglia, P massimo nello sfalsato) e R si adegua.
   function obiettivoRaggiungibile(params, ranges) {
     var rg = ranges || RANGES;
     var area = holeArea(params.d);
@@ -530,6 +532,11 @@
     if (t !== null) { p.ofTarget = clampToRange(t, rg.ofTarget, defaults.ofTarget); trovato = true; }
     var lock = q.get('lock');
     var bloccato = p.mode === 'step' && (lock === 'P' || lock === 'R') ? lock : null;
+    // Vecchio link della v1 in modalità Passo con P ≠ 2R (P ≠ R a griglia): un passo era fissato
+    // a mano, ma il link non diceva quale. Si considera fissato P: la geometria resta quella del
+    // link e cambiando l'OF obiettivo si ricalcola solo R.
+    var k = p.pattern === 'staggered' ? 2 : 1;
+    if (legacy && p.mode === 'step' && bloccato === null && Math.abs(p.P - k * p.R) > 1e-9 * p.P) bloccato = 'P';
     return trovato ? { params: p, legacy: legacy, bloccato: bloccato } : null;
   }
 
@@ -560,6 +567,34 @@
       if (h.cy > maxY) maxY = h.cy;
     });
     return { larghezza: (maxX - minX) / pxPerMm + d, altezza: (maxY - minY) / pxPerMm + d };
+  }
+
+
+  // Fori interamente contenuti in un campo quadrato di lato L (mm), con il reticolo centrato:
+  // un foro al centro del campo, righe a passo R, righe dispari spostate di S (lettura alternata,
+  // anche per le righe sopra il centro: conta la distanza dalla riga centrale).
+  // Restituisce [{ x, y }] in mm, riga per riga dall'alto, da sinistra a destra.
+  function disposizioneCampo(params, L) {
+    var P = params.P;
+    var R = params.R;
+    var d = params.d;
+    if (!(P > 0) || !(R > 0) || !(d >= 0) || !(L > 0)) return [];
+    var S = sfalsatura(P, params.pattern);
+    var r = d / 2;
+    var c = L / 2;
+    var eps = 1e-9;
+    var fori = [];
+    var nMax = Math.floor((c - r) / R + eps);
+    for (var n = -nMax; n <= nMax; n++) {
+      var y = c + n * R;
+      var off = spostamentoRiga(Math.abs(n), S);
+      var kMin = Math.ceil((r - c - off) / P - eps);
+      var kMax = Math.floor((L - r - c - off) / P + eps);
+      for (var k = kMin; k <= kMax; k++) {
+        fori.push({ x: c + off + k * P, y: y });
+      }
+    }
+    return fori;
   }
 
   return {
@@ -601,6 +636,7 @@
     TOLLERANZA_OF: TOLLERANZA_OF,
     fuoriObiettivo: fuoriObiettivo,
     daRicalcolare: daRicalcolare,
-    ingombroFori: ingombroFori
+    ingombroFori: ingombroFori,
+    disposizioneCampo: disposizioneCampo
   };
 }));
