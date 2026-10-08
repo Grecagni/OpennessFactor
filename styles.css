@@ -336,3 +336,35 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border-radius
   input[type="range"]::-moz-range-track { background: CanvasText; }
   .result__alert { forced-color-adjust: auto; }
 }
+
+/* ---------- Scheda da stampare o salvare in PDF (v2.7) ---------- */
+/* Con la stampa (menu Esporta, Ctrl+P o menu del browser) si stampa solo la scheda, su A4. */
+.scheda { display: none; }
+@page { size: A4; margin: 14mm; }
+@media print {
+  html, body { background: #ffffff !important; }
+  body > *:not(.scheda) { display: none !important; }
+  .scheda { display: block; color: #12232e; font-family: var(--of-font); font-size: 10.5pt; line-height: 1.35; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .scheda h1 { display: flex; align-items: center; gap: 3mm; margin: 0; font-size: 16pt; font-weight: 600; }
+  .scheda h1 svg { width: 9mm; height: 9mm; }
+  .scheda__testa { display: flex; justify-content: space-between; align-items: center; padding-bottom: 3mm; border-bottom: 0.6mm solid #c6b784; }
+  .scheda__data { color: #4c5a66; }
+  .scheda__of { margin: 5mm 0 1mm; font-size: 26pt; font-weight: 700; }
+  .scheda__of small { font-size: 12pt; font-weight: 600; margin-left: 1mm; }
+  .scheda__eyebrow { margin: 0; font-size: 8pt; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #4c5a66; }
+  .scheda__nota { margin: 0 0 5mm; color: #4c5a66; }
+  .scheda__avviso { margin: 0 0 4mm; padding: 2mm 3mm; border-left: 1mm solid #b42318; background: #fbeae8; }
+  .scheda__tabelle { display: grid; grid-template-columns: 1fr 1fr; gap: 8mm; align-items: start; break-inside: avoid; }
+  .scheda table { width: 100%; border-collapse: collapse; }
+  .scheda th, .scheda td { padding: 1.4mm 0; border-bottom: 0.2mm solid #d5dde2; text-align: left; vertical-align: top; font-weight: 400; }
+  .scheda td { text-align: right; font-weight: 600; white-space: nowrap; }
+  .scheda caption { text-align: left; padding-bottom: 1.5mm; }
+  .scheda__figure { display: grid; grid-template-columns: auto 1fr; gap: 10mm; align-items: start; margin-top: 8mm; break-inside: avoid; }
+  .scheda__figure figure { margin: 0; }
+  .scheda__figure figcaption { margin-top: 2mm; font-size: 8.5pt; color: #4c5a66; max-width: 60mm; }
+  .scheda__disegno { display: block; width: 50mm; height: 50mm; }
+  .scheda__qr { display: block; width: 32mm; height: 32mm; }
+  .scheda__link { font-size: 8pt; color: #4c5a66; overflow-wrap: anywhere; }
+  .scheda__formula { margin-top: 8mm; break-inside: avoid; }
+  .scheda__piede { margin-top: 10mm; padding-top: 2mm; border-top: 0.2mm solid #d5dde2; font-size: 8pt; color: #4c5a66; }
+}

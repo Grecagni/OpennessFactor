@@ -1544,13 +1544,13 @@
  "informazioni": {
   "aperto": true,
   "crediti": "Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico",
-  "versione": "Versione 2.6.0",
+  "versione": "Versione 2.7.0",
   "installa": "L’installazione funziona dall’indirizzo web dell’app, non dal file aperto con doppio clic.grecagni.github.io/OpennessFactor",
   "pulsanteInstalla": false,
   "novita": [
-   "Condividi con il codice QR: chi lo inquadra apre la stessa configurazione. Il link si copia o si salva come immagine.",
-   "Zoom dell’anteprima e croci sui fori in collisione (v2.5).",
-   "App installabile sulla schermata Home, anche senza rete (v2.4)."
+   "Scheda PDF: dal menu Esporta si stampa, o si salva in PDF, una pagina con parametri, risultati, disegno in scala 1:1 e codice QR.",
+   "Condividi con il codice QR: chi lo inquadra apre la stessa configurazione (v2.6).",
+   "Zoom dell’anteprima e croci sui fori in collisione (v2.5)."
   ]
  },
  "SVG per CAD": {
@@ -3562,6 +3562,41 @@
   "hash": "#d=0.9&p=1&r=0.5&pattern=staggered&mode=of",
   "toast": "",
   "etichetta": "Diametro del foro"
+ },
+ "scheda PDF (stampa)": {
+  "stampe": 1,
+  "titolo": "Openness Factor · Scheda del pattern",
+  "of": "1,57%",
+  "righe": [
+   "d · Diametro del foro0,50 mm",
+   "P · Passo tra i punti5,00 mm",
+   "R · Passo tra le righe2,50 mm",
+   "S · Sfalsatura2,50 mm",
+   "DisposizioneSfalsato",
+   "Modalità di calcoloOF",
+   "Ponte minimo3,04 mm",
+   "Interasse minimo3,54 mm",
+   "Fori al m²80.000",
+   "Area foro0,196 mm²",
+   "Area cella P × R12,50 mm²",
+   "Fori nel campo181"
+  ],
+  "disegno": [
+   "50mm",
+   "50mm",
+   181
+  ],
+  "qr": true,
+  "link": "https://grecagni.github.io/OpennessFactor/#d=0.5&p=5&r=2.5&pattern=staggered&mode=of",
+  "piede": "Openness Factor 2.7.0 · Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico"
+ },
+ "scheda PDF con avviso (collisione), in inglese": {
+  "titolo": "Openness Factor · Pattern sheet",
+  "avvisi": [
+   "Holes overlap: the geometric OF is capped at 100 %."
+  ],
+  "of": "100.00%",
+  "piede": "Openness Factor 2.7.0 · Designed and developed by Giacomo Recagni · Technical Department"
  },
  "memoria del browser": {
   "d": 0.7,

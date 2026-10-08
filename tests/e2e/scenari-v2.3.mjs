@@ -143,5 +143,12 @@ export default [
   { nome: 'zoom: + e poi − (campo intero)', azioni: `await clic('#zoom-piu'); await clic('#zoom-meno');` },
   { nome: 'zoom: doppio clic sull’anteprima (campo intero)', azioni: `await clic('#zoom-piu'); q('#preview').dispatchEvent(new MouseEvent('dblclick', { bubbles: true })); await frame();` },
   { nome: 'collisione: croci sui fori visibili dopo lo zoom', azioni: `await scrivi('${T('d')}', '0,9'); await scrivi('${T('P')}', '1'); await scrivi('${T('R')}', '0,5'); for (let i = 0; i < 4; i++) await clic('#zoom-piu');` },
+  { nome: 'scheda PDF (stampa)', azioni: `window.__stampe = 0; window.print = () => { window.__stampe++; }; await clic('[data-menu="menu-esporta"]'); await clic('[data-azione="scheda"]');`,
+    leggi: `(() => { const s = q('#scheda'); const d = s.querySelector('.scheda__disegno');
+      return { stampe: window.__stampe, titolo: s.querySelector('h1 span').textContent, of: s.querySelector('.scheda__of').textContent,
+        righe: [...s.querySelectorAll('tr')].map((r) => r.textContent), disegno: d && [d.getAttribute('width'), d.getAttribute('height'), d.querySelectorAll('circle').length],
+        qr: Boolean(s.querySelector('.scheda__qr')), link: s.querySelector('.scheda__link').textContent, piede: s.querySelector('.scheda__piede').textContent }; })()` },
+  { nome: 'scheda PDF con avviso (collisione), in inglese', azioni: `window.print = () => {}; await clic('[data-lang="en"]'); await scrivi('${T('d')}', '0.9'); await scrivi('${T('P')}', '1'); await scrivi('${T('R')}', '0.5'); await clic('[data-menu="menu-esporta"]'); await clic('[data-azione="scheda"]');`,
+    leggi: `(() => { const s = q('#scheda'); return { titolo: s.querySelector('h1 span').textContent, avvisi: [...s.querySelectorAll('.scheda__avviso')].map((a) => a.textContent), of: s.querySelector('.scheda__of').textContent, piede: s.querySelector('.scheda__piede').textContent }; })()` },
   { nome: 'memoria del browser', azioni: `await scrivi('${T('d')}', '0,7');`, leggi: `(() => { let s = null; try { s = JSON.parse(localStorage.getItem('of.v2.stato')); } catch (e) {} return s && s.params ? { d: s.params.d, bloccato: s.bloccato } : null; })()` }
 ];

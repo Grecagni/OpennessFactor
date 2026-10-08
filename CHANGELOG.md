@@ -2,6 +2,11 @@
 
 Ogni rilascio ha un tag git (`v2.1`, `v2.2`, …). I numeri dell'OF sono sempre **geometrici** (calcolati), non misurati.
 
+## v2.7 — Scheda PDF (08.10.2026)
+- **Scheda del pattern** da stampare o salvare in PDF ("Salva come PDF" del browser): dal menu Esporta → "Scheda PDF (stampa)", oppure con Ctrl+P.
+- Una pagina A4 con: OF geometrico in evidenza (con la nota sui valori nominali), avvisi se ci sono, parametri (d, P, R, S, disposizione, modalità, OF obiettivo), risultati (ponte, interasse, fori al m², area foro, area cella, fori nel campo), **disegno del campo di 50 × 50 mm in scala 1:1** se stampato al 100 %, **codice QR** del link per riaprire la configurazione, formula, e la firma nel piè di pagina con la versione dell'app.
+- Nella lingua scelta (italiano o inglese); funziona anche senza rete.
+
 ## v2.6 — Condivisione con codice QR (08.10.2026)
 - "Condividi" apre un foglio con il **codice QR** del link: chi lo inquadra con la fotocamera del telefono apre la stessa configurazione (pensato per mostrarla a un cliente o a un collega).
 - Nel foglio: riassunto dei parametri, il link, e i pulsanti "Copia link", "Condividi…" (condivisione del telefono, dove c'è) e "Salva immagine" (PNG del codice con i parametri, da allegare a un'email o a un'offerta).

@@ -6,7 +6,7 @@
 
   var OF = window.OFCore;
   var TESTI = window.OFTesti;
-  var VERSIONE = '2.6.0'; // uguale a VERSIONE in sw.js (lo controlla tests/run-node.js)
+  var VERSIONE = '2.7.0'; // uguale a VERSIONE in sw.js (lo controlla tests/run-node.js)
   var CAMPO_MM = 50;
   var INDIRIZZO = 'https://grecagni.github.io/OpennessFactor/';
   var CHIAVE_STATO = 'of.v2.stato';
@@ -111,6 +111,7 @@
     dom.lingue = Array.prototype.slice.call(document.querySelectorAll('[data-lang]'));
     dom.info = id('info');
     dom.condivisione = id('condivisione');
+    dom.scheda = id('scheda');
     dom.toast = id('toast');
     dom.toastTesto = id('toast-testo');
     dom.toastAzione = id('toast-azione');
@@ -344,6 +345,8 @@
       navigator.share({ title: 'Openness Factor', text: riassunto(), url: linkCompleto() }).catch(function () {});
     });
     document.getElementById('salva-qr').addEventListener('click', salvaQr);
+    // anche con Ctrl+P o dal menu del browser si stampa la scheda, aggiornata
+    window.addEventListener('beforeprint', compilaScheda);
 
     Object.keys(dom.menu).forEach(function (nome) {
       var m = dom.menu[nome];
@@ -466,6 +469,7 @@
     Object.keys(dom.menu).forEach(function (n) { chiudiMenu(n, n === aperto); });
     if (azione === 'svg') esportaSvg();
     else if (azione === 'png') esportaPng();
+    else if (azione === 'scheda') stampaScheda();
     else if (azione === 'griglia') { modifica('showGrid', !stato.params.showGrid, true); }
     else if (azione === 'quote') { stato.vista.quote = !stato.vista.quote; scriviMemoria(CHIAVE_VISTA, JSON.stringify(stato.vista)); disegna(); }
     else if (azione === 'annulla') annulla();
@@ -1160,6 +1164,114 @@
       parti.push(png.subarray(fineIhdr));
       return new Blob(parti, { type: 'image/png' });
     });
+  }
+
+  // ------------------------------------------------------------------ scheda da stampare (v2.7)
+  // Una pagina A4 con parametri, risultati, disegno del campo in scala 1:1 (50 × 50 mm se stampato
+  // al 100 %), codice QR del link e firma nel piè di pagina. "Salva come PDF" del browser la
+  // trasforma in PDF. La impaginazione è in styles.css (@media print).
+
+  function stampaScheda() {
+    compilaScheda();
+    if (typeof window.print === 'function') window.print();
+  }
+
+  function compilaScheda() {
+    var sez = dom.scheda;
+    if (!sez) return;
+    var t = stato.testi;
+    var p = stato.params;
+    var S = OF.sfalsatura(p.P, p.pattern);
+    var of = OF.ofGeometrico(p.d, p.P, p.R);
+    var dist = OF.distanzaMinima(p.P, p.R, S);
+    var ponte = dist.distanza - p.d;
+    var fori = OF.disposizioneCampo(p, CAMPO_MM);
+    var crea = function (tag, classe, testo, genitore) {
+      var e = document.createElement(tag);
+      if (classe) e.className = classe;
+      if (testo !== undefined && testo !== null) e.textContent = testo;
+      if (genitore) genitore.appendChild(e);
+      return e;
+    };
+    var mm = function (v, dec) { return t.n(v, dec === undefined ? 2 : dec) + ' mm'; };
+    sez.textContent = '';
+
+    var testa = crea('header', 'scheda__testa', null, sez);
+    var h1 = crea('h1', null, null, testa);
+    var icona = document.querySelector('.appbar__icon');
+    if (icona) h1.appendChild(icona.cloneNode(true));
+    crea('span', null, 'Openness Factor · ' + t.t('schedaTitolo'), h1);
+    crea('span', 'scheda__data', new Date().toLocaleDateString(t.locale), testa);
+
+    crea('p', 'scheda__eyebrow', t.t('ofGeo'), sez).style.marginTop = '5mm';
+    var valore = crea('p', 'scheda__of', t.n(of.percent, 2), sez);
+    crea('small', null, '%', valore);
+    crea('p', 'scheda__nota', t.t('notaOF'), sez);
+    Array.prototype.slice.call(dom.messaggi.querySelectorAll('.message span')).forEach(function (m) {
+      crea('p', 'scheda__avviso', m.textContent, sez);
+    });
+
+    var tabelle = crea('div', 'scheda__tabelle', null, sez);
+    var tabella = function (titolo, righe) {
+      var tb = crea('table', null, null, tabelle);
+      crea('caption', 'scheda__eyebrow', titolo, tb);
+      var corpo = crea('tbody', null, null, tb);
+      righe.forEach(function (r) {
+        var tr = crea('tr', null, null, corpo);
+        crea('th', null, r[0], tr);
+        crea('td', null, r[1], tr);
+      });
+    };
+    var modo = { of: 'modoOF', step: 'modoPasso', diameter: 'modoD' }[p.mode];
+    var righeParametri = [
+      ['d · ' + t.t('diametro'), mm(p.d)],
+      ['P · ' + t.t('passoPunti'), mm(p.P)],
+      ['R · ' + t.t('passoRighe'), mm(p.R)],
+      ['S · ' + t.t('sfalsatura'), mm(S)],
+      [t.t('disposizione'), t.t(p.pattern === 'staggered' ? 'sfalsato' : 'griglia')],
+      [t.t('schedaModo'), t.t(modo)]
+    ];
+    if (p.mode !== 'of') righeParametri.push([t.t('ofObiettivo'), t.n(p.ofTarget, 2) + ' %']);
+    tabella(t.t('schedaParametri'), righeParametri);
+    tabella(t.t('schedaRisultati'), [
+      [t.t('ponte'), mm(ponte)],
+      [t.t('interasse'), mm(dist.distanza)],
+      [t.t('foriM2Lungo'), t.n(OF.foriAlMetroQuadro(p.P, p.R), 0)],
+      [t.t('areaForo'), t.n(OF.holeArea(p.d), 3) + ' mm²'],
+      [t.t('areaCella'), t.n(OF.areaCella(p.P, p.R), 2) + ' mm²'],
+      [t.t('foriCampo'), t.n(fori.length, 0)]
+    ]);
+
+    var figure = crea('div', 'scheda__figure', null, sez);
+    var fig = crea('figure', null, null, figure);
+    var disegno = document.createElementNS(NS, 'svg');
+    disegno.setAttribute('class', 'scheda__disegno');
+    disegno.setAttribute('viewBox', '0 0 ' + CAMPO_MM + ' ' + CAMPO_MM);
+    disegno.setAttribute('width', CAMPO_MM + 'mm');
+    disegno.setAttribute('height', CAMPO_MM + 'mm');
+    el('rect', { x: 0.05, y: 0.05, width: CAMPO_MM - 0.1, height: CAMPO_MM - 0.1, fill: 'none', stroke: '#243646', 'stroke-width': 0.1 }, disegno);
+    var g = el('g', { fill: '#243646' }, disegno);
+    var r = arrotonda(p.d / 2);
+    fori.forEach(function (f) { el('circle', { cx: arrotonda(f.x), cy: arrotonda(f.y), r: r }, g); });
+    fig.appendChild(disegno);
+    crea('figcaption', null, t.t('schedaDisegno'), fig);
+    var figQr = crea('figure', null, null, figure);
+    var url = linkCompleto();
+    var qr = svgQr(url);
+    if (qr) {
+      qr.setAttribute('class', 'scheda__qr');
+      qr.setAttribute('aria-label', t.t('qrDescr'));
+      figQr.appendChild(qr);
+    }
+    var didascalia = crea('figcaption', null, t.t('schedaQr'), figQr);
+    crea('div', 'scheda__link', url, didascalia);
+
+    var formula = crea('div', 'scheda__formula', null, sez);
+    crea('p', 'scheda__eyebrow', t.t('comeSiCalcola'), formula);
+    crea('p', null, t.t('formula'), formula).style.fontWeight = '600';
+    crea('p', null, t.t('formulaNota'), formula);
+
+    crea('footer', 'scheda__piede', 'Openness Factor ' + VERSIONE + ' · ' + t.t('crediti'), sez);
   }
 
   // ------------------------------------------------------------------ informazioni e firma

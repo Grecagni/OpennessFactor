@@ -179,6 +179,7 @@
   <div class="menu" id="menu-esporta" role="menu" tabindex="-1" data-i18n-attr="aria-label:esporta" aria-label="Esporta" hidden>
     <button type="button" class="menu__item" role="menuitem" data-azione="svg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17"/><circle cx="9" cy="9" r="2"/><circle cx="15" cy="9" r="2"/><circle cx="12" cy="15" r="2"/></svg><span data-i18n="esportaSvg">SVG per CAD (mm)</span></button>
     <button type="button" class="menu__item" role="menuitem" data-azione="png"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1"/><circle cx="9" cy="10" r="1.5"/><path d="M21 15l-5-5-4 4-3-3-6 6"/></svg><span data-i18n="esportaPng">Immagine PNG</span></button>
+    <button type="button" class="menu__item" role="menuitem" data-azione="scheda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8V3.5h10V8"/><rect x="3.5" y="8" width="17" height="8.5" rx="1.5"/><path d="M7 14h10v6.5H7z"/></svg><span data-i18n="esportaScheda">Scheda PDF (stampa)</span></button>
   </div>
 
   <div class="menu" id="menu-altro" role="menu" tabindex="-1" data-i18n-attr="aria-label:altro" aria-label="Altro" hidden>
@@ -250,6 +251,8 @@
       <p class="qr__link" id="qr-link"></p>
     </div>
   </dialog>
+
+  <section class="scheda" id="scheda" aria-hidden="true"></section>
 
   <div class="toast" id="toast" role="status" hidden><span id="toast-testo"></span><button type="button" class="toast__action" id="toast-azione" hidden></button></div>
   <div class="visually-hidden" id="annuncio" aria-live="polite"></div>
