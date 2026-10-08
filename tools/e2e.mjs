@@ -6,7 +6,8 @@
 //
 // --app: cartella dell'app da provare (predefinita: quella di questo repository). Serve, per esempio,
 //        per registrare il riferimento da una copia della versione precedente.
-// Il file degli scenari esporta: export default [{ nome, hash?, azioni: 'codice JS async', leggi?: 'espressione' }]
+// Il file degli scenari esporta: export default [{ nome, hash?, azioni: 'codice JS async', leggi?: 'espressione', riapri?: true }]
+// riapri: dopo le azioni l'app si riapre senza link e senza svuotare la memoria, poi si legge.
 // e LETTURA (espressione predefinita). Le azioni girano nella pagina e possono usare gli aiuti di AIUTI.
 // Esito (codice di uscita) 1 se, con --confronta, almeno uno scenario è diverso.
 
@@ -94,11 +95,23 @@ try {
     const { identifier } = await chrome.send('Page.addScriptToEvaluateOnNewDocument', { source: 'try { localStorage.clear(); } catch (e) {}' });
     await chrome.carica(base + (s.hash ? '#' + s.hash : ''));
     await chrome.send('Page.removeScriptToEvaluateOnNewDocument', { identifier });
-    const valore = await chrome.valuta(`(async () => { ${AIUTI}
-      ${s.azioni || ''}
-      await frame();
-      return (${s.leggi || LETTURA});
-    })()`);
+    let valore;
+    if (s.riapri) {
+      await chrome.valuta(`(async () => { ${AIUTI}
+        ${s.azioni || ''}
+        await frame(); return true; })()`);
+      await chrome.carica('about:blank');
+      await chrome.carica(base);
+      valore = await chrome.valuta(`(async () => { ${AIUTI}
+        await frame();
+        return (${s.leggi || LETTURA}); })()`);
+    } else {
+      valore = await chrome.valuta(`(async () => { ${AIUTI}
+        ${s.azioni || ''}
+        await frame();
+        return (${s.leggi || LETTURA});
+      })()`);
+    }
     risultati[s.nome] = valore;
   }
 } finally {

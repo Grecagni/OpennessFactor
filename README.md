@@ -1,6 +1,6 @@
-# Open Factor Designer — v2
+# Openness Factor — v2
 
-Strumento web per progettare il pattern di microforatura laser del film WAVE (Pellini) e calcolarne il **fattore di apertura geometrico** (OF).
+Strumento web (già "Open Factor Designer") per progettare il pattern di microforatura laser del film WAVE (Pellini) e calcolarne il **fattore di apertura geometrico** (OF).
 
 - Si apre con doppio clic su `index.html`: HTML/CSS/JS vanilla, nessuna installazione.
 - Una sola versione per tutti gli schermi: telefono (verticale e orizzontale), tablet, PC.
@@ -35,5 +35,5 @@ Dalla v2.2 l'app usa questa convenzione. I vecchi link della v1 (campi x, y; nel
 | `test.html`, `tests/` | test del calcolo e dei testi (doppio clic su `test.html`, oppure `node tests/run-node.js`) e scenari registrati |
 | `CHANGELOG.md` | novità di ogni rilascio |
 | `CLAUDE.md` | regole di lavoro per Claude Code |
-| `tools/` | strumenti di verifica con Node + Chrome: grafica su 12 formati (`screenshot.mjs`), scenari dell'interfaccia (`e2e.mjs`), test nel browser (`test-browser.mjs`) |
+| `tools/` | strumenti di verifica con Node + Chrome: grafica su 13 formati (`screenshot.mjs`), scenari dell'interfaccia (`e2e.mjs`), test nel browser (`test-browser.mjs`) |
 | `docs/` | convenzione, piano e note di progetto |

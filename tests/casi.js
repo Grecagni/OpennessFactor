@@ -343,10 +343,15 @@
     t.ok('modalità Passo con R fissato: il link conserva lock=R', /(^|&)lock=R(&|$)/.test(link));
     t.uguale('… e lo rilegge', OF.leggiLink(link, DEFAULTS_V2).bloccato, 'R');
     t.uguale('lock non valido ignorato', OF.leggiLink('#mode=step&lock=X&d=0.5', DEFAULTS_V2).bloccato, null);
+    t.uguale('link senza t: segnalato (l’app ricava l’OF obiettivo dalla geometria)', [OF.leggiLink('#d=0.6&p=4&r=2&pattern=staggered&mode=step', DEFAULTS_V2).senzaObiettivo, OF.leggiLink('#d=0.6&p=4&r=2&mode=step&t=3', DEFAULTS_V2).senzaObiettivo], [true, false]);
     letto = OF.leggiLink('#d=0.50&x=1.20&y=3.27&n=20&m=10&grid=0&pattern=staggered&mode=step&t=10.00', DEFAULTS_V2);
     t.uguale('vecchio link v1 Passo con x ≠ y: P fissato (la geometria resta quella del link)', [letto.params.P, letto.params.R, letto.bloccato], [1.2, 1.635, 'P']);
     letto = OF.leggiLink('#d=0.50&x=5.00&y=5.00&pattern=staggered&mode=step&t=1.57', DEFAULTS_V2);
     t.uguale('vecchio link v1 Passo con x = y (P = 2R): nessun passo fissato', letto.bloccato, null);
+    letto = OF.leggiLink('#d=0.50&x=3.50&y=3.50&pattern=grid&mode=step&t=1.60', DEFAULTS_V2);
+    t.uguale('vecchio link v1 Passo a griglia con x = y (P = R): nessun passo fissato', letto.bloccato, null);
+    letto = OF.leggiLink('#d=0.50&x=3.00&y=4.00&pattern=grid&mode=step&t=1.64', DEFAULTS_V2);
+    t.uguale('vecchio link v1 Passo a griglia con x ≠ y: P fissato', [letto.params.P, letto.params.R, letto.bloccato], [3, 4, 'P']);
     letto = OF.leggiLink('#d=0.5&p=1.2&r=1.635&pattern=staggered&mode=step&t=10', DEFAULTS_V2);
     t.uguale('link v2 senza lock: nessun passo fissato, anche con P ≠ 2R', letto.bloccato, null);
 
@@ -356,7 +361,9 @@
     t.ok('scarto 0,004 punti: coerente (si riapre com’è, nessun avviso)', OF.daRicalcolare({ mode: 'diameter', d: 0.5, P: 5, R: 2.5, ofTarget: ofDef + 0.004 }) === false);
     t.ok('scarto 0,006 punti: incoerente (da ricalcolare, avviso)', OF.daRicalcolare({ mode: 'diameter', d: 0.5, P: 5, R: 2.5, ofTarget: ofDef + 0.006 }) === true);
     t.ok('… anche in modalità Passo, per difetto', OF.fuoriObiettivo({ mode: 'step', d: 0.5, P: 5, R: 2.5, ofTarget: ofDef - 0.006 }) === true);
-    t.uguale('tolleranza: metà dell’ultima cifra mostrata', OF.TOLLERANZA_OF, 0.005);
+    t.uguale('confronto con i decimali mostrati (2)', OF.DECIMALI_OF, 2);
+    t.ok('OF richiesto 1,957 con d 0,2, P 1,6, R 1 (OF 1,9635): mostrati entrambi 1,96 → nessun avviso', OF.fuoriObiettivo({ mode: 'diameter', d: 0.2, P: 1.6, R: 1, ofTarget: 1.957 }) === false);
+    t.ok('… OF richiesto 1,954: mostrati 1,95 e 1,96 → avviso', OF.fuoriObiettivo({ mode: 'diameter', d: 0.2, P: 1.6, R: 1, ofTarget: 1.954 }) === true);
     var coerente = { d: 0.5, P: 5, R: 2.5, pattern: 'staggered', mode: 'diameter', ofTarget: 1.5708 };
     t.ok('diametro coerente (OF obiettivo arrotondato a 4 decimali): si riapre com’è', OF.daRicalcolare(coerente) === false);
     var incoerente = { d: 0.4, P: 4, R: 2, pattern: 'staggered', mode: 'diameter', ofTarget: 3 };
@@ -418,6 +425,9 @@
     t.ok('fitto: tutti dentro il campo', dentro(campo({ d: 0.9, P: 1, R: 0.5 }), 0.9));
     t.uguale('rado P 10 R 10: 23 fori', campo({ P: 10, R: 10 }).length, 23);
     t.uguale('parametri non validi → nessun foro', OF.disposizioneCampo({ d: 0.5, P: 0, R: 2.5, pattern: 'grid' }, 50), []);
+    t.uguale('bordo: d 0,5, P 1, R 0,55 sfalsato → 4505 fori (righe a y 0,25 e 49,75 comprese)', campo({ d: 0.5, P: 1, R: 0.55 }).length, 4505);
+    t.uguale('bordo: d 0,5, P 1,1, R 0,5 sfalsato → 4505 fori', campo({ d: 0.5, P: 1.1, R: 0.5 }).length, 4505);
+    t.uguale('bordo: d 0,2, P 1, R 4,15 a griglia → 637 fori', campo({ d: 0.2, P: 1, R: 4.15, pattern: 'grid' }).length, 637);
   }
 
   function casiTesti(TESTI, t) {
@@ -438,6 +448,8 @@
     t.uguale('numeri in inglese: punto decimale', tEn.n(1.5708, 2), '1.57');
     t.uguale('migliaia in inglese', tEn.n(80000, 0), '80,000');
     t.uguale('numero non valido → trattino', tIt.n(NaN, 2), '–');
+    t.uguale('nessun "-0,00": valori che si arrotondano a zero senza segno', [tIt.n(-2.2e-16, 2), tIt.n(-0.004, 2), tEn.n(-0.0004, 3)], ['0,00', '0,00', '0.000']);
+    t.uguale('… i negativi veri restano negativi', tIt.n(-0.006, 2), '-0,01');
     t.uguale('segnaposto sostituiti', tIt.t('versione', { v: '2.3.0' }), 'Versione 2.3.0');
     t.uguale('chiave mancante → si vede la chiave (errore evidente)', tIt.t('chiave-inesistente'), 'chiave-inesistente');
     t.uguale('lingua iniziale: scelta salvata', TESTI.linguaIniziale('en', 'it-IT'), 'en');

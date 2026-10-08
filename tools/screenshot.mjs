@@ -2,11 +2,12 @@
 // Usa Chrome installato sul PC tramite il DevTools Protocol (tools/cdp.mjs): nessuna dipendenza da installare.
 //
 // Uso (dalla cartella del progetto):
-//   node --experimental-websocket tools/screenshot.mjs [cartella-out] [--confronta cartella-riferimento] [--pagina file.html] [--tema scuro]
+//   node --experimental-websocket tools/screenshot.mjs [cartella-out] [--confronta cartella-riferimento] [--pagina file.html] [--tema scuro] [--lingua en]
 //
 // Per ogni formato salva <formato>.png (vista iniziale) e <formato>-full.png (pagina intera)
 // e stampa una tabella: scorrimento orizzontale, altezza pagina, OF mostrato, confronto.
 // Il tema del "dispositivo" è chiaro (predefinito) o scuro con --tema scuro, qualunque sia quello di Windows.
+// La lingua del browser è l'italiano (predefinita) o l'inglese con --lingua en, qualunque sia quella del PC.
 // Esito (codice di uscita) 1 se c'è uno scorrimento orizzontale o, con --confronta, una differenza.
 //
 // Confronto: la vista iniziale deve essere identica (al più "quasi identica": ≤ 400 pixel con
@@ -24,7 +25,8 @@ import { confrontaPng } from './png.mjs';
 const here = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
 const opzione = (nome) => { const i = args.indexOf(nome); return i >= 0 ? args[i + 1] : null; };
-const valoriOpzioni = new Set(['--confronta', '--pagina', '--tema'].map(opzione).filter(Boolean));
+const valoriOpzioni = new Set(['--confronta', '--pagina', '--tema', '--lingua'].map(opzione).filter(Boolean));
+const inglese = /^en/i.test(opzione('--lingua') || '');
 const temaScuro = /^(scuro|dark)$/i.test(opzione('--tema') || '');
 const refDir = opzione('--confronta') ? resolve(opzione('--confronta')) : null;
 const pagina = opzione('--pagina') || 'index.html';
@@ -42,7 +44,7 @@ if (refDir && !existsSync(refDir)) {
 
 // nome, larghezza, altezza, dispositivo touch
 const SIZES = [
-  ['360x780', 360, 780, true], ['390x844', 390, 844, true], ['430x932', 430, 932, true],
+  ['320x640', 320, 640, true], ['360x780', 360, 780, true], ['390x844', 390, 844, true], ['430x932', 430, 932, true],
   ['667x375', 667, 375, true], ['844x390', 844, 390, true],
   ['768x1024', 768, 1024, true], ['820x1180', 820, 1180, true], ['1024x768', 1024, 768, true],
   ['1280x800', 1280, 800, false], ['1366x768', 1366, 768, false],
@@ -52,7 +54,7 @@ const SIZES = [
 mkdirSync(outDir, { recursive: true });
 const sha = (file) => createHash('sha256').update(readFileSync(file)).digest('hex');
 const ORDINE = ['identico', 'quasi identico', 'DIVERSO'];
-const chrome = await avviaChrome();
+const chrome = await avviaChrome({ lingua: inglese ? 'en-GB' : 'it-IT' });
 await chrome.tema(temaScuro ? 'dark' : 'light');
 const rows = [];
 let problemi = 0;
@@ -65,7 +67,7 @@ try {
     // lo scorrimento orizzontale si riconosce confrontando la larghezza del contenuto con quella dello schermo.
     const m = await chrome.valuta(`({ sw: Math.max(document.documentElement.scrollWidth, document.body ? document.body.scrollWidth : 0),
       sh: document.documentElement.scrollHeight,
-      of: (document.getElementById('ofInlineValue') || document.querySelector('[data-of-value]') || {}).textContent })`);
+      of: (document.getElementById('ofInlineValue') || [...document.querySelectorAll('[data-of-value]')].find((e) => e.offsetParent !== null) || {}).textContent })`);
     const shots = {
       [`${name}.png`]: await chrome.send('Page.captureScreenshot', { format: 'png' }),
       [`${name}-full.png`]: await chrome.send('Page.captureScreenshot', {

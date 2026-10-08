@@ -11,15 +11,17 @@ Stessi calcoli della v2.2; cambia l'interfaccia, secondo il mockup D1 (variante 
 - In modalità Passo, confermare un valore in P o R (anche quello che c'è già) fissa quel passo. Quando l'OF non si raggiunge con P = 2R (P = R a griglia) ma fissando P sì, l'avviso lo dice.
 - **Lente delle quote** sull'anteprima: P, R, S e d disegnati su una cella, in scala. Si nasconde dal menu Altro e, da sola, sulle anteprime molto piccole.
 - Anteprima su un campo di 50 × 50 mm con il reticolo centrato, un foro al centro (181 fori con i default) e una barra di scala. Il contatore conta i fori davvero disegnati.
-- Avvisi chiari per fori sovrapposti e per OF non raggiungibile.
+- Avvisi chiari per fori sovrapposti e per OF non raggiungibile, con un richiamo breve accanto al risultato (l'avviso intero è sotto i comandi). L'avviso "OF non raggiungibile" confronta i valori come si vedono, con 2 decimali: niente più avvisi con due numeri uguali.
 - **Italiano e inglese** con il selettore IT | EN in alto. Numeri nel formato della lingua: virgola in italiano, punto in inglese.
-- Annulla e ripeti: dal menu Altro, con Ctrl+Z e Ctrl+Maiusc+Z, e dopo "Ripristina valori iniziali" anche dal messaggio di conferma. L'app ricorda l'ultima configurazione.
-- Il link nella barra degli indirizzi è sempre aggiornato. "Condividi" usa la condivisione del telefono oppure copia il link (con l'indirizzo pubblico, anche se l'app è aperta con il doppio clic).
-- I vecchi link della v1 in modalità Passo con x diverso da y si aprono con P fissato (prima: P e R entrambi "calcolati").
-- Esportazione: SVG per CAD in mm (solo i contorni dei fori, con i metadati di autore e parametri) e immagine PNG con una didascalia dei parametri.
+- Annulla e ripeti: dal menu Altro, con Ctrl+Z, Ctrl+Maiusc+Z e Ctrl+Y, e dopo "Ripristina valori iniziali" anche dal messaggio di conferma (che annulla proprio il ripristino e si chiude alla modifica successiva). L'app ricorda l'ultima configurazione, la lingua e la scelta delle quote.
+- Il link nella barra degli indirizzi è sempre aggiornato (durante un trascinamento al massimo tre volte al secondo, perché i browser ignorano gli aggiornamenti troppo frequenti; alla fine del gesto subito). "Condividi" usa la condivisione del telefono oppure copia il link (con l'indirizzo pubblico, anche se l'app è aperta con il doppio clic).
+- I vecchi link della v1 in modalità Passo con x diverso da y si aprono con P fissato (prima: P e R entrambi "calcolati"). Un link in modalità Passo o Diametro senza t si apre con la sua geometria. In modalità Passo il passo fissato resta anche cambiando disposizione.
+- Esportazione: SVG per CAD in mm (solo i contorni dei fori, senza riquadro, con i metadati di autore e parametri nella lingua scelta) e immagine PNG con una didascalia dei parametri (sempre intera) e gli stessi metadati.
 - Foglio **Informazioni**: versione, formula, convenzione e crediti.
 - Tolti l'effetto Wave e la sigla "GR". La firma resta nei crediti e nei metadati dei file esportati.
-- Test: 203 casi, tra cui la disposizione nel campo e i testi nelle due lingue; 49 scenari dell'interfaccia nuova (`tests/e2e/v2.3.json`). Gli scenari della v2.2 restano come riferimento storico.
+- Accessibilità: menu sopra l'anteprima fissa, menu e messaggi utilizzabili da tastiera (il focus torna al pulsante del menu), "Vai ai comandi", controllo con il focus mai nascosto dietro l'anteprima, avvisi letti dai lettori di schermo, contrasti di cursori, griglia e anello di focus ≥ 3:1, stato delle scelte visibile anche con il contrasto elevato di Windows, una sola colonna con lo zoom al 400 %.
+- Test: 215 casi, tra cui la disposizione nel campo, i testi nelle due lingue e il controllo che ogni testo usato esista (e che nessuno resti inutilizzato); 73 scenari dell'interfaccia nuova (`tests/e2e/v2.3.json`), anche con esportazioni, riapertura e tastiera. Strumenti: lingua del browser fissa (italiano), schermate anche a 320 px e in inglese (`--lingua en`). Gli scenari della v2.2 restano come riferimento storico.
+- Revisione indipendente (4 revisori, ogni rilievo verificato): 52 rilievi confermati (44 problemi distinti), tutti corretti.
 
 ## v2.2 — Convenzione P, R, S (08.10.2026)
 Stesso aspetto della v2.0: cambiano i nomi dei campi e, dove deciso, alcuni numeri.

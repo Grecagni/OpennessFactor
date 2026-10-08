@@ -63,7 +63,10 @@
     } else {
       var salvati = leggiJSON(CHIAVE_STATO);
       iniziali = salvati && salvati.params ? normalizza(salvati.params) : copia(DEFAULTS);
-      stato.passoBloccato = salvati && (salvati.bloccato === 'P' || salvati.bloccato === 'R') ? salvati.bloccato : null;
+      stato.passoBloccato = salvati && iniziali.mode === 'step' && (salvati.bloccato === 'P' || salvati.bloccato === 'R') ? salvati.bloccato : null;
+      // valori fuori intervallo o incoerenti (copie dell'app aperte da file, versioni diverse):
+      // si ricalcolano come un link incoerente
+      if (OF.daRicalcolare(iniziali)) origine = 'link';
     }
     stato.params = calcola(iniziali, origine);
     stato.registrato = istantanea();
@@ -93,6 +96,7 @@
     dom.modi = Array.prototype.slice.call(document.querySelectorAll('input[name="mode"]'));
     dom.pattern = Array.prototype.slice.call(document.querySelectorAll('input[name="pattern"]'));
     dom.aiuto = id('aiuto-modo');
+    dom.richiami = Array.prototype.slice.call(document.querySelectorAll('[data-richiamo]'));
     dom.sezioneObiettivo = id('sezione-obiettivo');
     dom.sfalsatura = id('valore-s');
     dom.messaggi = id('messaggi');
@@ -124,7 +128,7 @@
   // arrotondamenti a 2 decimali).
   function origineLink(daLink) {
     var p = daLink.params;
-    if (daLink.legacy) {
+    if (daLink.legacy || (daLink.senzaObiettivo && p.mode !== 'of')) {
       p.ofTarget = OF.clampToRange(OF.ofGeometrico(p.d, p.P, p.R).percent, INTERVALLI.ofTarget, DEFAULTS.ofTarget);
       return null;
     }
@@ -155,7 +159,7 @@
       stato.passoBloccato = null;
     } else if (p.mode === 'step') {
       if (origine === 'P' || origine === 'R') stato.passoBloccato = origine;
-      else if (ricalcola && origine !== 'link') stato.passoBloccato = null;
+      else if (ricalcola && origine !== 'link' && origine !== 'pattern') stato.passoBloccato = null;
       if (ricalcola) {
         var r = OF.passiDaObiettivo(p, stato.passoBloccato);
         if (r) {
@@ -178,6 +182,8 @@
     var p = copia(stato.params);
     p[chiave] = valore;
     stato.params = calcola(p, chiave);
+    // gli avvisi sotto gli altri campi riguardano valori scritti prima: si tolgono
+    Object.keys(stato.erroriCampo).forEach(function (k) { if (k !== chiave) delete stato.erroriCampo[k]; });
     if (registra) registraCronologia();
     disegna();
   }
@@ -188,8 +194,11 @@
   }
 
   function registraCronologia() {
+    aggiornaLink(true);
     var attuale = istantanea();
     if (attuale === stato.registrato) return;
+    // una modifica nuova chiude il messaggio "Valori ripristinati · Annulla"
+    if (stato.toastRipristino) { stato.toastRipristino = false; nascondiToast(); }
     if (stato.registrato) {
       stato.annulla.push(stato.registrato);
       if (stato.annulla.length > 100) stato.annulla.shift();
@@ -220,17 +229,37 @@
     stato.erroriCampo = {};
     stato.passoBloccato = s.bloccato === 'P' || s.bloccato === 'R' ? s.bloccato : null;
     stato.params = calcola(normalizza(s.params), null);
+    if (stato.toastRipristino) { stato.toastRipristino = false; nascondiToast(); }
     salva();
+    aggiornaCampoAttivo();
     disegna();
+    aggiornaLink(true);
+    aggiornaVociMenu();
   }
 
   function ripristinaIniziali() {
+    var prima = stato.registrato;
     stato.erroriCampo = {};
     stato.passoBloccato = null;
     stato.params = calcola(copia(DEFAULTS), null);
     registraCronologia();
+    aggiornaCampoAttivo();
     disegna();
-    mostraToast(stato.testi.t('toastRipristino'), stato.testi.t('annulla'), annulla);
+    var dopo = stato.registrato;
+    if (dopo === prima) { mostraToast(stato.testi.t('toastRipristino')); return; }
+    // "Annulla" nel messaggio: torna allo stato di prima del ripristino (il messaggio si chiude alla
+    // modifica successiva, quindi non può annullare altro)
+    mostraToast(stato.testi.t('toastRipristino'), stato.testi.t('annulla'), function () { if (stato.registrato === dopo) annulla(); });
+    stato.toastRipristino = true;
+  }
+
+  // Un campo con il focus non viene riscritto da disegna(). Dopo un cambiamento che non viene da
+  // quel campo (link, annulla, ripristino) va aggiornato: uscendo non deve riapplicare il testo vecchio.
+  function aggiornaCampoAttivo() {
+    Object.keys(CAMPI).forEach(function (k) {
+      var c = dom.campi[k];
+      if (c && c.testo && c.testo === document.activeElement) c.testo.value = stato.testi.n(stato.params[k], CAMPI[k].decimali);
+    });
   }
 
   // ------------------------------------------------------------------ eventi
@@ -251,9 +280,18 @@
           if (c.testo.readOnly) return;
           e.preventDefault();
           var passo = CAMPI[k].freccia * (e.shiftKey ? 10 : 1) * (e.key === 'ArrowUp' ? 1 : -1);
-          var nuovo = OF.clampToRange(OF.pulisci(Math.round((stato.params[k] + passo) / CAMPI[k].freccia) * CAMPI[k].freccia), INTERVALLI[k], stato.params[k]);
+          // si parte dal numero scritto nel campo, se c'è e non è ancora confermato
+          var base = stato.params[k];
+          var scritto = c.testo.value.trim().replace(/\s/g, '').replace(',', '.');
+          if (scritto !== testoNumero(base, CAMPI[k].decimali) && /^[+-]?(\d+\.?\d*|\.\d+)$/.test(scritto)) {
+            base = OF.clampToRange(parseFloat(scritto), INTERVALLI[k], base);
+          }
+          var nuovo = OF.clampToRange(OF.pulisci(Math.round((base + passo) / CAMPI[k].freccia) * CAMPI[k].freccia), INTERVALLI[k], stato.params[k]);
           delete stato.erroriCampo[k];
-          modifica(k, nuovo, true);
+          // al limite dell'intervallo il valore non cambia: niente ricalcolo (resta il passo fissato),
+          // salvo P o R in modalità Passo, che si fissano come con Invio
+          var fissa = stato.params.mode === 'step' && (k === 'P' || k === 'R') && stato.passoBloccato !== k;
+          if (nuovo !== stato.params[k] || fissa) modifica(k, nuovo, true); else disegna();
           // il campo ha il focus: va aggiornato qui (disegna() non tocca il campo in modifica)
           c.testo.value = stato.testi.n(stato.params[k], CAMPI[k].decimali);
           c.testo.select();
@@ -262,6 +300,9 @@
       c.testo.addEventListener('focus', function () { c.testo.select(); });
       // uscendo dal campo si mostra il valore in uso, formattato (es. "0,6" → "0,60")
       c.testo.addEventListener('blur', function () {
+        // testo cambiato ma non confermato (per esempio riportato al valore di prima dopo un Invio,
+        // che non genera l'evento change): si conferma prima di riformattarlo
+        if (!c.testo.readOnly && c.testo.value.trim().replace(/\s/g, '').replace(',', '.') !== testoNumero(stato.params[k], CAMPI[k].decimali)) confermaTesto(k);
         c.testo.value = stato.testi.n(stato.params[k], CAMPI[k].decimali);
       });
     });
@@ -274,9 +315,15 @@
     dom.lingue.forEach(function (b) {
       b.addEventListener('click', function () { cambiaLingua(b.dataset.lang); });
     });
+    var salto = document.querySelector('.skip');
+    if (salto) salto.addEventListener('click', function (e) {
+      e.preventDefault();
+      var primo = document.querySelector('#comandi input[name="mode"]:checked') || document.querySelector('#comandi input, #comandi button');
+      if (primo) primo.focus();
+    });
     document.getElementById('apri-info').addEventListener('click', apriInfo);
     document.getElementById('chiudi-info').addEventListener('click', function () { dom.info.close(); });
-    dom.info.addEventListener('click', function (e) { if (e.target === dom.info) dom.info.close(); });
+    chiudiSuSfondo(dom.info);
     document.getElementById('condividi').addEventListener('click', condividi);
 
     Object.keys(dom.menu).forEach(function (nome) {
@@ -293,6 +340,11 @@
     document.querySelectorAll('[data-azione]').forEach(function (b) {
       b.addEventListener('click', function () { esegui(b.dataset.azione); });
     });
+    dom.toastAzione.addEventListener('focus', function () { clearTimeout(stato.toastTimer); });
+    dom.toastAzione.addEventListener('blur', function () {
+      clearTimeout(stato.toastTimer);
+      if (!dom.toast.hidden && stato.toastDurata !== 0) stato.toastTimer = setTimeout(nascondiToast, 4000);
+    });
     dom.toastAzione.addEventListener('click', function () {
       var azione = dom.toastAzione._azione;
       nascondiToast();
@@ -300,7 +352,11 @@
     });
 
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') Object.keys(dom.menu).forEach(function (n) { chiudiMenu(n, true); });
+      if (e.key === 'Escape') {
+        var menuAperto = Object.keys(dom.menu).some(function (n) { return !dom.menu[n].menu.hidden; });
+        Object.keys(dom.menu).forEach(function (n) { chiudiMenu(n, true); });
+        if (!menuAperto && !dom.toast.hidden) nascondiToast();
+      }
       var mod = e.ctrlKey || e.metaKey;
       if (!mod || e.altKey) return;
       var t = e.target;
@@ -314,19 +370,24 @@
     window.addEventListener('hashchange', function () {
       if (location.hash === '#' + OF.costruisciLink(stato.params, stato.passoBloccato)) return;
       var daLink = OF.leggiLink(location.hash, DEFAULTS);
-      if (!daLink) return;
+      if (!daLink) { aggiornaLink(true); return; }
       stato.erroriCampo = {};
       stato.passoBloccato = daLink.bloccato;
       stato.params = calcola(daLink.params, origineLink(daLink));
       registraCronologia();
+      aggiornaCampoAttivo();
       disegna();
     });
 
     if (window.ResizeObserver && dom.preview) {
-      new ResizeObserver(function () { disegnaAnteprima(); }).observe(dom.preview);
+      new ResizeObserver(function () { disegnaAnteprima(); aggiornaMargineFisso(); }).observe(dom.preview);
     } else {
       window.addEventListener('resize', disegnaAnteprima);
     }
+    var palco = dom.preview && dom.preview.closest('.stage');
+    if (window.ResizeObserver && palco) new ResizeObserver(aggiornaMargineFisso).observe(palco);
+    window.addEventListener('resize', aggiornaMargineFisso);
+    aggiornaMargineFisso();
   }
 
   // Conferma del valore scritto in un campo di testo (accetta virgola o punto).
@@ -336,17 +397,17 @@
     var t = stato.testi;
     var grezzo = c.testo.value.trim().replace(/\s/g, '').replace(',', '.');
     var valore = /^[+-]?(\d+\.?\d*|\.\d+)$/.test(grezzo) ? parseFloat(grezzo) : NaN;
+    // testo uguale al valore mostrato (Invio o "Fine" senza scrivere nulla): vale il valore esatto
+    // in uso, non quello arrotondato a 2 decimali (altrimenti cambierebbero OF o passi)
+    if (Number.isFinite(valore) && grezzo === testoNumero(stato.params[k], CAMPI[k].decimali)) valore = stato.params[k];
     if (!Number.isFinite(valore)) {
-      stato.erroriCampo[k] = t.t('avvisoNumero', { esempio: t.n(DEFAULTS[k], CAMPI[k].decimali) });
+      stato.erroriCampo[k] = { tipo: 'numero' };
       disegna();
       return;
     }
     var limitato = OF.clampToRange(valore, INTERVALLI[k], DEFAULTS[k]);
     if (limitato !== valore) {
-      stato.erroriCampo[k] = t.t('avvisoIntervallo', {
-        min: t.n(INTERVALLI[k].min, CAMPI[k].decimali), max: t.n(INTERVALLI[k].max, CAMPI[k].decimali),
-        unita: CAMPI[k].unita, usato: t.n(limitato, CAMPI[k].decimali) + ' ' + CAMPI[k].unita
-      });
+      stato.erroriCampo[k] = { tipo: 'intervallo', usato: limitato };
     } else {
       delete stato.erroriCampo[k];
     }
@@ -356,18 +417,34 @@
     modifica(k, limitato, true);
   }
 
+  // Avviso sotto un campo, nella lingua corrente (si memorizza solo il tipo e il valore usato).
+  function testoErrore(k) {
+    var e = stato.erroriCampo[k];
+    if (!e) return '';
+    var t = stato.testi;
+    var dec = CAMPI[k].decimali;
+    var u = CAMPI[k].unita;
+    if (e.tipo === 'numero') return t.t('avvisoNumero', { esempio: t.n(DEFAULTS[k], dec) });
+    return t.t('avvisoIntervallo', { min: t.n(INTERVALLI[k].min, dec), max: t.n(INTERVALLI[k].max, dec), unita: u, usato: t.n(e.usato, dec) + ' ' + u });
+  }
+
+  // numero come appare nel campo, con il punto decimale (per confrontarlo con il testo scritto)
+  function testoNumero(v, decimali) {
+    return stato.testi.n(v, decimali).replace(/\s/g, '').replace(',', '.');
+  }
+
   function cambiaLingua(l) {
     if (l === stato.lingua) return;
     stato.lingua = l;
     stato.testi = TESTI.crea(l);
     scriviMemoria(CHIAVE_LINGUA, l);
-    stato.erroriCampo = {};
     applicaTesti();
     disegna();
   }
 
   function esegui(azione) {
-    Object.keys(dom.menu).forEach(function (n) { chiudiMenu(n, false); });
+    var aperto = Object.keys(dom.menu).filter(function (n) { return !dom.menu[n].menu.hidden; })[0];
+    Object.keys(dom.menu).forEach(function (n) { chiudiMenu(n, n === aperto); });
     if (azione === 'svg') esportaSvg();
     else if (azione === 'png') esportaPng();
     else if (azione === 'griglia') { modifica('showGrid', !stato.params.showGrid, true); }
@@ -375,6 +452,30 @@
     else if (azione === 'annulla') annulla();
     else if (azione === 'ripeti') ripeti();
     else if (azione === 'ripristina') ripristinaIniziali();
+  }
+
+  // Margine per lo scorrimento (scroll-padding-top): un controllo che riceve il focus non deve finire
+  // sotto la parte fissa (barra in alto e, su telefoni e tablet in verticale, anteprima con il risultato).
+  function aggiornaMargineFisso() {
+    var barra = document.querySelector('.appbar');
+    var alto = barra ? barra.getBoundingClientRect().height : 0;
+    var palco = dom.preview && dom.preview.closest('.stage');
+    if (palco && getComputedStyle(palco).position === 'sticky') alto += palco.getBoundingClientRect().height;
+    document.documentElement.style.setProperty('--margine-fisso', Math.ceil(alto + 8) + 'px');
+  }
+
+  // Un foglio (dialog) si chiude con un clic sullo sfondo, ma non quando una selezione di testo
+  // cominciata dentro il foglio finisce sullo sfondo.
+  function chiudiSuSfondo(foglio) {
+    var giu = null;
+    var su = null;
+    foglio.addEventListener('pointerdown', function (e) { giu = e.target; });
+    foglio.addEventListener('pointerup', function (e) { su = e.target; });
+    foglio.addEventListener('click', function (e) {
+      // pressione e rilascio entrambi sullo sfondo (con la tastiera il clic non arriva al foglio)
+      if (e.target === foglio && giu === foglio && su === foglio) foglio.close();
+      giu = su = null;
+    });
   }
 
   // ------------------------------------------------------------------ menu
@@ -420,10 +521,10 @@
     var voci = Array.prototype.slice.call(dom.menu[nome].menu.querySelectorAll('[role^="menuitem"]:not([disabled])'));
     var i = voci.indexOf(document.activeElement);
     if (e.key === 'ArrowDown') { e.preventDefault(); voci[(i + 1) % voci.length].focus(); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); voci[(i - 1 + voci.length) % voci.length].focus(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); voci[i < 0 ? voci.length - 1 : (i - 1 + voci.length) % voci.length].focus(); }
     else if (e.key === 'Home') { e.preventDefault(); voci[0].focus(); }
     else if (e.key === 'End') { e.preventDefault(); voci[voci.length - 1].focus(); }
-    else if (e.key === 'Tab') { chiudiMenu(nome, false); }
+    else if (e.key === 'Tab') { chiudiMenu(nome, true); } // il Tab prosegue dal pulsante del menu
   }
 
   function aggiornaVociMenu() {
@@ -478,15 +579,16 @@
       c.riga.classList.toggle('field--computed', calcolato);
       c.riga.classList.toggle('field--invalid', Boolean(stato.erroriCampo[k]));
       if (c.badge) c.badge.hidden = !calcolato;
-      if (c.msg) { c.msg.textContent = stato.erroriCampo[k] || ''; c.msg.hidden = !stato.erroriCampo[k]; }
+      if (c.msg) { c.msg.textContent = testoErrore(k); c.msg.hidden = !stato.erroriCampo[k]; }
       if (c.msg) c.testo.setAttribute('aria-invalid', String(Boolean(stato.erroriCampo[k])));
     });
     dom.modi.forEach(function (r) { r.checked = r.value === p.mode; });
     dom.pattern.forEach(function (r) { r.checked = r.value === p.pattern; });
     dom.sezioneObiettivo.hidden = p.mode === 'of';
-    dom.aiuto.textContent = p.mode === 'of' ? t.t('aiutoOF')
+    var aiuto = p.mode === 'of' ? t.t('aiutoOF')
       : p.mode === 'diameter' ? t.t('aiutoD')
       : stato.passoBloccato ? t.t('aiutoPassoBloccato', { passo: stato.passoBloccato }) : t.t('aiutoPasso');
+    if (dom.aiuto.textContent !== aiuto) dom.aiuto.textContent = aiuto; // annunciato solo quando cambia
     dom.sfalsatura.textContent = t.t('sfalsaturaValore', { s: t.n(S, 2) + ' mm', regola: p.pattern === 'staggered' ? 'P/2' : '0' });
 
     // risultati
@@ -506,38 +608,61 @@
     };
     document.querySelectorAll('[data-valore]').forEach(function (el) {
       el.textContent = valori[el.dataset.valore];
-      el.classList.toggle('value--alert', el.dataset.valore === 'ponte' && ponte <= 0);
+      el.classList.toggle('value--alert', el.dataset.valore === 'ponte' && ponte <= 1e-12);
     });
 
     // messaggi
     var messaggi = [];
-    if (of.limitato) messaggi.push({ tipo: 'danger', testo: t.t('avvisoLimitato') });
-    else if (ponte <= 1e-12) messaggi.push({ tipo: 'danger', testo: t.t('avvisoCollisione', { ponte: valori.ponte }) });
+    if (of.limitato) messaggi.push({ tipo: 'danger', testo: t.t('avvisoLimitato'), breve: t.t('richiamoCollisione') });
+    else if (ponte <= 1e-12) messaggi.push({ tipo: 'danger', testo: t.t('avvisoCollisione', { ponte: valori.ponte }), breve: t.t('richiamoCollisione') });
     // OF obiettivo non raggiunto (Passo o Diametro): ricavato dai valori, con la stessa soglia
     // dei link, quindi resta con "Mostra griglia" e ricompare riaprendo il link.
     if (OF.fuoriObiettivo(p)) {
       messaggi.push({ tipo: 'warning', testo: t.t('avvisoTronca', {
         richiesto: t.n(p.ofTarget, 2) + ' %', ottenuto: t.n(of.percent, 2) + ' %', motivo: motivoFuoriObiettivo(p)
-      }) });
+      }), breve: t.t('richiamoTronca') });
     }
     disegnaMessaggi(messaggi);
+    disegnaRichiami(messaggi);
 
     disegnaAnteprima();
     aggiornaLink();
     salva();
-    annuncia(t.t('ofGeo') + ' ' + testoOF + ' %. ' + t.t('ponte') + ' ' + valori.ponte + '.');
+    // 7. per i lettori di schermo: avvisi dei campi e messaggi, poi OF e ponte (regione #annuncio)
+    var avvisi = Object.keys(CAMPI).map(testoErrore).filter(Boolean).concat(messaggi.map(function (m) { return m.testo; }));
+    var nuovi = avvisi.join(' ') !== stato.ultimiAvvisi;
+    stato.ultimiAvvisi = avvisi.join(' ');
+    annuncia((nuovi ? avvisi : []).concat([t.t('ofGeo') + ' ' + testoOF + ' %. ' + t.t('ponte') + ' ' + valori.ponte + '.']).join(' '));
   }
 
   // Perché l'OF obiettivo non si raggiunge: i limiti dei campi, con il vincolo della modalità.
   function motivoFuoriObiettivo(p) {
     var t = stato.testi;
     if (p.mode === 'diameter') return t.t('motivoD', { min: t.n(INTERVALLI.d.min, 2), max: t.n(INTERVALLI.d.max, 2) });
+    if (!OF.obiettivoRaggiungibile(p)) return t.t('motivoIntervalli');
     if (stato.passoBloccato) return t.t('motivoBloccato', { passo: stato.passoBloccato, valore: t.n(p[stato.passoBloccato], 2) });
-    if (OF.obiettivoRaggiungibile(p)) return t.t('motivoVincolo', { vincolo: p.pattern === 'staggered' ? 'P = 2R' : 'P = R' });
-    return t.t('motivoIntervalli');
+    return t.t('motivoVincolo', { vincolo: p.pattern === 'staggered' ? 'P = 2R' : 'P = R' });
   }
 
   var ICONA_AVVISO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3.5 2.8 19.5h18.4z"/><path d="M12 10v4.5"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg>';
+
+  // Richiamo breve del primo avviso accanto al risultato, nella striscia e nella scheda.
+  function disegnaRichiami(messaggi) {
+    var primo = messaggi.filter(function (m) { return m.breve; })[0];
+    var chiave = primo ? primo.tipo + '|' + primo.breve + '|' + messaggi.length : '';
+    dom.richiami.forEach(function (el) {
+      if (el._chiave === chiave) return;
+      el._chiave = chiave;
+      el.hidden = !primo;
+      el.className = 'result__alert' + (primo ? ' result__alert--' + primo.tipo : '');
+      el.textContent = '';
+      if (!primo) return;
+      el.innerHTML = ICONA_AVVISO;
+      var testo = document.createElement('span');
+      testo.textContent = primo.breve + (messaggi.length > 1 ? ' (+' + (messaggi.length - 1) + ')' : '');
+      el.appendChild(testo);
+    });
+  }
 
   function disegnaMessaggi(messaggi) {
     var chiave = JSON.stringify(messaggi);
@@ -615,7 +740,7 @@
     // regione mostrata (mm), calcolata in due passate perché le etichette hanno misure fisse in px
     var k = LW / (P * 2);
     var reg;
-    for (var giro = 0; giro < 3; giro++) {
+    for (var giro = 0; giro < 4; giro++) {
       var mm = function (px) { return px / k; };
       var gap = mm(6);
       var alto = d / 2 + mm(34);                                  // spazio sopra: quota P e sua etichetta
@@ -623,10 +748,11 @@
       var basso = R + d / 2 + (S > 0 ? mm(36) : mm(12));
       var sinistra = d / 2 + gap + mm(4);
       reg = { x: -sinistra, y: -alto, w: sinistra + P + destra, h: alto + basso };
-      k = LW / reg.w;
+      // la lente sta in LW di larghezza e nel 60 % dell'anteprima in altezza
+      k = Math.min(LW / reg.w, (0.6 * lato) / reg.h);
     }
+    LW = reg.w * k;
     var LH = reg.h * k;
-    if (LH > 0.6 * lato) { k = (0.6 * lato) / reg.h; LH = 0.6 * lato; LW = reg.w * k; }
     var mmV = 1 / pxmm;                             // mm della vista per 1 px
     var lw = LW * mmV, lh = LH * mmV;
     var lx = CAMPO_MM - lw - 8 * mmV, ly = 8 * mmV;
@@ -642,7 +768,7 @@
     var q = el('g', { 'stroke-width': px(1.3) }, lente);
     var linea = function (x1, y1, x2, y2) { el('line', { x1: arrotonda(x1), y1: arrotonda(y1), x2: arrotonda(x2), y2: arrotonda(y2), class: 'dim' }, q); };
     var testo = function (x, y, s, ancora) {
-      var e = el('text', { x: arrotonda(x), y: arrotonda(y), 'font-size': px(fsPx), 'text-anchor': ancora || 'middle', 'dominant-baseline': 'middle', class: 'dim-text' }, q);
+      var e = el('text', { x: arrotonda(x), y: arrotonda(y), 'font-size': px(fsPx), 'text-anchor': ancora || 'middle', 'dominant-baseline': 'middle', class: 'dim-text', 'stroke-width': px(3) }, q);
       e.textContent = s;
     };
     var sporgenza = px(4), stacco = px(3) + d / 2;
@@ -671,7 +797,19 @@
 
   // ------------------------------------------------------------------ link, memoria, annunci
 
-  function aggiornaLink() {
+  // Link nella barra degli indirizzi. Durante i gesti continui (cursori) si aggiorna al massimo ogni
+  // 300 ms, perché i browser ignorano history.replaceState chiamato troppo spesso; alla fine di ogni
+  // modifica (registraCronologia) si aggiorna subito.
+  var linkTimer = null;
+  var linkUltimo = 0;
+  function aggiornaLink(subito) {
+    clearTimeout(linkTimer);
+    var attesa = 300 - (Date.now() - linkUltimo);
+    if (subito || attesa <= 0) scriviLink();
+    else linkTimer = setTimeout(scriviLink, attesa);
+  }
+  function scriviLink() {
+    linkUltimo = Date.now();
     var hash = '#' + OF.costruisciLink(stato.params, stato.passoBloccato);
     if (location.hash !== hash) {
       try { history.replaceState(null, '', hash); } catch (e) { /* file:// in alcuni browser */ }
@@ -795,8 +933,11 @@
     var of = OF.ofGeometrico(p.d, p.P, p.R).percent;
     var fori = OF.disposizioneCampo(p, CAMPO_MM);
     var f = function (v) { return v.toFixed(2); };
-    var titolo = 'Openness Factor - d ' + f(p.d) + ' P ' + f(p.P) + ' R ' + f(p.R) + ' S ' + f(S) + ' mm - OF geometrico ' + f(of) + '%';
-    var oggi = new Date().toISOString().slice(0, 10);
+    var t = stato.testi;
+    var titolo = 'Openness Factor - d ' + f(p.d) + ' P ' + f(p.P) + ' R ' + f(p.R) + ' S ' + f(S) + ' mm - ' + t.t('ofGeo') + ' ' + f(of) + '%';
+    var ora = new Date();
+    var due = function (n) { return (n < 10 ? '0' : '') + n; };
+    var oggi = ora.getFullYear() + '-' + due(ora.getMonth() + 1) + '-' + due(ora.getDate()); // data locale
     var righe = [];
     righe.push('<?xml version="1.0" encoding="UTF-8"?>');
     righe.push('<svg xmlns="http://www.w3.org/2000/svg" width="' + CAMPO_MM + 'mm" height="' + CAMPO_MM + 'mm" viewBox="0 0 ' + CAMPO_MM + ' ' + CAMPO_MM + '">');
@@ -804,15 +945,24 @@
     righe.push('<metadata><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">'
       + '<rdf:Description dc:title="' + escapeXml(titolo) + '" dc:creator="Giacomo Recagni - Ufficio Tecnico Pellini" dc:date="' + oggi + '"'
       + ' dc:source="Openness Factor v' + VERSIONE + ' - ' + INDIRIZZO + '" dc:format="image/svg+xml"'
-      + ' dc:description="Campo di ' + CAMPO_MM + ' x ' + CAMPO_MM + ' mm. Unita: mm. OF geometrico calcolato dai valori nominali, non misurato."/>'
+      + ' dc:description="' + escapeXml(t.t('svgDescr', { l: CAMPO_MM })) + '"/>'
       + '</rdf:RDF></metadata>');
-    righe.push('<rect x="0" y="0" width="' + CAMPO_MM + '" height="' + CAMPO_MM + '" fill="none" stroke="#000000" stroke-width="0.05"/>');
     righe.push('<g fill="none" stroke="#000000" stroke-width="0.02">');
     var r = arrotonda(p.d / 2);
     fori.forEach(function (h) { righe.push('<circle cx="' + arrotonda(h.x) + '" cy="' + arrotonda(h.y) + '" r="' + r + '"/>'); });
     righe.push('</g>');
     righe.push('</svg>');
     return righe.join('\n') + '\n';
+  }
+
+  // Testo su una riga, rimpicciolito se è più largo dello spazio disponibile.
+  function scriviAdattato(g, testo, x, y, larghezzaMax) {
+    var misura = g.measureText(testo).width;
+    if (misura > larghezzaMax) {
+      var dimensione = parseFloat(g.font.match(/(\d+(?:\.\d+)?)px/)[1]);
+      g.font = g.font.replace(/\d+(?:\.\d+)?px/, Math.floor(dimensione * larghezzaMax / misura) + 'px');
+    }
+    g.fillText(testo, x, y);
   }
 
   // PNG: il pattern come nell'anteprima, con una didascalia dei parametri.
@@ -834,11 +984,63 @@
     g.fillStyle = '#c6b784'; g.fillRect(0, lato, lato, 4);
     g.fillStyle = '#243646';
     g.font = '600 34px ' + font;
-    g.fillText(riassunto(), 32, lato + 54);
+    scriviAdattato(g, riassunto(), 32, lato + 54, lato - 64);
     g.fillStyle = '#5b6874';
     g.font = '400 24px ' + font;
-    g.fillText('Openness Factor · ' + stato.testi.t('campo') + ' · ' + stato.testi.t('notaOF'), 32, lato + 94);
-    c.toBlob(function (blob) { if (blob) scarica(blob, nomeFile('png'), stato.testi.t('toastPng')); }, 'image/png');
+    scriviAdattato(g, 'Openness Factor · ' + stato.testi.t('campo') + ' · ' + stato.testi.t('notaOF'), 32, lato + 94, lato - 64);
+    var t = stato.testi;
+    var ora = new Date();
+    var due = function (n) { return (n < 10 ? '0' : '') + n; };
+    var metadati = {
+      Title: 'Openness Factor - ' + riassunto(),
+      Author: 'Giacomo Recagni - Ufficio Tecnico Pellini',
+      Software: 'Openness Factor ' + VERSIONE + ' - ' + INDIRIZZO,
+      Description: t.t('svgDescr', { l: CAMPO_MM }),
+      'Creation Time': ora.getFullYear() + '-' + due(ora.getMonth() + 1) + '-' + due(ora.getDate())
+    };
+    c.toBlob(function (blob) {
+      if (!blob) return;
+      conMetadatiPng(blob, metadati).catch(function () { return blob; }).then(function (b) { scarica(b, nomeFile('png'), t.t('toastPng')); });
+    }, 'image/png');
+  }
+
+  // Metadati di testo nel PNG (blocchi tEXt subito dopo l'intestazione IHDR), come la firma nell'SVG.
+  var TABELLA_CRC = null;
+  function crc32(byte) {
+    if (!TABELLA_CRC) {
+      TABELLA_CRC = [];
+      for (var n = 0; n < 256; n++) {
+        var c = n;
+        for (var k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+        TABELLA_CRC[n] = c >>> 0;
+      }
+    }
+    var crc = 0xffffffff;
+    for (var i = 0; i < byte.length; i++) crc = TABELLA_CRC[(crc ^ byte[i]) & 0xff] ^ (crc >>> 8);
+    return (crc ^ 0xffffffff) >>> 0;
+  }
+  function bloccoTesto(chiave, valore) {
+    var testo = chiave + String.fromCharCode(0) + valore;
+    var dati = new Uint8Array(testo.length);
+    for (var i = 0; i < testo.length; i++) { var cc = testo.charCodeAt(i); dati[i] = cc < 256 ? cc : 63; } // Latin-1, altrimenti "?"
+    var blocco = new Uint8Array(12 + dati.length);
+    var vista = new DataView(blocco.buffer);
+    vista.setUint32(0, dati.length);
+    blocco.set([116, 69, 88, 116], 4); // "tEXt"
+    blocco.set(dati, 8);
+    vista.setUint32(8 + dati.length, crc32(blocco.subarray(4, 8 + dati.length)));
+    return blocco;
+  }
+  function conMetadatiPng(blob, campi) {
+    if (typeof blob.arrayBuffer !== 'function') return Promise.resolve(blob);
+    return blob.arrayBuffer().then(function (buf) {
+      var png = new Uint8Array(buf);
+      var fineIhdr = 8 + 12 + new DataView(buf).getUint32(8); // firma (8 byte) + blocco IHDR
+      var parti = [png.subarray(0, fineIhdr)];
+      Object.keys(campi).forEach(function (k) { parti.push(bloccoTesto(k, campi[k])); });
+      parti.push(png.subarray(fineIhdr));
+      return new Blob(parti, { type: 'image/png' });
+    });
   }
 
   // ------------------------------------------------------------------ informazioni e firma

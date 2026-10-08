@@ -235,7 +235,7 @@ Dopo ogni passo: stop, verifica, approvazione.
 | **v2.5 Anteprima** | entrambi | quote P/R/S/d disegnate sui fori, barra di scala, collisioni evidenziate (anche senza colore), zoom | v2.3 | anteprima "parlante" |
 | **v2.6+ Funzioni** | — | per gli agenti: condivisione con QR, scheda PDF (con la firma nel piè di pagina), preset. Per Jack: tabella soluzioni, confronto varianti. Per la produzione: pannello reale, tempo laser, export coordinate, vincoli di processo | v2.5; dati da Jack | una funzione per rilascio |
 
-**Esito v2.3 (08.10.2026).** Fatto tutto quello che è in tabella. In più, anticipati dalla v2.5: lente delle quote P/R/S/d e barra di scala. La disposizione dei fori è quella propria della v2 (`disposizioneCampo`, reticolo centrato nel campo di 50 mm), e il contatore conta i fori disegnati (chiude la voce 2.7). Alla v2.5 restano zoom e collisioni evidenziate anche senza colore.
+**Esito v2.3 (08.10.2026).** Fatto tutto quello che è in tabella. In più, anticipati dalla v2.5: lente delle quote P/R/S/d e barra di scala. La disposizione dei fori è quella propria della v2 (`disposizioneCampo`, reticolo centrato nel campo di 50 mm), e il contatore conta i fori disegnati (chiude la voce 2.7). Alla v2.5 restano zoom e collisioni evidenziate anche senza colore. La firma è nei crediti e nei metadati dei file esportati (SVG e PNG).
 
 D1 e v2.1 possono partire subito, in parallelo. I passi 2.8 e 3.5 restano condizionati (2.8 se i test confermano A5; 3.5 dopo la decisione su "cumulativa o alternata").
 

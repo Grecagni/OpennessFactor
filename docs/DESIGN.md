@@ -752,7 +752,7 @@ if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
    - I pulsanti sono verbi.
    - Gli errori dicono cosa fare.
    - Niente "clicca" o "tocca": l'app si usa sia con il mouse sia con il dito.
-9. **Testi di lunghezza diversa**: si progetta sulla stringa più lunga e nessun pulsante ha larghezza fissa. Le schermate si provano in IT e in EN a 320 px e con zoom al 200% (script degli screenshot).
+9. **Testi di lunghezza diversa**: si progetta sulla stringa più lunga e nessun pulsante ha larghezza fissa. Le schermate si provano in IT e in EN, anche a 320 px (`tools/screenshot.mjs`, formato 320x640 e opzione `--lingua en`); lo zoom al 200 % e al 400 % corrisponde ai formati più stretti.
 10. **Nome dell'app neutro** nel manifest ("Openness Factor"): i campi tradotti del manifest sono sperimentali.
 
 ---

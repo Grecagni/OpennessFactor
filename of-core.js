@@ -533,27 +533,29 @@
     var lock = q.get('lock');
     var bloccato = p.mode === 'step' && (lock === 'P' || lock === 'R') ? lock : null;
     // Vecchio link della v1 in modalità Passo con P ≠ 2R (P ≠ R a griglia): un passo era fissato
-    // a mano, ma il link non diceva quale. Si considera fissato P: la geometria resta quella del
-    // link e cambiando l'OF obiettivo si ricalcola solo R.
+    // a mano, ma il link non diceva quale. Si considera fissato P, così all'apertura la geometria
+    // resta quella del link; come per ogni passo fissato, cambiando d o l'OF obiettivo si torna al
+    // calcolo automatico.
     var k = p.pattern === 'staggered' ? 2 : 1;
     if (legacy && p.mode === 'step' && bloccato === null && Math.abs(p.P - k * p.R) > 1e-9 * p.P) bloccato = 'P';
-    return trovato ? { params: p, legacy: legacy, bloccato: bloccato } : null;
+    // senzaObiettivo: il link non ha t (in modalità Passo o Diametro l'app ricava l'OF obiettivo dalla geometria)
+    return trovato ? { params: p, legacy: legacy, bloccato: bloccato, senzaObiettivo: t === null } : null;
   }
 
-  // Modalità Passo o Diametro: l'OF della geometria si discosta dall'OF obiettivo più della
-  // tolleranza, in punti percentuali (0,005 = metà dell'ultima cifra mostrata, 2 decimali).
-  // È la stessa soglia per l'avviso "OF non raggiungibile" e per i link incoerenti: così un
-  // link con l'avviso, riaperto, mostra di nuovo l'avviso; uno senza avviso si riapre com'è.
-  var TOLLERANZA_OF = 0.005;
-  function fuoriObiettivo(params, tolleranzaPercento) {
+  // Modalità Passo o Diametro: l'OF della geometria e l'OF obiettivo, mostrati con 2 decimali, sono
+  // diversi. È la stessa regola per l'avviso "OF non raggiungibile" e per i link incoerenti: così
+  // l'avviso non mostra mai due numeri uguali, un link con l'avviso, riaperto, lo mostra di nuovo
+  // e uno senza avviso si riapre com'è.
+  var DECIMALI_OF = 2;
+  function fuoriObiettivo(params, decimali) {
     if (params.mode !== 'step' && params.mode !== 'diameter') return false;
-    var tol = tolleranzaPercento === undefined ? TOLLERANZA_OF : tolleranzaPercento;
-    return Math.abs(ofGeometrico(params.d, params.P, params.R).percent - params.ofTarget) > tol;
+    var dec = decimali === undefined ? DECIMALI_OF : decimali;
+    return ofGeometrico(params.d, params.P, params.R).percent.toFixed(dec) !== Number(params.ofTarget).toFixed(dec);
   }
 
   // Un link (o uno stato salvato) fuori obiettivo è incoerente e va ricalcolato.
-  function daRicalcolare(params, tolleranzaPercento) {
-    return fuoriObiettivo(params, tolleranzaPercento);
+  function daRicalcolare(params, decimali) {
+    return fuoriObiettivo(params, decimali);
   }
 
   // Ingombro dei fori disegnati (in mm), dalla disposizione in pixel della v1.
@@ -633,7 +635,7 @@
     numeroLink: numeroLink,
     costruisciLink: costruisciLink,
     leggiLink: leggiLink,
-    TOLLERANZA_OF: TOLLERANZA_OF,
+    DECIMALI_OF: DECIMALI_OF,
     fuoriObiettivo: fuoriObiettivo,
     daRicalcolare: daRicalcolare,
     ingombroFori: ingombroFori,

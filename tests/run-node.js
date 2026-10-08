@@ -12,8 +12,27 @@ const casi = require('./casi.js');
 const t = crea();
 try {
   casi.tutti(OF, t, TESTI);
+  if (TESTI) chiaviTesti(t);
 } catch (errore) {
   t.interrotto(errore);
+}
+
+// Solo in Node (legge i file): ogni chiave usata da index.html e script.js esiste in i18n.js,
+// e ogni chiave di i18n.js è usata. Le chiavi scelte nel codice in base allo stato si riconoscono
+// perché compaiono tra virgolette in script.js.
+function chiaviTesti(t) {
+  const radice = path.join(__dirname, '..');
+  const html = fs.readFileSync(path.join(radice, 'index.html'), 'utf8');
+  const js = fs.readFileSync(path.join(radice, 'script.js'), 'utf8');
+  t.gruppo('testi · chiavi usate dall’app (solo in Node)');
+  const usate = new Set();
+  for (const m of html.matchAll(/data-i18n="([^"]+)"/g)) usate.add(m[1]);
+  for (const m of html.matchAll(/data-i18n-attr="([^"]+)"/g)) m[1].split(';').forEach((c) => usate.add(c.split(':')[1].trim()));
+  for (const m of js.matchAll(/\bt\('([A-Za-z0-9]+)'/g)) usate.add(m[1]);
+  const definite = Object.keys(TESTI.TESTI.it);
+  t.uguale('nessuna chiave usata e mancante', [...usate].filter((k) => definite.indexOf(k) < 0).sort(), []);
+  const citate = (k) => usate.has(k) || js.indexOf("'" + k + "'") >= 0;
+  t.uguale('nessuna chiave inutilizzata', definite.filter((k) => !citate(k)).sort(), []);
 }
 
 let gruppo = null;

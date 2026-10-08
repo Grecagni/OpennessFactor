@@ -26,12 +26,13 @@ const OPZIONI_STABILI = [
 
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-export async function avviaChrome() {
+// lingua: lingua del browser (navigator.language), fissa perché gli esiti non dipendano dal PC.
+export async function avviaChrome({ lingua = 'it-IT' } = {}) {
   const exe = CHROME_PATHS.find((p) => existsSync(p));
   if (!exe) throw new Error('Chrome o Edge non trovato');
   const profilo = mkdtempSync(join(tmpdir(), 'of-cdp-'));
   const proc = spawn(exe, ['--headless=new', ...OPZIONI_STABILI, '--remote-debugging-port=0',
-    `--user-data-dir=${profilo}`, 'about:blank'], { stdio: 'ignore' });
+    `--lang=${lingua}`, `--accept-lang=${lingua}`, `--user-data-dir=${profilo}`, 'about:blank'], { stdio: 'ignore' });
   let uscito = false;
   const fine = new Promise((r) => proc.once('exit', () => { uscito = true; r(); }));
 

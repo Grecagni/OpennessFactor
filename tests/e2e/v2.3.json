@@ -2,6 +2,7 @@
  "default": {
   "lingua": "it",
   "of": "1,57%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -36,6 +37,10 @@
   "interasse": "3,54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -46,6 +51,7 @@
  "d 0,6 scritto con la virgola": {
   "lingua": "it",
   "of": "2,26%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,60",
    "solaLettura": false,
@@ -80,6 +86,10 @@
   "interasse": "3,54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,60",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -90,6 +100,7 @@
  "d 0.6 con il cursore": {
   "lingua": "it",
   "of": "2,26%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,60",
    "solaLettura": false,
@@ -124,6 +135,10 @@
   "interasse": "3,54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,60",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -134,6 +149,7 @@
  "griglia (OF invariato)": {
   "lingua": "it",
   "of": "1,57%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -168,6 +184,10 @@
   "interasse": "2,50 mm",
   "foriCampo": "171",
   "foriDisegnati": 171,
+  "primiFori": "5;2.5 10;2.5 15;2.5",
+  "quote": "P 5,00 / R 2,50 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -178,6 +198,7 @@
  "P 3 e R 1 scritti": {
   "lingua": "it",
   "of": "6,54%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -212,6 +233,10 @@
   "interasse": "1,80 mm",
   "foriCampo": "809",
   "foriDisegnati": 809,
+  "primiFori": "1;1 4;1 7;1",
+  "quote": "P 3,00 / R 1,00 / S 1,50 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -222,6 +247,7 @@
  "collisione vera d 0,9 P 1 R 0,5": {
   "lingua": "it",
   "of": "100,00%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,90",
    "solaLettura": false,
@@ -258,6 +284,10 @@
   "interasse": "0,71 mm",
   "foriCampo": "4901",
   "foriDisegnati": 4901,
+  "primiFori": "0.5;0.5 1.5;0.5 2.5;0.5",
+  "quote": "P 1,00 / R 0,50 / S 0,50 / d 0,90",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 4901,
   "lente": true,
   "griglia": false,
@@ -268,6 +298,7 @@
  "ex falso allarme d 0,6 P 2 R 0,5": {
   "lingua": "it",
   "of": "28,27%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,60",
    "solaLettura": false,
@@ -302,6 +333,10 @@
   "interasse": "1,00 mm",
   "foriCampo": "2425",
   "foriDisegnati": 2425,
+  "primiFori": "2;0.5 4;0.5 6;0.5",
+  "quote": "P 2,00 / R 0,50 / S 1,00 / d 0,60",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -312,6 +347,7 @@
  "modo Passo": {
   "lingua": "it",
   "of": "1,57%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -342,7 +378,7 @@
   },
   "modo": "step",
   "pattern": "staggered",
-  "aiuto": "Imposta d e l’OF obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
+  "aiuto": "Imposta d e l’OF geometrico obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
   "S": "2,50 mm · P/2",
   "messaggi": [],
   "ponte": "3,04 mm",
@@ -352,6 +388,10 @@
   "interasse": "3,54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -362,6 +402,7 @@
  "Passo con OF 3": {
   "lingua": "it",
   "of": "3,00%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -392,7 +433,7 @@
   },
   "modo": "step",
   "pattern": "staggered",
-  "aiuto": "Imposta d e l’OF obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
+  "aiuto": "Imposta d e l’OF geometrico obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
   "S": "1,81 mm · P/2",
   "messaggi": [],
   "ponte": "2,06 mm",
@@ -402,6 +443,10 @@
   "interasse": "2,56 mm",
   "foriCampo": "365",
   "foriDisegnati": 365,
+  "primiFori": "1.483;1.483 5.101;1.483 8.719;1.483",
+  "quote": "P 3,62 / R 1,81 / S 1,81 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -412,6 +457,7 @@
  "Passo con P fissato a 4": {
   "lingua": "it",
   "of": "1,57%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -442,7 +488,7 @@
   },
   "modo": "step",
   "pattern": "staggered",
-  "aiuto": "Passo P fissato: l’app ricava l’altro passo. Cambia d o l’OF obiettivo per tornare al calcolo automatico.",
+  "aiuto": "Passo P fissato: l’app ricava l’altro passo. Cambia d o l’OF geometrico obiettivo per tornare al calcolo automatico.",
   "S": "2,00 mm · P/2",
   "messaggi": [],
   "ponte": "3,21 mm",
@@ -452,6 +498,10 @@
   "interasse": "3,71 mm",
   "foriCampo": "187",
   "foriDisegnati": 187,
+  "primiFori": "3;3.125 7;3.125 11;3.125",
+  "quote": "P 4,00 / R 3,13 / S 2,00 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -462,6 +512,7 @@
  "Passo troncato: d 0,2 e OF 12": {
   "lingua": "it",
   "of": "6,28%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,20",
    "solaLettura": false,
@@ -492,10 +543,10 @@
   },
   "modo": "step",
   "pattern": "staggered",
-  "aiuto": "Imposta d e l’OF obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
+  "aiuto": "Imposta d e l’OF geometrico obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
   "S": "0,50 mm · P/2",
   "messaggi": [
-   "warning: OF richiesto 12,00 % non raggiungibile con P e R negli intervalli: OF ottenuto 6,28 %."
+   "warning: OF geometrico richiesto 12,00 % non raggiungibile con P e R negli intervalli: con questi valori è 6,28 %."
   ],
   "ponte": "0,51 mm",
   "fori": "2.000.000",
@@ -504,6 +555,10 @@
   "interasse": "0,71 mm",
   "foriCampo": "4901",
   "foriDisegnati": 4901,
+  "primiFori": "0.5;0.5 1.5;0.5 2.5;0.5",
+  "quote": "P 1,00 / R 0,50 / S 0,50 / d 0,20",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -514,6 +569,7 @@
  "modo Diametro": {
   "lingua": "it",
   "of": "1,57%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": true,
@@ -544,7 +600,7 @@
   },
   "modo": "diameter",
   "pattern": "staggered",
-  "aiuto": "Imposta l’OF obiettivo, P e R: l’app calcola d.",
+  "aiuto": "Imposta l’OF geometrico obiettivo, P e R: l’app calcola d.",
   "S": "2,50 mm · P/2",
   "messaggi": [],
   "ponte": "3,04 mm",
@@ -554,6 +610,10 @@
   "interasse": "3,54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -564,6 +624,7 @@
  "Diametro troncato con OF 8": {
   "lingua": "it",
   "of": "5,09%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,90",
    "solaLettura": true,
@@ -594,10 +655,10 @@
   },
   "modo": "diameter",
   "pattern": "staggered",
-  "aiuto": "Imposta l’OF obiettivo, P e R: l’app calcola d.",
+  "aiuto": "Imposta l’OF geometrico obiettivo, P e R: l’app calcola d.",
   "S": "2,50 mm · P/2",
   "messaggi": [
-   "warning: OF richiesto 8,00 % non raggiungibile con d tra 0,20 e 0,90 mm: OF ottenuto 5,09 %."
+   "warning: OF geometrico richiesto 8,00 % non raggiungibile con d tra 0,20 e 0,90 mm: con questi valori è 5,09 %."
   ],
   "ponte": "2,64 mm",
   "fori": "80.000",
@@ -606,6 +667,10 @@
   "interasse": "3,54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,90",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -616,6 +681,7 @@
  "testo non numerico in d": {
   "lingua": "it",
   "of": "1,57%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -650,6 +716,10 @@
   "interasse": "3,54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -660,6 +730,7 @@
  "P fuori intervallo (15)": {
   "lingua": "it",
   "of": "0,79%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -694,6 +765,10 @@
   "interasse": "5,00 mm",
   "foriCampo": "85",
   "foriDisegnati": 85,
+  "primiFori": "10;2.5 20;2.5 30;2.5",
+  "quote": "P 10,00 / R 2,50 / S 5,00 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -704,6 +779,7 @@
  "freccia su in d (+0,01)": {
   "lingua": "it",
   "of": "1,63%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,51",
    "solaLettura": false,
@@ -738,6 +814,10 @@
   "interasse": "3,54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,51",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -748,6 +828,7 @@
  "Maiusc + freccia giù in P (−0,5)": {
   "lingua": "it",
   "of": "1,75%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -782,6 +863,10 @@
   "interasse": "3,36 mm",
   "foriCampo": "219",
   "foriDisegnati": 219,
+  "primiFori": "0.25;2.5 4.75;2.5 9.25;2.5",
+  "quote": "P 4,50 / R 2,50 / S 2,25 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -792,6 +877,7 @@
  "lingua inglese": {
   "lingua": "en",
   "of": "1.57%",
+  "strisciaUguale": true,
   "d": {
    "v": "0.50",
    "solaLettura": false,
@@ -826,6 +912,10 @@
   "interasse": "3.54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5.00 / R 2.50 / S 2.50 / d 0.50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -836,6 +926,7 @@
  "inglese con d 0.6": {
   "lingua": "en",
   "of": "2.26%",
+  "strisciaUguale": true,
   "d": {
    "v": "0.60",
    "solaLettura": false,
@@ -870,6 +961,10 @@
   "interasse": "3.54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5.00 / R 2.50 / S 2.50 / d 0.60",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -880,6 +975,7 @@
  "annulla dopo una modifica": {
   "lingua": "it",
   "of": "1,57%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -914,6 +1010,10 @@
   "interasse": "3,54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -924,6 +1024,7 @@
  "annulla e ripeti": {
   "lingua": "it",
   "of": "2,26%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,60",
    "solaLettura": false,
@@ -958,6 +1059,10 @@
   "interasse": "3,54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,60",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -968,6 +1073,7 @@
  "ripristino dal menu Altro": {
   "lingua": "it",
   "of": "1,57%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -1002,6 +1108,10 @@
   "interasse": "3,54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -1012,6 +1122,7 @@
  "ripristino e poi Annulla nel messaggio": {
   "lingua": "it",
   "of": "3,08%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,70",
    "solaLettura": false,
@@ -1046,6 +1157,10 @@
   "interasse": "3,54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,70",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -1056,6 +1171,7 @@
  "mostra griglia dal menu": {
   "lingua": "it",
   "of": "1,57%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -1090,6 +1206,10 @@
   "interasse": "3,54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": "0",
   "foriInCollisione": 0,
   "lente": true,
   "griglia": true,
@@ -1100,6 +1220,7 @@
  "quote nascoste dal menu": {
   "lingua": "it",
   "of": "1,57%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -1134,6 +1255,10 @@
   "interasse": "3,54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": false,
   "griglia": false,
@@ -1144,6 +1269,7 @@
  "vecchio link v1": {
   "lingua": "it",
   "of": "2,36%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,60",
    "solaLettura": false,
@@ -1178,6 +1304,10 @@
   "interasse": "3,00 mm",
   "foriCampo": "221",
   "foriDisegnati": 221,
+  "primiFori": "1;1 5;1 9;1",
+  "quote": "P 4,00 / R 3,00 / d 0,60",
+  "scala": "5 mm",
+  "primaLinea": "1",
   "foriInCollisione": 0,
   "lente": true,
   "griglia": true,
@@ -1188,6 +1318,7 @@
  "link v2 con P fissato": {
   "lingua": "it",
   "of": "1,57%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -1218,7 +1349,7 @@
   },
   "modo": "step",
   "pattern": "staggered",
-  "aiuto": "Passo P fissato: l’app ricava l’altro passo. Cambia d o l’OF obiettivo per tornare al calcolo automatico.",
+  "aiuto": "Passo P fissato: l’app ricava l’altro passo. Cambia d o l’OF geometrico obiettivo per tornare al calcolo automatico.",
   "S": "2,00 mm · P/2",
   "messaggi": [],
   "ponte": "3,21 mm",
@@ -1228,6 +1359,10 @@
   "interasse": "3,71 mm",
   "foriCampo": "187",
   "foriDisegnati": 187,
+  "primiFori": "3;3.125 7;3.125 11;3.125",
+  "quote": "P 4,00 / R 3,13 / S 2,00 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -1238,6 +1373,7 @@
  "vecchio link diametro incoerente": {
   "lingua": "it",
   "of": "1,57%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,40",
    "solaLettura": true,
@@ -1268,7 +1404,7 @@
   },
   "modo": "diameter",
   "pattern": "staggered",
-  "aiuto": "Imposta l’OF obiettivo, P e R: l’app calcola d.",
+  "aiuto": "Imposta l’OF geometrico obiettivo, P e R: l’app calcola d.",
   "S": "2,00 mm · P/2",
   "messaggi": [],
   "ponte": "2,43 mm",
@@ -1278,6 +1414,10 @@
   "interasse": "2,83 mm",
   "foriCampo": "313",
   "foriDisegnati": 313,
+  "primiFori": "1;1 5;1 9;1",
+  "quote": "P 4,00 / R 2,00 / S 2,00 / d 0,40",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -1288,6 +1428,7 @@
  "link incollato nella stessa scheda": {
   "lingua": "it",
   "of": "6,28%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,60",
    "solaLettura": false,
@@ -1322,6 +1463,10 @@
   "interasse": "1,50 mm",
   "foriCampo": "561",
   "foriDisegnati": 561,
+  "primiFori": "1;1 4;1 7;1",
+  "quote": "P 3,00 / R 1,50 / d 0,60",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -1356,6 +1501,7 @@
  "Condividi: copia il link completo": {
   "lingua": "it",
   "of": "1,90%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,55",
    "solaLettura": false,
@@ -1390,6 +1536,10 @@
   "interasse": "3,54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,55",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -1401,6 +1551,7 @@
  "Condividi con R fissato (griglia, Passo)": {
   "lingua": "it",
   "of": "1,57%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -1431,7 +1582,7 @@
   },
   "modo": "step",
   "pattern": "grid",
-  "aiuto": "Passo R fissato: l’app ricava l’altro passo. Cambia d o l’OF obiettivo per tornare al calcolo automatico.",
+  "aiuto": "Passo R fissato: l’app ricava l’altro passo. Cambia d o l’OF geometrico obiettivo per tornare al calcolo automatico.",
   "S": "0,00 mm · 0",
   "messaggi": [],
   "ponte": "2,50 mm",
@@ -1441,6 +1592,10 @@
   "interasse": "3,00 mm",
   "foriCampo": "187",
   "foriDisegnati": 187,
+  "primiFori": "4.1667;1 8.3333;1 12.5;1",
+  "quote": "P 4,17 / R 3,00 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -1452,6 +1607,7 @@
  "Passo troncato poi griglia (l’avviso resta)": {
   "lingua": "it",
   "of": "6,28%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,20",
    "solaLettura": false,
@@ -1482,10 +1638,10 @@
   },
   "modo": "step",
   "pattern": "staggered",
-  "aiuto": "Imposta d e l’OF obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
+  "aiuto": "Imposta d e l’OF geometrico obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
   "S": "0,50 mm · P/2",
   "messaggi": [
-   "warning: OF richiesto 12,00 % non raggiungibile con P e R negli intervalli: OF ottenuto 6,28 %."
+   "warning: OF geometrico richiesto 12,00 % non raggiungibile con P e R negli intervalli: con questi valori è 6,28 %."
   ],
   "ponte": "0,51 mm",
   "fori": "2.000.000",
@@ -1494,6 +1650,10 @@
   "interasse": "0,71 mm",
   "foriCampo": "4901",
   "foriDisegnati": 4901,
+  "primiFori": "0.5;0.5 1.5;0.5 2.5;0.5",
+  "quote": "P 1,00 / R 0,50 / S 0,50 / d 0,20",
+  "scala": "5 mm",
+  "primaLinea": "0",
   "foriInCollisione": 0,
   "lente": true,
   "griglia": true,
@@ -1504,6 +1664,7 @@
  "Diametro troncato poi griglia (l’avviso resta)": {
   "lingua": "it",
   "of": "5,09%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,90",
    "solaLettura": true,
@@ -1534,10 +1695,10 @@
   },
   "modo": "diameter",
   "pattern": "staggered",
-  "aiuto": "Imposta l’OF obiettivo, P e R: l’app calcola d.",
+  "aiuto": "Imposta l’OF geometrico obiettivo, P e R: l’app calcola d.",
   "S": "2,50 mm · P/2",
   "messaggi": [
-   "warning: OF richiesto 8,00 % non raggiungibile con d tra 0,20 e 0,90 mm: OF ottenuto 5,09 %."
+   "warning: OF geometrico richiesto 8,00 % non raggiungibile con d tra 0,20 e 0,90 mm: con questi valori è 5,09 %."
   ],
   "ponte": "2,64 mm",
   "fori": "80.000",
@@ -1546,6 +1707,10 @@
   "interasse": "3,54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,90",
+  "scala": "5 mm",
+  "primaLinea": "0",
   "foriInCollisione": 0,
   "lente": true,
   "griglia": true,
@@ -1556,6 +1721,7 @@
  "Passo a griglia, d 0,2, OF 4 (si raggiunge fissando P)": {
   "lingua": "it",
   "of": "3,14%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,20",
    "solaLettura": false,
@@ -1586,10 +1752,10 @@
   },
   "modo": "step",
   "pattern": "grid",
-  "aiuto": "Imposta d e l’OF obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
+  "aiuto": "Imposta d e l’OF geometrico obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
   "S": "0,00 mm · 0",
   "messaggi": [
-   "warning: OF richiesto 4,00 % non raggiungibile con P = R (si raggiunge fissando P): OF ottenuto 3,14 %."
+   "warning: OF geometrico richiesto 4,00 % non raggiungibile con P = R (si raggiunge fissando P): con questi valori è 3,14 %."
   ],
   "ponte": "0,80 mm",
   "fori": "1.000.000",
@@ -1598,6 +1764,10 @@
   "interasse": "1,00 mm",
   "foriCampo": "2401",
   "foriDisegnati": 2401,
+  "primiFori": "1;1 2;1 3;1",
+  "quote": "P 1,00 / R 1,00 / d 0,20",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -1608,6 +1778,7 @@
  "… e fissando P = 1": {
   "lingua": "it",
   "of": "4,00%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,20",
    "solaLettura": false,
@@ -1638,7 +1809,7 @@
   },
   "modo": "step",
   "pattern": "grid",
-  "aiuto": "Passo P fissato: l’app ricava l’altro passo. Cambia d o l’OF obiettivo per tornare al calcolo automatico.",
+  "aiuto": "Passo P fissato: l’app ricava l’altro passo. Cambia d o l’OF geometrico obiettivo per tornare al calcolo automatico.",
   "S": "0,00 mm · 0",
   "messaggi": [],
   "ponte": "0,59 mm",
@@ -1648,6 +1819,10 @@
   "interasse": "0,79 mm",
   "foriCampo": "3087",
   "foriDisegnati": 3087,
+  "primiFori": "1;0.6527 2;0.6527 3;0.6527",
+  "quote": "P 1,00 / R 0,79 / d 0,20",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -1658,6 +1833,7 @@
  "Passo con OF 0": {
   "lingua": "it",
   "of": "0,39%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -1688,10 +1864,10 @@
   },
   "modo": "step",
   "pattern": "staggered",
-  "aiuto": "Imposta d e l’OF obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
+  "aiuto": "Imposta d e l’OF geometrico obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
   "S": "5,00 mm · P/2",
   "messaggi": [
-   "warning: OF richiesto 0,00 % non raggiungibile con P e R negli intervalli: OF ottenuto 0,39 %."
+   "warning: OF geometrico richiesto 0,00 % non raggiungibile con P e R negli intervalli: con questi valori è 0,39 %."
   ],
   "ponte": "6,57 mm",
   "fori": "20.000",
@@ -1700,6 +1876,10 @@
   "interasse": "7,07 mm",
   "foriCampo": "41",
   "foriDisegnati": 41,
+  "primiFori": "5;5 15;5 25;5",
+  "quote": "P 10,00 / R 5,00 / S 5,00 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -1710,6 +1890,7 @@
  "Diametro con OF 0": {
   "lingua": "it",
   "of": "0,25%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,20",
    "solaLettura": true,
@@ -1740,10 +1921,10 @@
   },
   "modo": "diameter",
   "pattern": "staggered",
-  "aiuto": "Imposta l’OF obiettivo, P e R: l’app calcola d.",
+  "aiuto": "Imposta l’OF geometrico obiettivo, P e R: l’app calcola d.",
   "S": "2,50 mm · P/2",
   "messaggi": [
-   "warning: OF richiesto 0,00 % non raggiungibile con d tra 0,20 e 0,90 mm: OF ottenuto 0,25 %."
+   "warning: OF geometrico richiesto 0,00 % non raggiungibile con d tra 0,20 e 0,90 mm: con questi valori è 0,25 %."
   ],
   "ponte": "3,34 mm",
   "fori": "80.000",
@@ -1752,6 +1933,10 @@
   "interasse": "3,54 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,20",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -1762,6 +1947,7 @@
  "Diametro P 1,6 R 1 OF 1,96 (d 0,2 a meno di 0,005: nessun avviso)": {
   "lingua": "it",
   "of": "1,96%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,20",
    "solaLettura": true,
@@ -1792,7 +1978,7 @@
   },
   "modo": "diameter",
   "pattern": "staggered",
-  "aiuto": "Imposta l’OF obiettivo, P e R: l’app calcola d.",
+  "aiuto": "Imposta l’OF geometrico obiettivo, P e R: l’app calcola d.",
   "S": "0,80 mm · P/2",
   "messaggi": [],
   "ponte": "1,08 mm",
@@ -1802,6 +1988,10 @@
   "interasse": "1,28 mm",
   "foriCampo": "1543",
   "foriDisegnati": 1543,
+  "primiFori": "1;1 2.6;1 4.2;1",
+  "quote": "P 1,60 / R 1,00 / S 0,80 / d 0,20",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -1812,6 +2002,7 @@
  "fori a contatto: griglia d 0,9 P 1 R 0,9": {
   "lingua": "it",
   "of": "70,69%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,90",
    "solaLettura": false,
@@ -1848,6 +2039,10 @@
   "interasse": "0,90 mm",
   "foriCampo": "2695",
   "foriDisegnati": 2695,
+  "primiFori": "1;0.7 2;0.7 3;0.7",
+  "quote": "P 1,00 / R 0,90 / d 0,90",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 2695,
   "lente": true,
   "griglia": false,
@@ -1858,6 +2053,7 @@
  "tre frecce su in R (link senza rumore: r=2.65)": {
   "lingua": "it",
   "of": "1,48%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -1892,6 +2088,10 @@
   "interasse": "3,64 mm",
   "foriCampo": "181",
   "foriDisegnati": 181,
+  "primiFori": "2.5;1.15 7.5;1.15 12.5;1.15",
+  "quote": "P 5,00 / R 2,65 / S 2,50 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -1902,6 +2102,7 @@
  "vecchio link v1 Passo con x fissato (geometria conservata)": {
   "lingua": "it",
   "of": "10,01%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -1932,7 +2133,7 @@
   },
   "modo": "step",
   "pattern": "staggered",
-  "aiuto": "Passo P fissato: l’app ricava l’altro passo. Cambia d o l’OF obiettivo per tornare al calcolo automatico.",
+  "aiuto": "Passo P fissato: l’app ricava l’altro passo. Cambia d o l’OF geometrico obiettivo per tornare al calcolo automatico.",
   "S": "0,60 mm · P/2",
   "messaggi": [],
   "ponte": "0,70 mm",
@@ -1942,6 +2143,10 @@
   "interasse": "1,20 mm",
   "foriCampo": "1287",
   "foriDisegnati": 1287,
+  "primiFori": "0.4;0.475 1.6;0.475 2.8;0.475",
+  "quote": "P 1,20 / R 1,64 / S 0,60 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -1952,6 +2157,7 @@
  "link v2 con R fissato": {
   "lingua": "it",
   "of": "2,00%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,50",
    "solaLettura": false,
@@ -1982,7 +2188,7 @@
   },
   "modo": "step",
   "pattern": "grid",
-  "aiuto": "Passo R fissato: l’app ricava l’altro passo. Cambia d o l’OF obiettivo per tornare al calcolo automatico.",
+  "aiuto": "Passo R fissato: l’app ricava l’altro passo. Cambia d o l’OF geometrico obiettivo per tornare al calcolo automatico.",
   "S": "0,00 mm · 0",
   "messaggi": [],
   "ponte": "2,50 mm",
@@ -1992,6 +2198,10 @@
   "interasse": "3,00 mm",
   "foriCampo": "255",
   "foriDisegnati": 255,
+  "primiFori": "2.0926;1 5.365;1 8.6375;1",
+  "quote": "P 3,27 / R 3,00 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -2002,6 +2212,7 @@
  "link v2 con la virgola": {
   "lingua": "it",
   "of": "8,08%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,60",
    "solaLettura": false,
@@ -2036,6 +2247,10 @@
   "interasse": "1,00 mm",
   "foriCampo": "735",
   "foriDisegnati": 735,
+  "primiFori": "0.5;1 4;1 7.5;1",
+  "quote": "P 3,50 / R 1,00 / d 0,60",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
@@ -2046,6 +2261,7 @@
  "link troncato riaperto (avviso)": {
   "lingua": "it",
   "of": "6,28%",
+  "strisciaUguale": true,
   "d": {
    "v": "0,20",
    "solaLettura": false,
@@ -2076,10 +2292,10 @@
   },
   "modo": "step",
   "pattern": "staggered",
-  "aiuto": "Imposta d e l’OF obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
+  "aiuto": "Imposta d e l’OF geometrico obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
   "S": "0,50 mm · P/2",
   "messaggi": [
-   "warning: OF richiesto 12,00 % non raggiungibile con P e R negli intervalli: OF ottenuto 6,28 %."
+   "warning: OF geometrico richiesto 12,00 % non raggiungibile con P e R negli intervalli: con questi valori è 6,28 %."
   ],
   "ponte": "0,51 mm",
   "fori": "2.000.000",
@@ -2088,12 +2304,916 @@
   "interasse": "0,71 mm",
   "foriCampo": "4901",
   "foriDisegnati": 4901,
+  "primiFori": "0.5;0.5 1.5;0.5 2.5;0.5",
+  "quote": "P 1,00 / R 0,50 / S 0,50 / d 0,20",
+  "scala": "5 mm",
+  "primaLinea": null,
   "foriInCollisione": 0,
   "lente": true,
   "griglia": false,
   "hash": "#d=0.2&p=1&r=0.5&pattern=staggered&mode=step&t=12",
   "toast": "",
   "etichetta": "Diametro del foro"
+ },
+ "P ≠ 2R: anteprima, quote e scala (griglia P 3, R 1, d 0,5, griglia visibile)": {
+  "lingua": "it",
+  "of": "6,54%",
+  "strisciaUguale": true,
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "3,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "1,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "grid",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "0,00 mm · 0",
+  "messaggi": [],
+  "ponte": "0,50 mm",
+  "fori": "333.333",
+  "areaForo": "0,196 mm²",
+  "areaCella": "3,00 mm²",
+  "interasse": "1,00 mm",
+  "foriCampo": "833",
+  "foriDisegnati": 833,
+  "primiFori": "1;1 4;1 7;1",
+  "quote": "P 3,00 / R 1,00 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": "0",
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": true,
+  "hash": "#d=0.5&p=3&r=1&pattern=grid&mode=of&grid=1",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "esporta SVG dal menu (P 3, R 1)": {
+  "file": "OF-d0.50-P3.00-R1.00-S0.00.svg",
+  "toast": "SVG salvato",
+  "titolo": "Openness Factor - d 0.50 P 3.00 R 1.00 S 0.00 mm - OF geometrico 6.54%",
+  "primi": "1;1 4;1 7;1",
+  "cerchi": 833,
+  "riquadro": false
+ },
+ "esporta PNG dal menu (P 3, R 1)": {
+  "file": "OF-d0.50-P3.00-R1.00-S0.00.png",
+  "toast": "PNG salvato",
+  "larghezza": 1200,
+  "altezza": 1320,
+  "metadati": [
+   "Title",
+   "Author",
+   "Software",
+   "Description",
+   "Creation Time"
+  ]
+ },
+ "riapertura: l’app ricorda modalità, passo fissato, lingua e quote": {
+  "modo": "step",
+  "P": "4.00",
+  "R": "3.13",
+  "lingua": "en",
+  "quote": false,
+  "hash": "#d=0.5&p=4&r=3.125&pattern=staggered&mode=step&t=1.57079632679&lock=P"
+ },
+ "Altro › Annulla e poi Ripeti": {
+  "dopoAnnulla": "0,50",
+  "dopoRipeti": "0,60"
+ },
+ "cursore e poi Ctrl+Z": {
+  "lingua": "it",
+  "of": "1,57%",
+  "strisciaUguale": true,
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "3,04 mm",
+  "fori": "80.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=5&r=2.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "Ctrl+Y ripete": {
+  "lingua": "it",
+  "of": "2,26%",
+  "strisciaUguale": true,
+  "d": {
+   "v": "0,60",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "2,94 mm",
+  "fori": "80.000",
+  "areaForo": "0,283 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,60",
+  "scala": "5 mm",
+  "primaLinea": null,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.6&p=5&r=2.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "Passo: R confermato con lo stesso valore lo fissa": {
+  "lingua": "it",
+  "of": "1,57%",
+  "strisciaUguale": true,
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "1,57",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "staggered",
+  "aiuto": "Passo R fissato: l’app ricava l’altro passo. Cambia d o l’OF geometrico obiettivo per tornare al calcolo automatico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "3,04 mm",
+  "fori": "80.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=5&r=2.5&pattern=staggered&mode=step&t=1.57079632679&lock=R",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "avviso con passo fissato (Passo, d 0,2, OF 12, P 1)": {
+  "lingua": "it",
+  "of": "6,28%",
+  "strisciaUguale": true,
+  "d": {
+   "v": "0,20",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "1,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "12,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "staggered",
+  "aiuto": "Passo P fissato: l’app ricava l’altro passo. Cambia d o l’OF geometrico obiettivo per tornare al calcolo automatico.",
+  "S": "0,50 mm · P/2",
+  "messaggi": [
+   "warning: OF geometrico richiesto 12,00 % non raggiungibile con P e R negli intervalli: con questi valori è 6,28 %."
+  ],
+  "ponte": "0,51 mm",
+  "fori": "2.000.000",
+  "areaForo": "0,031 mm²",
+  "areaCella": "0,50 mm²",
+  "interasse": "0,71 mm",
+  "foriCampo": "4901",
+  "foriDisegnati": 4901,
+  "primiFori": "0.5;0.5 1.5;0.5 2.5;0.5",
+  "quote": "P 1,00 / R 0,50 / S 0,50 / d 0,20",
+  "scala": "5 mm",
+  "primaLinea": null,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.2&p=1&r=0.5&pattern=staggered&mode=step&t=12&lock=P",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "inglese: avviso e foglio Informazioni": {
+  "messaggi": [
+   "Requested geometric OF 4.00 % cannot be reached with P = R (fix P to reach it): with these values it is 3.14 %."
+  ],
+  "formula": "Geometric OF = π(d/2)² / (P·R)",
+  "convenzione": [
+   "d — hole diameter",
+   "P — pitch between holes in the same row",
+   "R — pitch between one row and the next",
+   "S — offset: shift of a row relative to the previous one (0 grid, P/2 staggered)"
+  ],
+  "lingua": "Language"
+ },
+ "Invio senza scrivere nell’OF obiettivo: nulla cambia (passo fissato e valori esatti)": {
+  "lingua": "it",
+  "of": "1,57%",
+  "strisciaUguale": true,
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "4,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "3,13",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "1,57",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "staggered",
+  "aiuto": "Passo P fissato: l’app ricava l’altro passo. Cambia d o l’OF geometrico obiettivo per tornare al calcolo automatico.",
+  "S": "2,00 mm · P/2",
+  "messaggi": [],
+  "ponte": "3,21 mm",
+  "fori": "80.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,71 mm",
+  "foriCampo": "187",
+  "foriDisegnati": 187,
+  "primiFori": "3;3.125 7;3.125 11;3.125",
+  "quote": "P 4,00 / R 3,13 / S 2,00 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=4&r=3.125&pattern=staggered&mode=step&t=1.57079632679&lock=P",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "freccia dopo aver scritto senza confermare: parte dal valore scritto": {
+  "lingua": "it",
+  "of": "3,17%",
+  "strisciaUguale": true,
+  "d": {
+   "v": "0,71",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "2,83 mm",
+  "fori": "80.000",
+  "areaForo": "0,396 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,71",
+  "scala": "5 mm",
+  "primaLinea": null,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.71&p=5&r=2.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "freccia al limite: il passo fissato resta": {
+  "lingua": "it",
+  "of": "1,59%",
+  "strisciaUguale": true,
+  "d": {
+   "v": "0,90",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "4,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "10,00",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "1,57",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "staggered",
+  "aiuto": "Passo P fissato: l’app ricava l’altro passo. Cambia d o l’OF geometrico obiettivo per tornare al calcolo automatico.",
+  "S": "2,00 mm · P/2",
+  "messaggi": [
+   "warning: OF geometrico richiesto 1,57 % non raggiungibile con P fissato a 4,00 mm: con questi valori è 1,59 %."
+  ],
+  "ponte": "3,10 mm",
+  "fori": "25.000",
+  "areaForo": "0,636 mm²",
+  "areaCella": "40,00 mm²",
+  "interasse": "4,00 mm",
+  "foriCampo": "63",
+  "foriDisegnati": 63,
+  "primiFori": "1;5 5;5 9;5",
+  "quote": "P 4,00 / R 10,00 / S 2,00 / d 0,90",
+  "scala": "5 mm",
+  "primaLinea": null,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.9&p=4&r=10&pattern=staggered&mode=step&t=1.57079632679&lock=P",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "campo ricalcolato: sparisce l’avviso del valore scritto prima": {
+  "lingua": "it",
+  "of": "3,00%",
+  "strisciaUguale": true,
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "3,62",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "1,81",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "3,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "staggered",
+  "aiuto": "Imposta d e l’OF geometrico obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
+  "S": "1,81 mm · P/2",
+  "messaggi": [],
+  "ponte": "2,06 mm",
+  "fori": "152.789",
+  "areaForo": "0,196 mm²",
+  "areaCella": "6,54 mm²",
+  "interasse": "2,56 mm",
+  "foriCampo": "365",
+  "foriDisegnati": 365,
+  "primiFori": "1.483;1.483 5.101;1.483 8.719;1.483",
+  "quote": "P 3,62 / R 1,81 / S 1,81 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=3.61800627279&r=1.8090031364&pattern=staggered&mode=step&t=3",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "fori tangenti: ponte 0,00 mm senza segno ed evidenziato": {
+  "ponte": "0,00 mm",
+  "evidenziato": true,
+  "messaggi": [
+   "Fori sovrapposti o a contatto: ponte minimo 0,00 mm."
+  ]
+ },
+ "riportare il valore di prima dopo Invio e uscire con Tab: si applica": {
+  "lingua": "it",
+  "of": "1,57%",
+  "strisciaUguale": true,
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "3,04 mm",
+  "fori": "80.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=5&r=2.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "ripristino e poi modifica: Annulla del messaggio non c’è più": {
+  "lingua": "it",
+  "of": "1,96%",
+  "strisciaUguale": true,
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "2,70 mm",
+  "fori": "100.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "10,00 mm²",
+  "interasse": "3,20 mm",
+  "foriCampo": "237",
+  "foriDisegnati": 237,
+  "primiFori": "5;1 10;1 15;1",
+  "quote": "P 5,00 / R 2,00 / S 2,50 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=5&r=2&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "ripristino senza cambiamenti: messaggio senza Annulla": {
+  "lingua": "it",
+  "of": "1,57%",
+  "strisciaUguale": true,
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "5,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Imposta d, P e R: l’app calcola l’OF geometrico.",
+  "S": "2,50 mm · P/2",
+  "messaggi": [],
+  "ponte": "3,04 mm",
+  "fori": "80.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,54 mm",
+  "foriCampo": "181",
+  "foriDisegnati": 181,
+  "primiFori": "2.5;2.5 7.5;2.5 12.5;2.5",
+  "quote": "P 5,00 / R 2,50 / S 2,50 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=5&r=2.5&pattern=staggered&mode=of",
+  "toast": "Valori ripristinati",
+  "etichetta": "Diametro del foro"
+ },
+ "avviso sotto il campo tradotto cambiando lingua": {
+  "lingua": "en",
+  "of": "0.79%",
+  "strisciaUguale": true,
+  "d": {
+   "v": "0.50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "10.00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "Value out of range (1.00–10.00 mm): 10.00 mm used.",
+   "invalido": true
+  },
+  "R": {
+   "v": "2.50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": null,
+  "modo": "of",
+  "pattern": "staggered",
+  "aiuto": "Set d, P and R: the app computes the geometric OF.",
+  "S": "5.00 mm · P/2",
+  "messaggi": [],
+  "ponte": "4.50 mm",
+  "fori": "40,000",
+  "areaForo": "0.196 mm²",
+  "areaCella": "25.00 mm²",
+  "interasse": "5.00 mm",
+  "foriCampo": "85",
+  "foriDisegnati": 85,
+  "primiFori": "10;2.5 20;2.5 30;2.5",
+  "quote": "P 10.00 / R 2.50 / S 5.00 / d 0.50",
+  "scala": "5 mm",
+  "primaLinea": null,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=10&r=2.5&pattern=staggered&mode=of",
+  "toast": "",
+  "etichetta": "Hole diameter"
+ },
+ "link in modalità Passo senza t: geometria del link": {
+  "lingua": "it",
+  "of": "3,53%",
+  "strisciaUguale": true,
+  "d": {
+   "v": "0,60",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "4,00",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "2,00",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "3,53",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "staggered",
+  "aiuto": "Imposta d e l’OF geometrico obiettivo: l’app calcola P e R (sfalsato P = 2R, griglia P = R). Muovi P o R per fissarlo.",
+  "S": "2,00 mm · P/2",
+  "messaggi": [],
+  "ponte": "2,23 mm",
+  "fori": "125.000",
+  "areaForo": "0,283 mm²",
+  "areaCella": "8,00 mm²",
+  "interasse": "2,83 mm",
+  "foriCampo": "313",
+  "foriDisegnati": 313,
+  "primiFori": "1;1 5;1 9;1",
+  "quote": "P 4,00 / R 2,00 / S 2,00 / d 0,60",
+  "scala": "5 mm",
+  "primaLinea": null,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.6&p=4&r=2&pattern=staggered&mode=step&t=3.53429173529",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "Passo con P fissato e poi Griglia: il passo resta fissato": {
+  "lingua": "it",
+  "of": "1,57%",
+  "strisciaUguale": true,
+  "d": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "4,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "3,13",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "1,57",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "grid",
+  "aiuto": "Passo P fissato: l’app ricava l’altro passo. Cambia d o l’OF geometrico obiettivo per tornare al calcolo automatico.",
+  "S": "0,00 mm · 0",
+  "messaggi": [],
+  "ponte": "2,63 mm",
+  "fori": "80.000",
+  "areaForo": "0,196 mm²",
+  "areaCella": "12,50 mm²",
+  "interasse": "3,13 mm",
+  "foriCampo": "195",
+  "foriDisegnati": 195,
+  "primiFori": "1;3.125 5;3.125 9;3.125",
+  "quote": "P 4,00 / R 3,13 / d 0,50",
+  "scala": "5 mm",
+  "primaLinea": null,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.5&p=4&r=3.125&pattern=grid&mode=step&t=1.57079632679&lock=P",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "OF irraggiungibile con P fissato: motivo “P e R negli intervalli”": {
+  "lingua": "it",
+  "of": "6,28%",
+  "strisciaUguale": true,
+  "d": {
+   "v": "0,20",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "P": {
+   "v": "1,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "R": {
+   "v": "0,50",
+   "solaLettura": false,
+   "calcolato": true,
+   "msg": "",
+   "invalido": false
+  },
+  "ofObiettivo": {
+   "v": "12,00",
+   "solaLettura": false,
+   "calcolato": false,
+   "msg": "",
+   "invalido": false
+  },
+  "modo": "step",
+  "pattern": "staggered",
+  "aiuto": "Passo P fissato: l’app ricava l’altro passo. Cambia d o l’OF geometrico obiettivo per tornare al calcolo automatico.",
+  "S": "0,50 mm · P/2",
+  "messaggi": [
+   "warning: OF geometrico richiesto 12,00 % non raggiungibile con P e R negli intervalli: con questi valori è 6,28 %."
+  ],
+  "ponte": "0,51 mm",
+  "fori": "2.000.000",
+  "areaForo": "0,031 mm²",
+  "areaCella": "0,50 mm²",
+  "interasse": "0,71 mm",
+  "foriCampo": "4901",
+  "foriDisegnati": 4901,
+  "primiFori": "0.5;0.5 1.5;0.5 2.5;0.5",
+  "quote": "P 1,00 / R 0,50 / S 0,50 / d 0,20",
+  "scala": "5 mm",
+  "primaLinea": null,
+  "foriInCollisione": 0,
+  "lente": true,
+  "griglia": false,
+  "hash": "#d=0.2&p=1&r=0.5&pattern=staggered&mode=step&t=12&lock=P",
+  "toast": "",
+  "etichetta": "Diametro del foro"
+ },
+ "menu da tastiera: dopo una voce il focus torna al pulsante": {
+  "primaVoce": "quote",
+  "focus": true,
+  "menuChiuso": true
+ },
+ "Vai ai comandi: focus sui comandi, link invariato": {
+  "hash": "#d=0.6&p=4&r=2&pattern=grid&mode=of",
+  "focus": "mode=of"
  },
  "memoria del browser": {
   "d": 0.7,

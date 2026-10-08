@@ -54,6 +54,7 @@
             <span><span data-i18n="ponte">Ponte minimo</span> <b data-valore="ponte">3,04 mm</b></span>
             <span><b data-valore="fori">80.000</b> <span data-i18n="foriM2">fori/m²</span></span>
           </div>
+          <p class="result__alert" data-richiamo hidden></p>
         </div>
       </section>
       <div class="toolbar">
@@ -86,6 +87,8 @@
         </dl>
         <p class="result__note" data-i18n="notaOF">Calcolato dai valori nominali: non è l'OF misurato.</p>
       </div>
+
+      <div class="messages" id="messaggi"></div>
 
       <section class="section" aria-labelledby="h-calcola">
         <h2 class="eyebrow" id="h-calcola" data-i18n="calcola">Calcola</h2>
@@ -153,7 +156,6 @@
         </div>
       </section>
 
-      <div class="messages" id="messaggi" aria-live="polite"></div>
 
       <p class="footnote" data-i18n="piede">Openness Factor · OF geometrico = π(d/2)² / (P·R)</p>
     </div>

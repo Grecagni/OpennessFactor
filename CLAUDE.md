@@ -43,7 +43,7 @@ Repository: github.com/Grecagni/OpennessFactor (pubblico; in futuro da trasferir
 ## Verifica minima (dopo ogni modifica)
 1. Con i default l'OF geometrico è **1,57%**.
 2. Con d = 0,6 (resto ai default) l'OF geometrico è **2,26%**.
-3. Grafica: `node --experimental-websocket tools/screenshot.mjs <cartella> --confronta <cartella-riferimento>` (12 formati, dal telefono al desktop). Nessuno scorrimento orizzontale; i formati che il passo non deve toccare restano "identico". Riferimento grafico dalla v2.3: il nuovo aspetto, in tema chiaro e scuro (punto 6).
+3. Grafica: `node --experimental-websocket tools/screenshot.mjs <cartella> --confronta <cartella-riferimento>` (13 formati, dal telefono di 320 px al desktop; `--lingua en` per l'inglese). Nessuno scorrimento orizzontale; i formati che il passo non deve toccare restano "identico". Riferimento grafico dalla v2.3: il nuovo aspetto, in tema chiaro e scuro (punto 6).
 4. Test del calcolo verdi: `node tests/run-node.js` e `test.html` (doppio clic, oppure `node --experimental-websocket tools/test-browser.mjs`).
 5. Scenari dell'interfaccia: `node --experimental-websocket tools/e2e.mjs tests/e2e/scenari-v2.3.mjs <uscita.json> --confronta tests/e2e/v2.3.json` (scenari e riferimento dell'interfaccia in uso; quelli della v2.0 e della v2.2 restano come storico). Nei passi "invisibili" tutti gli scenari restano identici; se un passo cambia dei valori di proposito, il riferimento si registra di nuovo e il commit elenca le differenze.
 6. Tema scuro: `tools/screenshot.mjs` con `--tema scuro` simula un dispositivo in modalità scura (il predefinito è chiaro, qualunque sia il tema di Windows).
