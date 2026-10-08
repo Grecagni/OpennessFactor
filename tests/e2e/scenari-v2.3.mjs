@@ -150,5 +150,16 @@ export default [
         qr: Boolean(s.querySelector('.scheda__qr')), link: s.querySelector('.scheda__link').textContent, piede: s.querySelector('.scheda__piede').textContent }; })()` },
   { nome: 'scheda PDF con avviso (collisione), in inglese', azioni: `window.print = () => {}; await clic('[data-lang="en"]'); await scrivi('${T('d')}', '0.9'); await scrivi('${T('P')}', '1'); await scrivi('${T('R')}', '0.5'); await clic('[data-menu="menu-esporta"]'); await clic('[data-azione="scheda"]');`,
     leggi: `(() => { const s = q('#scheda'); return { titolo: s.querySelector('h1 span').textContent, avvisi: [...s.querySelectorAll('.scheda__avviso')].map((a) => a.textContent), of: s.querySelector('.scheda__of').textContent, piede: s.querySelector('.scheda__piede').textContent }; })()` },
+  { nome: 'confronto: vuoto all’inizio', leggi: `({ vuoto: !q('#confronto-vuoto').hidden, tabella: q('#confronto-tabella').children.length, pulsante: q('#confronto-aggiungi').textContent.trim(), attivo: !q('#confronto-aggiungi').disabled })` },
+  { nome: 'confronto: due varianti e la configurazione attuale', azioni: `await clic('#confronto-aggiungi'); await scrivi('${T('d')}', '0,6'); await clic('#confronto-aggiungi'); await scrivi('${T('P')}', '4');`,
+    leggi: `({ intestazioni: [...document.querySelectorAll('#confronto-tabella thead th')].map((th) => th.querySelector('span') ? th.querySelector('span').textContent : th.textContent),
+      righe: [...document.querySelectorAll('#confronto-tabella tbody tr')].map((tr) => [...tr.children].map((c) => c.textContent + (c.classList.contains('confronto__diverso') ? '*' : '')).join(' | ')),
+      pulsante: q('#confronto-aggiungi').textContent.trim(), memoria: JSON.parse(localStorage.getItem('of.v2.confronto')).length })` },
+  { nome: 'confronto: apri la variante 1', azioni: `await clic('#confronto-aggiungi'); await scrivi('${T('d')}', '0,7'); await clic('[data-variante="0"][data-azione-variante="apri"]');`,
+    leggi: `({ d: q('[data-testo="d"]').value, pulsante: q('#confronto-aggiungi').textContent.trim(), giaPresente: q('#confronto-aggiungi').disabled })` },
+  { nome: 'confronto: pieno a 3 varianti, poi togli la seconda', azioni: `await clic('#confronto-aggiungi'); await scrivi('${T('d')}', '0,6'); await clic('#confronto-aggiungi'); await scrivi('${T('d')}', '0,7'); await clic('#confronto-aggiungi'); await scrivi('${T('d')}', '0,8');`,
+    leggi: `(async () => { const pieno = { pulsante: q('#confronto-aggiungi').textContent.trim(), disattivo: q('#confronto-aggiungi').disabled };
+      q('[data-variante="1"][data-azione-variante="togli"]').click(); await frame();
+      return { pieno, dopo: OFApp.varianti().map((v) => v.params.d), pulsante: q('#confronto-aggiungi').textContent.trim() }; })()` },
   { nome: 'memoria del browser', azioni: `await scrivi('${T('d')}', '0,7');`, leggi: `(() => { let s = null; try { s = JSON.parse(localStorage.getItem('of.v2.stato')); } catch (e) {} return s && s.params ? { d: s.params.d, bloccato: s.bloccato } : null; })()` }
 ];

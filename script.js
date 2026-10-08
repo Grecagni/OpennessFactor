@@ -6,12 +6,14 @@
 
   var OF = window.OFCore;
   var TESTI = window.OFTesti;
-  var VERSIONE = '2.7.0'; // uguale a VERSIONE in sw.js (lo controlla tests/run-node.js)
+  var VERSIONE = '2.8.0'; // uguale a VERSIONE in sw.js (lo controlla tests/run-node.js)
   var CAMPO_MM = 50;
   var INDIRIZZO = 'https://grecagni.github.io/OpennessFactor/';
   var CHIAVE_STATO = 'of.v2.stato';
   var CHIAVE_LINGUA = 'of.v2.lingua';
   var CHIAVE_VISTA = 'of.v2.vista';
+  var CHIAVE_CONFRONTO = 'of.v2.confronto';
+  var MAX_VARIANTI = 3;
 
   var INTERVALLI = OF.RANGES;
   var DEFAULTS = {
@@ -29,6 +31,7 @@
   var stato = {
     params: copia(DEFAULTS),
     passoBloccato: null,   // 'P' o 'R' quando, in modalità Passo, l'utente fissa un passo
+    varianti: [],          // confronto: [{ params, bloccato }], al massimo MAX_VARIANTI
     erroriCampo: {},       // chiave → testo dell'avviso sotto il campo
     lingua: 'it',
     testi: null,
@@ -72,6 +75,7 @@
     }
     stato.params = calcola(iniziali, origine);
     stato.registrato = istantanea();
+    stato.varianti = leggiVarianti();
 
     collegaEventi();
     collegaZoom();
@@ -335,6 +339,19 @@
     document.getElementById('chiudi-info').addEventListener('click', function () { dom.info.close(); });
     chiudiSuSfondo(dom.info);
     document.getElementById('condividi').addEventListener('click', condividi);
+    document.getElementById('confronto-aggiungi').addEventListener('click', aggiungiVariante);
+    document.getElementById('confronto-tabella').addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('button[data-variante]') : null;
+      if (!b) return;
+      var i = Number(b.dataset.variante);
+      var azione = b.dataset.azioneVariante;
+      if (azione === 'apri') apriVariante(i); else togliVariante(i);
+      // la tabella è stata ridisegnata: il focus va sul pulsante equivalente, o su "Aggiungi", o sul titolo
+      var j = azione === 'apri' ? i : Math.min(i, stato.varianti.length - 1);
+      var dopo = document.querySelector('#confronto-tabella button[data-variante="' + j + '"][data-azione-variante="' + azione + '"]');
+      var aggiungi = document.getElementById('confronto-aggiungi');
+      (dopo || (!aggiungi.disabled ? aggiungi : document.getElementById('h-confronto'))).focus();
+    });
     document.getElementById('chiudi-condivisione').addEventListener('click', function () { dom.condivisione.close(); });
     chiudiSuSfondo(dom.condivisione);
     document.getElementById('copia-link').addEventListener('click', function () {
@@ -647,6 +664,7 @@
       }), breve: t.t('richiamoTronca') });
     }
     disegnaMessaggi(messaggi);
+    disegnaConfronto();
     disegnaRichiami(messaggi);
 
     disegnaAnteprima();
@@ -1166,6 +1184,144 @@
     });
   }
 
+  // ------------------------------------------------------------------ confronto varianti (v2.8)
+  // Fino a MAX_VARIANTI configurazioni fissate, affiancate a quella attuale; i valori diversi da
+  // quella attuale sono evidenziati. Restano nella memoria del browser.
+
+  function leggiVarianti() {
+    var v = leggiJSON(CHIAVE_CONFRONTO);
+    if (!Array.isArray(v)) return [];
+    return v.filter(function (x) { return x && typeof x === 'object' && x.params && typeof x.params === 'object'; })
+      .slice(0, MAX_VARIANTI)
+      .map(function (x) {
+        var p = normalizza(x.params);
+        return { params: p, bloccato: p.mode === 'step' && (x.bloccato === 'P' || x.bloccato === 'R') ? x.bloccato : null };
+      });
+  }
+
+  function salvaVarianti() {
+    scriviMemoria(CHIAVE_CONFRONTO, JSON.stringify(stato.varianti));
+  }
+
+  // chiave di una configurazione: stessi valori visibili = stessa variante
+  function chiaveVariante(p) {
+    return [p.d, p.P, p.R, p.pattern].map(function (v) { return typeof v === 'number' ? OF.pulisci(v) : v; }).join('|');
+  }
+
+  function indiceVariante(p) {
+    var k = chiaveVariante(p);
+    for (var i = 0; i < stato.varianti.length; i++) if (chiaveVariante(stato.varianti[i].params) === k) return i;
+    return -1;
+  }
+
+  function aggiungiVariante() {
+    if (stato.varianti.length >= MAX_VARIANTI || indiceVariante(stato.params) >= 0) return;
+    stato.varianti.push({ params: copia(stato.params), bloccato: stato.passoBloccato });
+    salvaVarianti();
+    disegnaConfronto();
+    mostraToast(stato.testi.t('toastConfronto'));
+  }
+
+  function apriVariante(i) {
+    var v = stato.varianti[i];
+    if (!v) return;
+    stato.erroriCampo = {};
+    stato.passoBloccato = v.bloccato;
+    stato.params = calcola(normalizza(v.params), null);
+    registraCronologia();
+    disegna();
+  }
+
+  function togliVariante(i) {
+    stato.varianti.splice(i, 1);
+    salvaVarianti();
+    disegnaConfronto();
+  }
+
+  // valori confrontati: [chiave del testo, funzione che li calcola e li scrive]
+  function valoriConfronto(p) {
+    var t = stato.testi;
+    var S = OF.sfalsatura(p.P, p.pattern);
+    var dist = OF.distanzaMinima(p.P, p.R, S);
+    return [
+      ['ofGeo', t.n(OF.ofGeometrico(p.d, p.P, p.R).percent, 2) + ' %'],
+      ['d', t.n(p.d, 2) + ' mm'],
+      ['P', t.n(p.P, 2) + ' mm'],
+      ['R', t.n(p.R, 2) + ' mm'],
+      ['S', t.n(S, 2) + ' mm'],
+      ['disposizione', t.t(p.pattern === 'staggered' ? 'sfalsato' : 'griglia')],
+      ['ponte', t.n(dist.distanza - p.d, 2) + ' mm'],
+      ['interasse', t.n(dist.distanza, 2) + ' mm'],
+      ['foriM2Lungo', t.n(OF.foriAlMetroQuadro(p.P, p.R), 0)]
+    ];
+  }
+
+  function disegnaConfronto() {
+    var contenitore = document.getElementById('confronto-tabella');
+    var vuoto = document.getElementById('confronto-vuoto');
+    var aggiungi = document.getElementById('confronto-aggiungi');
+    if (!contenitore) return;
+    var t = stato.testi;
+    var n = stato.varianti.length;
+    vuoto.hidden = n > 0;
+    var presente = indiceVariante(stato.params) >= 0;
+    aggiungi.disabled = presente || n >= MAX_VARIANTI;
+    aggiungi.querySelector('[data-i18n]').textContent = t.t(presente ? 'confrontoGiaPresente' : n >= MAX_VARIANTI ? 'confrontoPieno' : 'confrontoAggiungi');
+    contenitore.textContent = '';
+    if (!n) return;
+    var attuale = valoriConfronto(stato.params);
+    var colonne = stato.varianti.map(function (v) { return valoriConfronto(v.params); });
+    var tabella = document.createElement('table');
+    var testa = tabella.createTHead().insertRow();
+    var vuota = document.createElement('th');
+    vuota.setAttribute('scope', 'col');
+    testa.appendChild(vuota);
+    var thAttuale = document.createElement('th');
+    thAttuale.setAttribute('scope', 'col');
+    thAttuale.textContent = t.t('confrontoAttuale');
+    testa.appendChild(thAttuale);
+    stato.varianti.forEach(function (v, i) {
+      var th = document.createElement('th');
+      th.setAttribute('scope', 'col');
+      var box = document.createElement('div');
+      box.className = 'confronto__var';
+      var nome = document.createElement('span');
+      nome.textContent = t.t('variante', { n: i + 1 });
+      box.appendChild(nome);
+      var bottoni = document.createElement('div');
+      bottoni.className = 'confronto__bottoni';
+      [['apri', 'confrontoApri', 'confrontoApriVariante'], ['togli', 'confrontoTogli', 'confrontoTogliVariante']].forEach(function (a) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.dataset.variante = String(i);
+        b.dataset.azioneVariante = a[0];
+        b.textContent = t.t(a[1]);
+        b.setAttribute('aria-label', t.t(a[2], { n: i + 1 }));
+        bottoni.appendChild(b);
+      });
+      box.appendChild(bottoni);
+      th.appendChild(box);
+      testa.appendChild(th);
+    });
+    var corpo = tabella.createTBody();
+    attuale.forEach(function (riga, r) {
+      var tr = corpo.insertRow();
+      var th = document.createElement('th');
+      th.setAttribute('scope', 'row');
+      th.textContent = riga[0].length === 1 ? riga[0] : t.t(riga[0]);
+      tr.appendChild(th);
+      var td = tr.insertCell();
+      td.className = 'confronto__attuale';
+      td.textContent = riga[1];
+      colonne.forEach(function (col) {
+        var c = tr.insertCell();
+        c.textContent = col[r][1];
+        if (col[r][1] !== riga[1]) c.className = 'confronto__diverso';
+      });
+    });
+    contenitore.appendChild(tabella);
+  }
+
   // ------------------------------------------------------------------ scheda da stampare (v2.7)
   // Una pagina A4 con parametri, risultati, disegno del campo in scala 1:1 (50 × 50 mm se stampato
   // al 100 %), codice QR del link e firma nel piè di pagina. "Salva come PDF" del browser la
@@ -1504,6 +1660,7 @@
     stato: function () { return JSON.parse(istantanea()); },
     svg: function () { return svgCad(); },
     vista: function () { return { z: vista.z, cx: vista.cx, cy: vista.cy }; },
+    varianti: function () { return JSON.parse(JSON.stringify(stato.varianti)); },
     qr: function (testo) { var q = moduliQr(testo || linkCompleto()); return q ? { moduli: q.getModuleCount(), scuri: function (r, c) { return q.isDark(r, c); } } : null; }
   };
 

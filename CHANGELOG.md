@@ -2,6 +2,11 @@
 
 Ogni rilascio ha un tag git (`v2.1`, `v2.2`, …). I numeri dell'OF sono sempre **geometrici** (calcolati), non misurati.
 
+## v2.8 — Confronto varianti (08.10.2026)
+- Sezione **Confronto varianti**: "Aggiungi al confronto" fissa la configurazione attuale (fino a 3). La tabella affianca le varianti a quella attuale: OF geometrico, d, P, R, S, disposizione, ponte minimo, interasse minimo, fori al m². I valori diversi da quelli attuali sono evidenziati.
+- Per ogni variante: "Apri" la riporta nei campi (si può annullare con Annulla), "Togli" la elimina. Una configurazione già presente non si aggiunge due volte.
+- Le varianti restano nella memoria del browser. Sul telefono la tabella scorre dentro la sua scheda, senza spostare la pagina.
+
 ## v2.7 — Scheda PDF (08.10.2026)
 - **Scheda del pattern** da stampare o salvare in PDF ("Salva come PDF" del browser): dal menu Esporta → "Scheda PDF (stampa)", oppure con Ctrl+P.
 - Una pagina A4 con: OF geometrico in evidenza (con la nota sui valori nominali), avvisi se ci sono, parametri (d, P, R, S, disposizione, modalità, OF obiettivo), risultati (ponte, interasse, fori al m², area foro, area cella, fori nel campo), **disegno del campo di 50 × 50 mm in scala 1:1** se stampato al 100 %, **codice QR** del link per riaprire la configurazione, formula, e la firma nel piè di pagina con la versione dell'app.

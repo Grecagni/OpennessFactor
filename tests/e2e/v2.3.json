@@ -1544,13 +1544,13 @@
  "informazioni": {
   "aperto": true,
   "crediti": "Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico",
-  "versione": "Versione 2.7.0",
+  "versione": "Versione 2.8.0",
   "installa": "L’installazione funziona dall’indirizzo web dell’app, non dal file aperto con doppio clic.grecagni.github.io/OpennessFactor",
   "pulsanteInstalla": false,
   "novita": [
-   "Scheda PDF: dal menu Esporta si stampa, o si salva in PDF, una pagina con parametri, risultati, disegno in scala 1:1 e codice QR.",
-   "Condividi con il codice QR: chi lo inquadra apre la stessa configurazione (v2.6).",
-   "Zoom dell’anteprima e croci sui fori in collisione (v2.5)."
+   "Confronto varianti: fino a 3 configurazioni affiancate a quella attuale, con le differenze evidenziate.",
+   "Scheda PDF con parametri, risultati, disegno in scala 1:1 e codice QR (v2.7).",
+   "Condividi con il codice QR: chi lo inquadra apre la stessa configurazione (v2.6)."
   ]
  },
  "SVG per CAD": {
@@ -3588,7 +3588,7 @@
   ],
   "qr": true,
   "link": "https://grecagni.github.io/OpennessFactor/#d=0.5&p=5&r=2.5&pattern=staggered&mode=of",
-  "piede": "Openness Factor 2.7.0 · Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico"
+  "piede": "Openness Factor 2.8.0 · Progettata e sviluppata da Giacomo Recagni · Ufficio Tecnico"
  },
  "scheda PDF con avviso (collisione), in inglese": {
   "titolo": "Openness Factor · Pattern sheet",
@@ -3596,7 +3596,50 @@
    "Holes overlap: the geometric OF is capped at 100 %."
   ],
   "of": "100.00%",
-  "piede": "Openness Factor 2.7.0 · Designed and developed by Giacomo Recagni · Technical Department"
+  "piede": "Openness Factor 2.8.0 · Designed and developed by Giacomo Recagni · Technical Department"
+ },
+ "confronto: vuoto all’inizio": {
+  "vuoto": true,
+  "tabella": 0,
+  "pulsante": "＋ Aggiungi al confronto",
+  "attivo": true
+ },
+ "confronto: due varianti e la configurazione attuale": {
+  "intestazioni": [
+   "",
+   "Attuale",
+   "Variante 1",
+   "Variante 2"
+  ],
+  "righe": [
+   "OF geometrico | 2,83 % | 1,57 %* | 2,26 %*",
+   "d | 0,60 mm | 0,50 mm* | 0,60 mm",
+   "P | 4,00 mm | 5,00 mm* | 5,00 mm*",
+   "R | 2,50 mm | 2,50 mm | 2,50 mm",
+   "S | 2,00 mm | 2,50 mm* | 2,50 mm*",
+   "Disposizione | Sfalsato | Sfalsato | Sfalsato",
+   "Ponte minimo | 2,60 mm | 3,04 mm* | 2,94 mm*",
+   "Interasse minimo | 3,20 mm | 3,54 mm* | 3,54 mm*",
+   "Fori al m² | 100.000 | 80.000* | 80.000*"
+  ],
+  "pulsante": "＋ Aggiungi al confronto",
+  "memoria": 2
+ },
+ "confronto: apri la variante 1": {
+  "d": "0,50",
+  "pulsante": "＋ Già nel confronto",
+  "giaPresente": true
+ },
+ "confronto: pieno a 3 varianti, poi togli la seconda": {
+  "pieno": {
+   "pulsante": "＋ Confronto pieno: al massimo 3 varianti",
+   "disattivo": true
+  },
+  "dopo": [
+   0.5,
+   0.7
+  ],
+  "pulsante": "＋ Aggiungi al confronto"
  },
  "memoria del browser": {
   "d": 0.7,

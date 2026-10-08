@@ -4,7 +4,7 @@
    tests/run-node.js): così i telefoni scaricano i file nuovi e propongono "Aggiorna". */
 'use strict';
 
-var VERSIONE = '2.7.0';
+var VERSIONE = '2.8.0';
 var CACHE = 'of-' + VERSIONE;
 var FILE = [
   './',
