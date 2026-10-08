@@ -74,6 +74,14 @@ Oltre ai difetti già in `STATO.md` (incongruenze 1–6):
 
 ## Passo 0 — Fissare il comportamento di oggi (nessun effetto visibile)
 
+**Esito (08.10.2026): FATTO → rilascio v2.1.** `of-core.js` contiene il calcolo e la disposizione dei fori (0.1 e 0.2). Verifiche:
+- 75 test verdi in Node e nel browser; 13 errori introdotti di proposito, tutti scoperti dai test;
+- 29 scenari dell'interfaccia registrati dalla v2.0 originale e identici sulla v2.1 (`tests/e2e/v2.0.json`, impronta del disegno compresa);
+- 12 formati grafici identici;
+- revisione indipendente con verifica dei rilievi: nessuna differenza di calcolo; 14 rilievi su test e strumenti, tutti corretti.
+
+Confermate due ipotesi: A5 (arrotondamenti: passando a "Passo" i passi diventano 4,99) e A7 (un link in modalità "Passo" non riproduce i passi). Le 216 combinazioni dell'Excel **non** entrano nel repository pubblico: sono dati di processo.
+
 ### 0.1 Separare il calcolo in `of-core.js` + test che registrano i numeri di oggi
 - **Cosa**: funzioni pure, senza DOM, con gli intervalli passati come parametro. I nomi restano quelli della v1 (x, y, pattern): in questo passo **non cambia nessun numero**.
   - `holeArea(d)`, `cellAreaV1(x, y, pattern)`, `ofV1(d, x, y, pattern)` (limite 100% compreso), `rowStepV1(y, pattern)`;
@@ -200,7 +208,7 @@ Dopo ogni passo: stop, verifica, approvazione.
 |---|---|---|---|---|
 | **v2.0** ✔ | — | base unificata, passo U | — | un'app sola per tutti gli schermi |
 | **D1 Mockup** | progettazione | 2 varianti statiche, fuori dall'app (A "Pellini editoriale", B "Apple chiara"; vedi `DESIGN.md`); Jack sceglie o mescola; `DESIGN.md` approvato | materiali di Jack (facoltativi) | solo il mockup |
-| **v2.1 Fondamenta** | ingegneria | passo 0.1–0.2: `of-core.js` e test; `CHANGELOG.md` | — | nulla (invisibile) |
+| **v2.1 Fondamenta** ✔ | ingegneria | passo 0.1–0.2: `of-core.js` e test; `CHANGELOG.md` | — | nulla (invisibile) |
 | **v2.2 Convenzione** | ingegneria | passo 1 (P, R, S) + passo 2: ponte vero, avviso di troncamento, SVG in mm, link completo e robusto, contatore fori, default OF, README | v2.1 | nuove etichette e avvisi |
 | **v2.3 Nuovo aspetto** | incontro | token CSS dal mockup scelto; intestazione con nome e selettore lingua IT/EN; riquadro "OF geometrico"; controlli a segmenti; campi con unità; numeri nel formato della lingua; toast; avvisi sul campo; tema scuro; via Wave e "GR"; foglio "Informazioni" con la firma; metadati autore negli export | D1, v2.2 | l'app rinnovata |
 | **v2.4 App** | ingegneria | PWA: manifest (inserito solo in http/https, nessun errore da doppio clic), icone, service worker per l'uso offline, istruzioni di installazione per iPhone e Android | v2.3; nome, indirizzo e icona definitivi | si installa sulla Home |

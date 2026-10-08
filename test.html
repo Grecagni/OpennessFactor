@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Openness Factor — test del calcolo</title>
+  <style>
+    :root { color-scheme: light dark; --ok: #1e7a5a; --no: #b42318; --testo: #243646; --fondo: #f4f7f9; --riga: #dde3e8; }
+    @media (prefers-color-scheme: dark) { :root { --ok: #6fd0a8; --no: #ff8a7a; --testo: #e8f0f4; --fondo: #12232e; --riga: #2c4250; } }
+    body { margin: 0; padding: 24px 16px 48px; font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--testo); background: var(--fondo); }
+    main { max-width: 920px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 0 0 4px; }
+    .sintesi { font-size: 17px; font-weight: 600; margin: 12px 0 20px; padding: 12px 14px; border-left: 4px solid currentColor; }
+    .sintesi.ok { color: var(--ok); } .sintesi.no { color: var(--no); }
+    h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; margin: 22px 0 6px; opacity: .8; }
+    ul { list-style: none; margin: 0; padding: 0; }
+    li { padding: 6px 0; border-bottom: 1px solid var(--riga); display: grid; grid-template-columns: 2.2em 1fr; }
+    li .esito { font-weight: 700; } li.ok .esito { color: var(--ok); } li.no .esito { color: var(--no); }
+    li .dettaglio { grid-column: 2; font-size: 13px; color: var(--no); white-space: pre-wrap; }
+    code { font-size: 13px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Test del calcolo (of-core.js)</h1>
+    <p>Gli stessi casi girano anche con <code>node tests/run-node.js</code>.</p>
+    <div id="sintesi" class="sintesi no" role="status">Esecuzione non avviata: se il messaggio resta, uno dei file dei test non si è caricato.</div>
+    <div id="elenco"></div>
+  </main>
+  <script src="of-core.js"></script>
+  <script src="tests/harness.js"></script>
+  <script src="tests/casi.js"></script>
+  <script>
+    (function () {
+      var sintesi = document.getElementById('sintesi');
+      var elenco = document.getElementById('elenco');
+      var mancanti = [];
+      if (typeof OFCore === 'undefined') mancanti.push('of-core.js');
+      if (typeof OFHarness === 'undefined') mancanti.push('tests/harness.js');
+      if (typeof OFCasi === 'undefined') mancanti.push('tests/casi.js');
+      if (mancanti.length) {
+        sintesi.className = 'sintesi no';
+        sintesi.textContent = 'File non caricati o con errori: ' + mancanti.join(', ') + '. Nessun test eseguito.';
+        document.title = '✗ ' + document.title;
+        return;
+      }
+      var t = OFHarness.crea();
+      try {
+        OFCasi.tutti(OFCore, t, typeof OFTesti !== 'undefined' ? OFTesti : null);
+      } catch (err) {
+        t.interrotto(err);
+      }
+      var gruppo = null;
+      var ul = null;
+      t.risultati.forEach(function (r) {
+        if (r.gruppo !== gruppo) {
+          gruppo = r.gruppo;
+          var h = document.createElement('h2');
+          h.textContent = gruppo;
+          ul = document.createElement('ul');
+          elenco.appendChild(h);
+          elenco.appendChild(ul);
+        }
+        var li = document.createElement('li');
+        li.className = r.ok ? 'ok' : 'no';
+        var esito = document.createElement('span');
+        esito.className = 'esito';
+        esito.textContent = r.ok ? '✓' : '✗';
+        var nome = document.createElement('span');
+        nome.textContent = r.nome;
+        li.appendChild(esito);
+        li.appendChild(nome);
+        if (!r.ok) {
+          var det = document.createElement('span');
+          det.className = 'dettaglio';
+          det.textContent = r.dettaglio;
+          li.appendChild(det);
+        }
+        ul.appendChild(li);
+      });
+      var s = OFHarness.riepilogo(t.risultati);
+      sintesi.className = 'sintesi ' + (s.falliti ? 'no' : 'ok');
+      sintesi.textContent = s.vuoto ? 'Nessun caso eseguito: i casi non sono stati caricati.'
+        : s.falliti ? (s.totale - s.elencoFalliti.length) + '/' + s.totale + ' test superati — ' + s.falliti + ' FALLITI'
+        : 'Tutti i ' + s.totale + ' test superati';
+      document.title = (s.falliti ? '✗ ' : '✓ ') + document.title;
+    })();
+  </script>
+</body>
+</html>

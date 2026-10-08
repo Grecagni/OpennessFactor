@@ -1,6 +1,7 @@
 # OF-v2 — regole per Claude Code
 
-Open Factor Designer v2: un'unica base desktop + smartphone, da migliorare a piccoli passi.
+Openness Factor (v2, già Open Factor Designer): un'unica app per telefono, tablet e PC, da migliorare a piccoli passi.
+**08.10.2026: Jack ha approvato tutta la roadmap** (`docs/PIANO_v2.md`, sezione Roadmap). Si procede un rilascio alla volta, verificato, documentato in `CHANGELOG.md` e pubblicato; a Jack si chiede solo quando servono informazioni o decisioni nuove.
 Punto di partenza: copia di OF-mobile (commit "Base v2 = copia di OF-mobile"), che a sua volta è la v1 (github.com/Grecagni/OF, tag v1.0) con un blocco CSS per smartphone.
 Piano dei passi: `docs/PIANO_v2.md`. Convenzione del pattern: `docs/CONVENZIONE_PASSO.md`.
 Repository: github.com/Grecagni/OpennessFactor (pubblico; in futuro da trasferire nell'organizzazione Pellini). È l'unica base viva del progetto.
@@ -12,7 +13,9 @@ Repository: github.com/Grecagni/OpennessFactor (pubblico; in futuro da trasferir
 - Push su `main` dopo ogni passo approvato e verificato. Niente Excel di processo né dati aziendali nel repository.
 
 ## Tecnologia
-- HTML/CSS/JS vanilla. Nessun build, nessun framework, nessuna dipendenza esterna.
+- HTML/CSS/JS vanilla. Nessun build, nessun framework, nessuna dipendenza esterna a runtime (tutto è nel repository e funziona offline).
+- Ammessi solo file locali con licenza libera e con il file di licenza accanto (es. font IBM Plex Sans, OFL, in `assets/fonts/`).
+- Logo e marchi Pellini: NON nel repository pubblico finché Jack non decide (vedi `docs/DESIGN.md`).
 - L'app si apre con doppio clic su `index.html` (protocollo `file://`): niente moduli ES, niente fetch di file locali.
 
 ## Cosa non si cambia senza approvazione
@@ -41,7 +44,8 @@ Repository: github.com/Grecagni/OpennessFactor (pubblico; in futuro da trasferir
 1. Con i default l'OF geometrico è **1,57%**.
 2. Con d = 0,6 (resto ai default) l'OF geometrico è **2,26%**.
 3. Grafica: `node --experimental-websocket tools/screenshot.mjs <cartella> --confronta <cartella-riferimento>` (12 formati, dal telefono al desktop). Nessuno scorrimento orizzontale; i formati che il passo non deve toccare restano "identico". Riferimento grafico dal passo U (07.10.2026): telefono verticale = OF-mobile, desktop ≥ 1440 × 900 = v1; tablet, telefono orizzontale e desktop basso come da passo U.
-4. Quando esisteranno (passo 0 del piano): tutti i test verdi (`test.html` con doppio clic; `node tests/run-node.js`).
+4. Test del calcolo verdi: `node tests/run-node.js` e `test.html` (doppio clic, oppure `node --experimental-websocket tools/test-browser.mjs`).
+5. Passi "invisibili": `node --experimental-websocket tools/e2e.mjs <scenari.mjs> <uscita.json> --confronta <riferimento.json>` deve dare tutti gli scenari identici.
 
 ## Commit
 - Commit diretti su `main` (niente rami né Pull Request), piccoli, uno per modifica logica, con messaggi in italiano che dicano cosa cambia. **Non** si seguono le regole della guida GitHub di Pellini (`Pellini-S-P-A/guida_github`): decisione di Jack del 07.10.2026.

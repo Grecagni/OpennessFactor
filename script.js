@@ -269,12 +269,9 @@
     }
     if (params.mode === CALC_MODES.DIAMETER) {
       state.stepAuto = true;
-      const ofDecimal = params.ofTarget > 0 ? params.ofTarget / 100 : 0;
-      const cellArea = computeCellArea(params.x, params.y, params.pattern);
-      if (ofDecimal > 0 && cellArea > 0) {
-        const desiredDiameter = Math.sqrt((4 * cellArea * ofDecimal) / Math.PI);
-        const clampedDiameter = clampToSliderRange('d', desiredDiameter);
-        params.d = clampedDiameter;
+      const diameter = OFCore.computeDiameterFromTarget(params, getSliderRanges(), defaults);
+      if (diameter !== null) {
+        params.d = diameter;
         applySliderValue('d', params.d);
       }
       return;
@@ -283,35 +280,19 @@
   }
 
   function computeStepPairFromTarget(params, lockedKey = null) {
-    const ofDecimal = params.ofTarget > 0 ? params.ofTarget / 100 : 0;
-    const holeArea = Math.PI * Math.pow(params.d / 2, 2);
-    const patternFactor = getPatternAreaFactor(params.pattern);
-    if (ofDecimal <= 0 || holeArea <= 0 || patternFactor <= 0) {
-      return null;
-    }
-    const cellArea = holeArea / (ofDecimal * patternFactor);
-    if (!Number.isFinite(cellArea) || cellArea <= 0) {
-      return null;
-    }
-    if (lockedKey === 'x') {
-      const lockedX = clampToSliderRange('x', params.x);
-      if (!Number.isFinite(lockedX) || lockedX <= 0) {
-        return null;
+    return OFCore.computeStepPairFromTarget(params, lockedKey, getSliderRanges(), defaults);
+  }
+
+  // Intervalli {min, max} letti dagli slider dell'HTML (unica fonte degli intervalli).
+  function getSliderRanges() {
+    const ranges = {};
+    Object.keys(sliderMap).forEach((key) => {
+      const ctrl = sliderMap[key];
+      if (ctrl && ctrl.range) {
+        ranges[key] = { min: parseFloat(ctrl.range.min), max: parseFloat(ctrl.range.max) };
       }
-      const computedY = clampToSliderRange('y', cellArea / lockedX);
-      return { x: lockedX, y: computedY };
-    }
-    if (lockedKey === 'y') {
-      const lockedY = clampToSliderRange('y', params.y);
-      if (!Number.isFinite(lockedY) || lockedY <= 0) {
-        return null;
-      }
-      const computedX = clampToSliderRange('x', cellArea / lockedY);
-      return { x: computedX, y: lockedY };
-    }
-    const step = Math.sqrt(cellArea);
-    const clampedStep = clampToSliderRange('x', step);
-    return { x: clampedStep, y: clampToSliderRange('y', clampedStep) };
+    });
+    return ranges;
   }
 
   function syncOfTargetWithComputed(params) {
@@ -358,28 +339,21 @@
   }
 
   function updateInfoBox(params) {
-    const { percent } = computeOF(params.d, params.x, params.y, params.pattern);
+    const info = OFCore.infoV1(params, defaults);
     if (dom.ofInlineValue) {
-      dom.ofInlineValue.textContent = `${percent.toFixed(2)}%`;
+      dom.ofInlineValue.textContent = `${info.of.percent.toFixed(2)}%`;
     }
-    const holeArea = Math.PI * Math.pow(params.d / 2, 2);
-    const cellArea = computeCellArea(params.x, params.y, params.pattern);
-    dom.info.holeArea.textContent = `${holeArea.toFixed(4)} mm²`;
-    dom.info.cellArea.textContent = `${cellArea.toFixed(4)} mm²`;
-    dom.info.ratioDX.textContent = (params.d / params.x).toFixed(2);
-    dom.info.ratioDY.textContent = (params.d / params.y).toFixed(2);
-    const safeCols = Math.max(params.cols - 1, 0);
-    const safeRows = Math.max(params.rows - 1, 0);
-    const widthMm = Math.max(0, safeCols * params.x + params.d);
-    const rowStepMm = getEffectiveRowStepMm(params);
-    const heightMm = Math.max(0, safeRows * rowStepMm + params.d);
+    dom.info.holeArea.textContent = `${info.holeArea.toFixed(4)} mm²`;
+    dom.info.cellArea.textContent = `${info.cellArea.toFixed(4)} mm²`;
+    dom.info.ratioDX.textContent = info.ratioDX.toFixed(2);
+    dom.info.ratioDY.textContent = info.ratioDY.toFixed(2);
     if (dom.previewWidthLabel) {
-      dom.previewWidthLabel.textContent = `${widthMm.toFixed(1)} mm`;
+      dom.previewWidthLabel.textContent = `${info.widthMm.toFixed(1)} mm`;
     }
     if (dom.previewHeightLabel) {
-      dom.previewHeightLabel.textContent = `${heightMm.toFixed(1)} mm`;
+      dom.previewHeightLabel.textContent = `${info.heightMm.toFixed(1)} mm`;
     }
-    const collision = params.d >= Math.min(params.x, rowStepMm);
+    const collision = info.collision;
     dom.info.warning.classList.toggle('visible', collision);
     dom.info.warning.textContent = collision
       ? 'ATTENZIONE: d ≥ min(x, y) — fori sovrapposti o a bordo.'
@@ -389,34 +363,18 @@
 
   function render(params) {
     if (!dom.svg) return;
-    const marginMm = PREVIEW_MARGIN_MM;
-    const widthMm = PREVIEW_SIZE_MM;
-    const heightMm = PREVIEW_SIZE_MM;
-    const widthPx = mmToPx(widthMm);
-    const heightPx = mmToPx(heightMm);
+    const layout = OFCore.layoutV1(params, defaults, {
+      previewSizeMm: PREVIEW_SIZE_MM,
+      marginMm: PREVIEW_MARGIN_MM,
+      pxPerMm: PX_PER_MM
+    });
+    const {
+      widthPx, heightPx, marginPx, cellWidthPx, cellHeightPx, holeRadiusPx,
+      previewWidthPx, previewHeightPx, contentLeftPx, contentTopPx,
+      boundedWidthPx, boundedHeightPx, startCx, startCy
+    } = layout;
     state.baseWidthPx = widthPx;
     state.baseHeightPx = heightPx;
-
-    const marginPx = mmToPx(marginMm);
-    const cellWidthPx = mmToPx(params.x);
-    const effectiveRowStepMm = getEffectiveRowStepMm(params);
-    const cellHeightPx = mmToPx(effectiveRowStepMm);
-    const holeRadiusPx = mmToPx(params.d / 2);
-    const holeDiameterPx = holeRadiusPx * 2;
-    const previewWidthPx = mmToPx(widthMm - marginMm * 2);
-    const previewHeightPx = mmToPx(heightMm - marginMm * 2);
-    const spanColsPx = Math.max(params.cols - 1, 0) * cellWidthPx;
-    const spanRowsPx = Math.max(params.rows - 1, 0) * cellHeightPx;
-    const patternContentWidthPx = holeDiameterPx + spanColsPx;
-    const patternContentHeightPx = holeDiameterPx + spanRowsPx;
-    const boundedWidthPx = Math.min(patternContentWidthPx, previewWidthPx);
-    const boundedHeightPx = Math.min(patternContentHeightPx, previewHeightPx);
-    const contentLeftPx = marginPx + Math.max(0, (previewWidthPx - boundedWidthPx) / 2);
-    const contentTopPx = marginPx + Math.max(0, (previewHeightPx - boundedHeightPx) / 2);
-    const contentRightPx = contentLeftPx + boundedWidthPx;
-    const contentBottomPx = contentTopPx + boundedHeightPx;
-    const startCx = contentLeftPx + holeRadiusPx;
-    const startCy = contentTopPx + holeRadiusPx;
     updatePreviewFrameOffsets({
       widthPx,
       heightPx,
@@ -461,22 +419,10 @@
       }
     }
 
-    let holesDrawn = 0;
-    for (let row = 0; row < params.rows; row += 1) {
-      const cy = startCy + row * cellHeightPx;
-      const offset = params.pattern === 'staggered' && row % 2 === 1 ? cellWidthPx / 2 : 0;
-      for (let col = 0; col < params.cols; col += 1) {
-        const cx = startCx + col * cellWidthPx + offset;
-        if (cx - holeRadiusPx < contentLeftPx || cx + holeRadiusPx > contentRightPx) {
-          continue;
-        }
-        if (cy - holeRadiusPx < contentTopPx || cy + holeRadiusPx > contentBottomPx) {
-          continue;
-        }
-        contentFragments.push(`<circle cx="${cx}" cy="${cy}" r="${holeRadiusPx}" class="hole" />`);
-        holesDrawn += 1;
-      }
-    }
+    layout.holes.forEach(({ cx, cy }) => {
+      contentFragments.push(`<circle cx="${cx}" cy="${cy}" r="${holeRadiusPx}" class="hole" />`);
+    });
+    const holesDrawn = layout.holes.length;
 
     const shouldClipContent = state.waveEnabled && Boolean(borderFrame.wavePath) && contentFragments.length > 0;
     if (shouldClipContent) {
@@ -540,15 +486,7 @@
   }
 
   function computeOF(d, x, y, pattern = 'grid') {
-    const cellArea = computeCellArea(x, y, pattern);
-    const holeArea = Math.PI * Math.pow(d / 2, 2);
-    const raw = cellArea > 0 ? holeArea / cellArea : 0;
-    const decimal = Math.min(raw, 1);
-    return { decimal, percent: decimal * 100 };
-  }
-
-  function mmToPx(mm) {
-    return mm * PX_PER_MM;
+    return OFCore.computeOF(d, x, y, pattern);
   }
 
   function exportSVG() {
@@ -688,72 +626,12 @@
   }
 
   function buildHashFromParams(params) {
-    const query = new URLSearchParams();
-    query.set('d', params.d.toFixed(2));
-    query.set('x', params.x.toFixed(2));
-    query.set('y', params.y.toFixed(2));
-    query.set('n', params.rows);
-    query.set('m', params.cols);
-    query.set('grid', params.showGrid ? '1' : '0');
-    query.set('pattern', params.pattern);
-    query.set('mode', params.mode);
-    query.set('t', params.ofTarget.toFixed(2));
-    return query.toString();
+    return OFCore.buildHash(params);
   }
 
   function parseHash() {
     if (!location.hash) return null;
-    const raw = location.hash.replace(/^#/, '');
-    const query = new URLSearchParams(raw);
-    const parsed = { ...defaults };
-    let hasValue = false;
-    let manualGrid = false;
-    ['d', 'x', 'y'].forEach((key) => {
-      const val = query.get(key);
-      if (val === null) return;
-      const num = parseFloat(val);
-      if (Number.isFinite(num)) {
-        hasValue = true;
-        parsed[key] = num;
-      }
-    });
-    ['n', 'm'].forEach((key) => {
-      const val = query.get(key);
-      if (val === null) return;
-      const num = parseInt(val, 10);
-      if (Number.isFinite(num)) {
-        hasValue = true;
-        manualGrid = true;
-        if (key === 'n') parsed.rows = num;
-        if (key === 'm') parsed.cols = num;
-      }
-    });
-    if (query.has('grid')) {
-      parsed.showGrid = query.get('grid') === '1';
-      hasValue = true;
-    }
-    if (query.has('pattern')) {
-      const value = query.get('pattern');
-      if (value === 'grid' || value === 'staggered') {
-        parsed.pattern = value;
-        hasValue = true;
-      }
-    }
-    if (query.has('mode')) {
-      const rawMode = query.get('mode');
-      if (rawMode === CALC_MODES.OF || rawMode === CALC_MODES.STEP || rawMode === CALC_MODES.DIAMETER) {
-        parsed.mode = rawMode;
-        hasValue = true;
-      }
-    }
-    if (query.has('t')) {
-      const target = parseFloat(query.get('t'));
-      if (Number.isFinite(target)) {
-        parsed.ofTarget = clampToSliderRange('ofTarget', target);
-        hasValue = true;
-      }
-    }
-    return hasValue ? { params: parsed, gridLocked: manualGrid } : null;
+    return OFCore.parseHash(location.hash, defaults, getSliderRanges());
   }
 
   function setStatus(message, isError = false) {
@@ -979,38 +857,9 @@
     if (!force && state.gridLocked) {
       return;
     }
-    params.cols = computeAutoCount(params.x, params.d);
-    params.rows = computeAutoCount(getEffectiveRowStepMm(params), params.d);
-  }
-
-  function computeAutoCount(stepMm, diameterMm) {
-    if (!Number.isFinite(stepMm) || stepMm <= 0) {
-      return 1;
-    }
-    const safeDiameter = Number.isFinite(diameterMm) && diameterMm > 0 ? diameterMm : 0;
-    const usableSize = Math.max(PREVIEW_SIZE_MM - safeDiameter, 0);
-    const steps = Math.floor(usableSize / stepMm);
-    return Math.max(1, steps + 1);
-  }
-
-  function computeCellArea(x, y, pattern = 'grid') {
-    if (!Number.isFinite(x) || !Number.isFinite(y)) {
-      return 0;
-    }
-    return x * y * getPatternAreaFactor(pattern);
-  }
-
-  function getPatternAreaFactor(pattern) {
-    return pattern === 'staggered' ? 0.5 : 1;
-  }
-
-  function getEffectiveRowStepMm(params) {
-    if (!params) {
-      return defaults.y;
-    }
-    const base = Number.isFinite(params.y) ? params.y : defaults.y;
-    const step = params.pattern === 'staggered' ? base / 2 : base;
-    return Math.max(step, 0);
+    const grid = OFCore.autoGrid(params, defaults, PREVIEW_SIZE_MM);
+    params.cols = grid.cols;
+    params.rows = grid.rows;
   }
 
 })();

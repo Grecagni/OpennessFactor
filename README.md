@@ -27,7 +27,10 @@ Convenzione del pattern della v2 (`docs/CONVENZIONE_PASSO.md`):
 ## File
 | file | contenuto |
 |---|---|
-| `index.html`, `script.js`, `styles.css` | l'app |
+| `index.html`, `script.js`, `styles.css` | l'app (interfaccia) |
+| `of-core.js` | il calcolo: funzioni pure, provate dai test |
+| `test.html`, `tests/` | test del calcolo (doppio clic su `test.html`, oppure `node tests/run-node.js`) e scenari registrati |
+| `CHANGELOG.md` | novità di ogni rilascio |
 | `CLAUDE.md` | regole di lavoro per Claude Code |
-| `tools/screenshot.mjs` | verifica grafica su 12 formati di schermo (Node + Chrome) |
+| `tools/` | strumenti di verifica con Node + Chrome: grafica su 12 formati (`screenshot.mjs`), scenari dell'interfaccia (`e2e.mjs`), test nel browser (`test-browser.mjs`) |
 | `docs/` | convenzione, piano e note di progetto |
